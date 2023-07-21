@@ -8,63 +8,38 @@
  * @see https://trpc.io/docs/v10/procedures
  */
 
-import type { User } from '@prisma/client'
 import { TRPCError, initTRPC } from '@trpc/server'
 import superjson from 'superjson'
-import type { OpenApiMeta } from 'trpc-openapi'
-import type { Context } from '~/server/trpc/context'
 
-interface Meta {
-  // Accessible by participants
-  participants: boolean
-}
+import type { DefaultUser } from './modules/user/user.select'
+import { defaultUserSelect } from './modules/user/user.select'
+import type { Context } from './context'
+import type { Meta } from './meta'
 
 const t = initTRPC
-  .context<Context>()
   .meta<Meta>()
-  .meta<OpenApiMeta>()
+  .context<Context>()
   .create({
     transformer: superjson,
-    defaultMeta: {
-      participants: false,
-    },
   })
 
-const authMiddleware = t.middleware(async ({ next, ctx, meta }) => {
-  let user
-  if (!ctx.session.data.id) {
-    if (!meta?.participants)
-      throw new TRPCError({ code: 'UNAUTHORIZED' })
+const authMiddleware = t.middleware(async ({ next, ctx }) => {
+  if (!ctx.session.data.id)
+    throw new TRPCError({ code: 'UNAUTHORIZED' })
 
-    user = await ctx.prisma.user.create({
-      data: {
-        admin: false,
-      },
-    })
+  let user = await ctx.cache.users.getItem<DefaultUser>(ctx.session.data.id)
+  user ??= await ctx.prisma.user.findUnique({
+    where: { id: ctx.session.data.id },
+    select: defaultUserSelect,
+  })
 
-    await ctx.cache.users.setItem(user.id, user)
+  await ctx.cache.users.setItem(ctx.session.data.id, user)
 
-    await ctx.session.update({
-      id: user.id,
-    })
-  }
-  else {
-    if (await ctx.cache.users.hasItem(ctx.session.data.id)) {
-      user = await ctx.cache.users.getItem<User>(ctx.session.data.id)
-    }
-    else {
-      user = await ctx.prisma.user.findUnique({
-        where: { id: ctx.session.data.id },
-      })
-    }
+  if (user === null)
+    throw new TRPCError({ code: 'UNAUTHORIZED' })
 
-    if (user === null)
-      throw new TRPCError({ code: 'UNAUTHORIZED' })
-
-    if (!meta?.participants && !user.admin)
-      throw new TRPCError({ code: 'UNAUTHORIZED' })
-  }
-
+  // If user is logged in, replace original session data with user session.
+  // Modifying session data is usually not done.
   return next({
     ctx: {
       session: {

@@ -3,13 +3,11 @@ import { prefixStorage } from 'unstorage'
 
 const baseStorage = useStorage('redis')
 const userStorage = prefixStorage(baseStorage, 'users')
-const surveyStorage = prefixStorage(baseStorage, 'surveys')
 
 declare module 'h3' {
   interface H3EventContext {
     cache: {
       users: Storage
-      surveys: Storage
     }
   }
 }
@@ -18,6 +16,5 @@ declare module 'h3' {
 export default defineEventHandler((event) => {
   event.context.cache = {
     users: userStorage,
-    surveys: surveyStorage,
   }
 })

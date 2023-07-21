@@ -19,40 +19,201 @@ model VerificationToken {
 }
 
 model User {
-  id    String  @id @default(cuid())
-  name  String?
-  email String? // Mandatory for admins
-
-  // For participants
-  nric  String?
-  phone String?
+  id    String @id @default(cuid())
+  email String @unique
+  name  String
 
   admin Boolean
-  won   Boolean?
 
-  surveyResponses Response[]
+  points                 Int      @default(0)
+  pointsAwardedCount     Int      @default(0)
+  pointsAwardedResetTime DateTime @default(now())
+
+  institutionRole InstitutionRole?
+
+  institutionId String?
+  institution   Institution? @relation(fields: [institutionId], references: [id])
+
+  groups            GroupUsers[]
+  posts             ForumPost[]
+  reactions         ForumPostReaction[]
+  deadlinesAuthored Deadline[]           @relation("DeadlinesAuthored")
+  deadlinesUpvoted  Deadline[]           @relation("DeadlinesUpvoted")
 }
 
-model Survey {
-  id          String  @id @default(cuid())
-  title       String
+// ===========
+// Institution
+// ===========
+
+enum InstitutionRole {
+  Admin
+  Educator
+  Member
+}
+
+model Institution {
+  id   String @id @default(cuid())
+  name String
+
+  groups   Group[]
+  users    User[]
+  vouchers Voucher[]
+  invites  InstitutionInvite[]
+}
+
+// ======
+// Prizes
+// ======
+
+model Voucher {
+  id String @id @default(cuid())
+
+  name           String
+  description    String
+  pointsRequired String
+
+  institutionId String
+  institution   Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+}
+
+// ============
+// Invite links
+// ============
+
+model InstitutionInvite {
+  id String @id @default(cuid())
+
+  institutionId String
+  institution   Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+
+  role InstitutionRole
+}
+
+// ======
+// Groups
+// ======
+
+enum GroupRole {
+  Owner
+  Educator
+  Member
+}
+
+model Group {
+  id          String @id @default(cuid())
+  name        String
   description String
-  workshop    Boolean
-  questions   Json
-  permissions Json?
 
-  responses Response[]
+  institutionId String
+  institution   Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+
+  users     GroupUsers[]
+  forums    Forum[]
+  deadlines Deadline[]
+  events    Event[]
+  invites   GroupInvite[]
 }
 
-model Response {
-  id        String   @id @default(cuid())
-  timestamp DateTime @default(now())
-  data      Json
+model GroupUsers {
+  id String @id @default(cuid())
 
-  survey       Survey @relation(fields: [surveyId], references: [id], onDelete: Cascade)
-  surveyId     String
-  respondent   User   @relation(fields: [respondentId], references: [id], onDelete: Cascade)
-  respondentId String
+  groupId String
+  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  userId  String
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([surveyId, respondentId])
+  role GroupRole
+}
+
+// ======
+// Forums
+// ======
+
+model Forum {
+  id          String @id @default(cuid())
+  name        String
+  description String
+
+  groupId String
+  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  posts ForumPost[]
+}
+
+model ForumPost {
+  id String @id @default(cuid())
+
+  title   String
+  content String
+
+  // Optional relation in the event user is deleted
+  authorId String?
+  author   User?   @relation(fields: [authorId], references: [id])
+
+  forumId String
+  forum   Forum  @relation(fields: [forumId], references: [id], onDelete: Cascade)
+
+  parentId String
+  parent   ForumPost?  @relation("ParentChildren", fields: [parentId], references: [id], onDelete: Cascade)
+  children ForumPost[] @relation("ParentChildren")
+
+  reactions ForumPostReaction[]
+}
+
+model ForumPostReaction {
+  id String @id @default(cuid())
+
+  postId String
+  post   ForumPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId String
+  user   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  emoji String
+}
+
+// =========
+// Deadlines
+// =========
+
+model Deadline {
+  id      String   @id @default(cuid())
+  name    String
+  dueDate DateTime
+
+  // Optional reference in the event user is deleted
+  authorId String?
+  author   User?   @relation("DeadlinesAuthored", fields: [authorId], references: [id])
+  groupId  String
+  group    Group   @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  upvotes User[] @relation("DeadlinesUpvoted")
+}
+
+// ======
+// Events
+// ======
+
+model Event {
+  id            String   @id @default(cuid())
+  name          String
+  startTime     DateTime
+  endTime       DateTime
+  location      String
+  repeatPattern String
+
+  groupId String
+  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+}
+
+// =============
+// Group invites
+// =============
+
+model GroupInvite {
+  id String @id @default(cuid())
+
+  groupId String
+  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  role GroupRole
 }

@@ -1,7 +1,7 @@
 FROM docker.io/library/node:lts-alpine AS base
 
 # Prepare work directory
-WORKDIR /wsa-tollbooth
+WORKDIR /inprove
 
 FROM base AS builder
 
@@ -33,14 +33,14 @@ ARG GID=911
 
 # Create a dedicated user and group
 RUN set -eux; \
-    addgroup -g $GID wsa-tollbooth; \
-    adduser -u $UID -D -G wsa-tollbooth wsa-tollbooth;
+    addgroup -g $GID inprove; \
+    adduser -u $UID -D -G inprove inprove;
 
-USER wsa-tollbooth
+USER inprove
 
 ENV NODE_ENV=production
 
-COPY --from=builder /wsa-tollbooth/.output ./.output
+COPY --from=builder /inprove/.output ./.output
 
 EXPOSE 3000/tcp
 

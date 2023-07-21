@@ -28,7 +28,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: |
-            ghcr.io/qin-guan/wsa-tollbooth
+            ghcr.io/np-inprove/inprove
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2

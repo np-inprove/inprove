@@ -1,13 +1,14 @@
 <script setup lang="ts">
+import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
-import type { TRPCError } from '@trpc/server'
+import { TRPCClientError } from '@trpc/client'
 
 const config = useRuntimeConfig()
 const { $client } = useNuxtApp()
 
 useSeoMeta({
-  title: config.public.appName,
+  title: 'Login',
 })
 
 const formData = reactive<{
@@ -28,10 +29,16 @@ async function generateOtp() {
   try {
     await $client.auth.email.login.mutate(formData)
     formData.stage = 'otp'
+    await nextTick(() => { // Wait for OTP form to load
+      document.getElementById('otp')?.focus()
+    })
   }
   catch (err) {
     console.error(err)
-    formData.error = (err as TRPCError).message
+    if (err instanceof TRPCClientError)
+      formData.error = err.message
+    else
+      formData.error = JSON.stringify(err)
   }
   finally {
     formData.pending = false
@@ -49,7 +56,10 @@ async function verifyOtp() {
   }
   catch (err) {
     console.error(err)
-    formData.error = (err as TRPCError).message
+    if (err instanceof TRPCClientError)
+      formData.error = err.message
+    else
+      formData.error = JSON.stringify(err)
   }
   finally {
     formData.pending = false
@@ -59,50 +69,60 @@ async function verifyOtp() {
 
 <template>
   <div>
-    <header
-      class="h-24 flex items-center justify-between p-6 lg:px-30"
-    >
+    <header class="h-24 flex items-center justify-between p-6 lg:px-30">
       <NuxtLink to="/">
         <span font-semibold>{{ config.public.appName }}</span>
       </NuxtLink>
     </header>
 
     <main>
-      <div grid grid-cols-1 lg:grid-cols-2 lg:py-20>
+      <div grid grid-cols-1 md:grid-cols-2 lg:py-20>
         <div mx-auto max-w-lg w-full p-10>
           <UndrawLogin />
         </div>
 
-        <div p-6 lg:px-30>
-          <h1 text-3xl font-bold>
-            Login
-          </h1>
+        <div flex p-6 lg:px-30>
+          <Card class="w-full md:max-w-lg">
+            <template #title>
+              Login
+            </template>
+            <template #subtitle>
+              Please enter your academic email address.
+            </template>
+            <template #content>
+              <form v-if="formData.stage === 'email'" @submit.prevent="generateOtp">
+                <div class="flex flex-col gap-2">
+                  <InputText
+                    id="email"
+                    v-model="formData.email" :class="{ 'p-invalid': formData.error }" autofocus :required="true" placeholder="sam@doge.edu.sg"
+                    type="email" aria-describedby="email-help"
+                  />
+                  <small id="email-help" class="sr-only">Enter your email</small>
+                  <small id="text-error" class="p-error">{{ formData.error || '&nbsp;' }}</small>
+                </div>
 
-          <div mt-8>
-            <form v-if="formData.stage === 'email'" @submit.prevent="generateOtp">
-              <div class="flex flex-col gap-2">
-                <label for="email">Email</label>
-                <InputText id="email" v-model="formData.email" autofocus :required="true" placeholder="sam@example.com" type="email" aria-describedby="email-help" class="max-w-md" />
-                <small id="email-help" class="sr-only">Enter your email</small>
-              </div>
+                <div mt2>
+                  <Button type="submit" :loading="formData.pending" icon="" icon-pos="right" label="Get OTP" />
+                </div>
+              </form>
 
-              <div mt6>
-                <Button type="submit" :loading="formData.pending" icon="" icon-pos="right" label="Get OTP" />
-              </div>
-            </form>
+              <form v-else-if="formData.stage === 'otp'" @submit.prevent="verifyOtp">
+                <div class="flex flex-col gap-2">
+                  <InputText
+                    id="otp"
+                    v-model="formData.otp" :class="{ 'p-invalid': formData.error }" autofocus :required="true" placeholder="123456"
+                    aria-describedby="otp-help"
+                  />
+                  <small id="otp-help" class="sr-only">Enter your OTP</small>
+                  <small id="text-error" class="p-error">{{ formData.error || '&nbsp;' }}</small>
+                </div>
 
-            <form v-else-if="formData.stage === 'otp'" @submit.prevent="verifyOtp">
-              <div class="flex flex-col gap-2">
-                <label for="otp">OTP</label>
-                <InputText id="otp" v-model="formData.otp" autofocus :required="true" placeholder="123456" aria-describedby="otp-help" class="max-w-md" />
-                <small id="otp-help" class="sr-only">Enter your OTP</small>
-              </div>
-
-              <div mt6>
-                <Button type="submit" :loading="formData.pending" icon="" icon-pos="right" label="Login" />
-              </div>
-            </form>
-          </div>
+                <div mt2>
+                  <Button type="submit" :loading="formData.pending" icon="" icon-pos="right" label="Login" />
+                </div>
+              </form>
+            </template>
+          </Card>
         </div>
       </div>
     </main>

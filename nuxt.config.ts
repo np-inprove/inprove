@@ -1,22 +1,18 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
-  routeRules: {
-    '/dashboard/surveys/*/print': { ssr: false },
-  },
+
   modules: [
     '@unocss/nuxt',
     '@vueuse/nuxt',
     '@nuxtjs/html-validator',
     '@nuxt/image',
   ],
+
   typescript: {
     strict: true,
   },
-  css: [
-    '@unocss/reset/tailwind-compat.css',
-    '~/styles/global.css',
-  ],
+
   build: {
     transpile: [
       'primevue',
@@ -24,6 +20,10 @@ export default defineNuxtConfig({
     ],
   },
 
+  css: [
+    '@unocss/reset/tailwind-compat.css',
+    '~/styles/global.css',
+  ],
   app: {
     head: {
       charset: 'utf-8',
@@ -49,7 +49,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      appName: 'World Skills ASEAN',
+      appName: 'iNProve',
     },
 
     skipEnvValidation: false,
@@ -58,6 +58,8 @@ export default defineNuxtConfig({
 
     sessionSecret: '',
     sessionName: 'h3',
+
+    admins: '',
 
     axiom: {
       dataset: '',

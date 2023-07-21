@@ -1,22 +1,30 @@
 import type { HttpLogger } from 'pino-http'
-import pino from 'pino-http'
+import pinoHttp from 'pino-http'
 import axiomPino from '@axiomhq/pino'
 import { isDevelopment } from 'std-env'
 
-let logger: HttpLogger
+let httpLogger: HttpLogger
+
+declare module 'h3' {
+  interface H3EventContext {
+    logger: HttpLogger['logger']
+  }
+}
 
 export default defineEventHandler(async (event) => {
-  if (!logger) {
+  if (!httpLogger) {
     if (isDevelopment) {
-      logger = pino()
+      httpLogger = pinoHttp()
     }
     else {
-      logger = pino(await axiomPino({
+      httpLogger = pinoHttp(await axiomPino({
         dataset: useRuntimeConfig().axiom.dataset,
         token: useRuntimeConfig().axiom.token,
       }))
     }
   }
 
-  logger(event.node.req, event.node.res)
+  httpLogger(event.node.req, event.node.res)
+
+  event.context.logger = httpLogger.logger
 })
