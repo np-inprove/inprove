@@ -97,7 +97,9 @@ export const emailSessionRouter = router({
 
       const user = await ctx.prisma.user.upsert({
         where: { email },
-        update: {},
+        update: {
+          admin: admins.includes(email),
+        },
         create: data,
         select: defaultUserSelect,
       })

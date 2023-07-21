@@ -1,0 +1,54 @@
+<script setup lang="ts">
+import Divider from 'primevue/divider'
+
+definePageMeta({
+  middleware: ['auth', 'admin'],
+})
+
+const items = [
+  {
+    pathname: '/dashboard/__admin',
+    name: 'Institutions',
+  },
+  {
+    pathname: '/dashboard/__admin/users',
+    name: 'Users',
+  },
+]
+</script>
+
+<template>
+  <main h-full flex flex-col p6>
+    <h1 text-2xl font-bold tracking-tight>
+      Admin dashboard
+    </h1>
+    <p>Manage platform wide iNProve settings</p>
+
+    <!-- For some reason, the divider does not appear -->
+    <Divider :pt="{ root: { class: 'before:border-solid!' } }" />
+
+    <div mt6 flex flex-col pl4 lg:flex-row space-y-8 lg:space-x-12 lg:space-y-0>
+      <!-- Styles copied from ui.shadcn.com -->
+      <aside class="-ml4 lg:w-1/5">
+        <nav flex flex-row lg:flex-col space-x-2 lg:space-x-0 lg:space-y-1>
+          <NuxtLink
+            v-for="{ pathname, name } in items" :key="name" :to="pathname"
+            class="h-9 inline-flex cursor-pointer items-center justify-start rounded-md bg-transparent px-4 py-2 font-normal transition-colors disabled:pointer-events-none hover:bg-$highlight-bg font-medium! hover:text-$highlight-text-color hover:underline disabled:opacity-50 focus-visible:outline-none focus-visible:ring-1"
+          >
+            {{ name }}
+          </NuxtLink>
+        </nav>
+      </aside>
+
+      <div flex-1 lg:max-w-2xl>
+        <NuxtPage />
+      </div>
+    </div>
+  </main>
+</template>
+
+<style scoped>
+  .router-link-active {
+    --at-apply: bg-$highlight-bg text-$highlight-text-color hover:no-underline;
+  }
+</style>
