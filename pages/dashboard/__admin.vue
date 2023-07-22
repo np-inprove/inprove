@@ -7,11 +7,13 @@ definePageMeta({
 
 const items = [
   {
-    pathname: '/dashboard/__admin',
+    to: '/dashboard/__admin',
+    match: ['/dashboard/__admin', '/dashboard/__admin/invites'],
     name: 'Institutions',
   },
   {
-    pathname: '/dashboard/__admin/users',
+    to: '/dashboard/__admin/users',
+    match: ['/dashboard/__admin/users'],
     name: 'Users',
   },
 ]
@@ -32,8 +34,9 @@ const items = [
       <aside class="-ml4 lg:w-1/5">
         <nav flex flex-row lg:flex-col space-x-2 lg:space-x-0 lg:space-y-1>
           <NuxtLink
-            v-for="{ pathname, name } in items" :key="name" :to="pathname"
-            class="h-9 inline-flex cursor-pointer items-center justify-start rounded-md bg-transparent px-4 py-2 font-normal transition-colors disabled:pointer-events-none hover:bg-$highlight-bg font-medium! hover:text-$highlight-text-color hover:underline disabled:opacity-50 focus-visible:outline-none focus-visible:ring-1"
+            v-for="{ to, match, name } in items" :key="to" :to="to"
+            :class="{ 'bg-$highlight-bg text-$highlight-text-color hover:no-underline': match.indexOf($route.path) > -1 }"
+            class="h-9 inline-flex cursor-pointer items-center justify-start rounded-md px-4 py-2 font-normal transition-colors disabled:pointer-events-none hover:bg-$highlight-bg font-medium! hover:text-$highlight-text-color hover:underline disabled:opacity-50 focus-visible:outline-none focus-visible:ring-1"
           >
             {{ name }}
           </NuxtLink>
@@ -46,9 +49,3 @@ const items = [
     </div>
   </main>
 </template>
-
-<style scoped>
-  .router-link-exact-active {
-    --at-apply: bg-$highlight-bg text-$highlight-text-color hover:no-underline;
-  }
-</style>

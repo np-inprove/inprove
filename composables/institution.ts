@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
-import type { CreateInstitutionInput, DeleteInstitutionInput, UpdateInstitutionInput } from '~/shared/institution'
-import type { DefaultInstitution, TRPCClientError } from '~/shared/types'
+import type { CreateInstitutionInput, CreateInstitutionInviteInput, DeleteInstitutionInput, DeleteInstitutionInviteInput, UpdateInstitutionInput } from '~/shared/institution'
+import type { DefaultInstitution, DefaultInstitutionInvite, TRPCClientError } from '~/shared/types'
 
 export function useInstitutions() {
   const { $client } = useNuxtApp()
@@ -94,6 +94,63 @@ export function useDeleteInstitutionMutation() {
     },
     onSettled() {
       queryClient.invalidateQueries({ queryKey: ['institutions'] })
+    },
+  })
+}
+
+export function useCreateInstitutionInviteMutation() {
+  const { $client } = useNuxtApp()
+  const queryClient = useQueryClient()
+
+  return useMutation<
+    DefaultInstitutionInvite,
+    TRPCClientError,
+    CreateInstitutionInviteInput,
+    { previousInvites?: DefaultInstitutionInvite[] }
+  >({
+    mutationFn: invite => $client.institutionInvite.create.mutate(invite),
+    async onMutate(newInvite) {
+      await queryClient.cancelQueries({ queryKey: ['institutions', newInvite.institutionId, 'invites'] })
+      const previousInvites = queryClient.getQueryData<DefaultInstitutionInvite[]>(['institutions', newInvite.institutionId, 'invites'])
+      queryClient.setQueryData<DefaultInstitutionInvite[]>(['institutions', newInvite.institutionId, 'invites'], old => [...old!, {
+        ...newInvite,
+        id: 'Generating...',
+      }])
+
+      return { previousInvites }
+    },
+    onError(_, vars, context) {
+      queryClient.setQueryData<DefaultInstitutionInvite[]>(['institutions', vars.institutionId, 'invites'], context?.previousInvites)
+    },
+    onSettled(_, __, vars) {
+      queryClient.invalidateQueries({ queryKey: ['institutions', vars.institutionId, 'invites'] })
+    },
+  })
+}
+
+export function useDeleteInstitutionInviteMutation() {
+  const { $client } = useNuxtApp()
+  const queryClient = useQueryClient()
+
+  return useMutation<
+    DefaultInstitutionInvite,
+    TRPCClientError,
+    DeleteInstitutionInviteInput,
+    { previousInvites?: DefaultInstitutionInvite[] }
+  >({
+    mutationFn: invite => $client.institutionInvite.delete.mutate(invite),
+    async onMutate(deletedInvite) {
+      await queryClient.cancelQueries({ queryKey: ['institutions', deletedInvite.institutionId, 'invites'] })
+      const previousInvites = queryClient.getQueryData<DefaultInstitutionInvite[]>(['institutions', deletedInvite.institutionId, 'invites'])
+      queryClient.setQueryData<DefaultInstitutionInvite[]>(['institutions', deletedInvite.institutionId, 'invites'], old => old?.filter(invite => invite.id !== deletedInvite.inviteId))
+
+      return { previousInvites }
+    },
+    onError(_, vars, context) {
+      queryClient.setQueryData<DefaultInstitutionInvite[]>(['institutions', vars.institutionId, 'invites'], context?.previousInvites)
+    },
+    onSettled(_, __, vars) {
+      queryClient.invalidateQueries({ queryKey: ['institutions', vars.institutionId, 'invites'] })
     },
   })
 }

@@ -27,7 +27,7 @@ export const meRouter = router({
         return user
       }
       catch (err) {
-        ctx.logger.error('error updating user', { err })
+        ctx.logger.error({ err, msg: 'failed to update user' })
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Error updating user',

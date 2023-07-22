@@ -10,6 +10,7 @@ import InputText from 'primevue/inputtext'
 import { useToast } from 'primevue/usetoast'
 
 const toast = useToast()
+const router = useRouter()
 
 const { data: institutions, isLoading: institutionsIsLoading, error: institutionsError, suspense } = useInstitutions()
 
@@ -73,6 +74,10 @@ function openUpdateForm(id: string) {
   updateForm.visible = true
   updateForm.id = id
   updateForm.name = institutions.value?.find(institution => institution.id === id)?.name ?? ''
+}
+
+function openInvites(id: string) {
+  router.push({ path: '/dashboard/__admin/invites', query: { institutionId: id } })
 }
 
 await suspense()
@@ -144,11 +149,12 @@ await suspense()
         <DataTable :value="institutions">
           <Column field="id" header="ID" style="width: 30%" />
           <Column field="name" header="Name" />
-          <Column header="Actions" style="width: 20%">
+          <Column header="Actions" style="width: 25%">
             <template #body="slotProps">
               <div flex space-x-2>
+                <Button size="small" label="Invites" @click="openInvites(slotProps.data.id)" />
                 <Button size="small" text label="Edit" @click="openUpdateForm(slotProps.data.id)" />
-                <Button size="small" severity="danger" label="Delete" @click="deleteInstitution(slotProps.data.id)" />
+                <Button size="small" text severity="danger" label="Delete" @click="deleteInstitution(slotProps.data.id)" />
               </div>
             </template>
           </Column>

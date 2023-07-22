@@ -10,4 +10,4 @@ export const defaultInstitutionInviteSelect = Prisma.validator<Prisma.Institutio
   role: true,
 })
 
-type DefaultInstitutionInvite = Prisma.InstitutionInviteGetPayload<{ select: typeof defaultInstitutionInviteSelect }>
+export type DefaultInstitutionInvite = Prisma.InstitutionInviteGetPayload<{ select: typeof defaultInstitutionInviteSelect }>

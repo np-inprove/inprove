@@ -3,6 +3,7 @@ import { publicProcedure, router } from '../trpc'
 import { authRouter } from './auth/auth.router'
 import { meRouter } from './me/me.router'
 import { institutionRouter } from './institution/institution.router'
+import { institutionInviteRouter } from './institution/institution-invite.router'
 
 export const appRouter = router({
   hello: publicProcedure
@@ -24,6 +25,7 @@ export const appRouter = router({
 
   // Institution
   institution: institutionRouter,
+  institutionInvite: institutionInviteRouter,
 })
 
 // export type definition of API

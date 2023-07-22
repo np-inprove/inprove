@@ -1,3 +1,4 @@
 export interface Meta {
-  admin: boolean
+  // Checked by middleware
+  admin?: boolean
 }

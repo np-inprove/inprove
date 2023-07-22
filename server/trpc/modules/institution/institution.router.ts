@@ -11,7 +11,7 @@ export const institutionRouter = router({
         return await ctx.prisma.institution.findMany({ select: defaultInstitutionSelect })
       }
       catch (err) {
-        ctx.logger.error('error listing institutions', { err })
+        ctx.logger.error({ err, msg: 'failed to list institutions' })
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to list institutions',
@@ -30,7 +30,7 @@ export const institutionRouter = router({
         })
       }
       catch (err) {
-        ctx.logger.error('error creating institution', { err })
+        ctx.logger.error({ err, msg: 'failed to create institution' })
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to create institution',
@@ -52,7 +52,7 @@ export const institutionRouter = router({
         })
       }
       catch (err) {
-        ctx.logger.error('error updating institution', { err })
+        ctx.logger.error({ err, msg: 'failed to update institution' })
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to create institution',
@@ -70,7 +70,7 @@ export const institutionRouter = router({
         })
       }
       catch (err) {
-        ctx.logger.error('error updating institution', { err })
+        ctx.logger.error({ err, msg: 'failed to delete institution' })
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to create institution',

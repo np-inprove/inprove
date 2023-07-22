@@ -14,6 +14,7 @@ export const defaultUserSelect = Prisma.validator<Prisma.UserSelect>()({
   pointsAwardedCount: true,
   pointsAwardedResetTime: true,
   institutionRole: true,
+  institution: true,
 })
 
 export type DefaultUser = Prisma.UserGetPayload<{ select: typeof defaultUserSelect }>
