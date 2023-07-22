@@ -10,4 +10,4 @@ export const defaultInstitutionSelect = Prisma.validator<Prisma.InstitutionSelec
   name: true,
 })
 
-type DefaultInstitution = Prisma.InstitutionGetPayload<{ select: typeof defaultInstitutionSelect }>
+export type DefaultInstitution = Prisma.InstitutionGetPayload<{ select: typeof defaultInstitutionSelect }>

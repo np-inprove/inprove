@@ -40,7 +40,7 @@ const items = [
         </nav>
       </aside>
 
-      <div flex-1 lg:max-w-2xl>
+      <div flex-1 lg:max-w-5xl>
         <NuxtPage />
       </div>
     </div>
@@ -48,7 +48,7 @@ const items = [
 </template>
 
 <style scoped>
-  .router-link-active {
+  .router-link-exact-active {
     --at-apply: bg-$highlight-bg text-$highlight-text-color hover:no-underline;
   }
 </style>

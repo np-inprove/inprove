@@ -23,7 +23,7 @@ const t = initTRPC
     transformer: superjson,
   })
 
-const authMiddleware = t.middleware(async ({ next, ctx }) => {
+const authMiddleware = t.middleware(async ({ next, ctx, meta }) => {
   if (!ctx.session.data.id)
     throw new TRPCError({ code: 'UNAUTHORIZED' })
 
@@ -36,6 +36,9 @@ const authMiddleware = t.middleware(async ({ next, ctx }) => {
   await ctx.cache.users.setItem(ctx.session.data.id, user)
 
   if (user === null)
+    throw new TRPCError({ code: 'UNAUTHORIZED' })
+
+  if (meta?.admin && !user.admin)
     throw new TRPCError({ code: 'UNAUTHORIZED' })
 
   // If user is logged in, replace original session data with user session.
