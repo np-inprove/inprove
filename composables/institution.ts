@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
-import type { CreateInstitutionInput, CreateInstitutionInviteInput, DeleteInstitutionInput, DeleteInstitutionInviteInput, UpdateInstitutionInput } from '~/shared/institution'
-import type { DefaultInstitution, DefaultInstitutionInvite, TRPCClientError } from '~/shared/types'
+import type { AcceptInstitutionInviteInput, CreateInstitutionInput, CreateInstitutionInviteInput, DeleteInstitutionInput, DeleteInstitutionInviteInput, UpdateInstitutionInput } from '~/shared/institution'
+import type { DefaultInstitution, DefaultInstitutionInvite, DefaultUser, TRPCClientError } from '~/shared/types'
 
 export function useInstitutions() {
   const { $client } = useNuxtApp()
@@ -94,6 +94,23 @@ export function useDeleteInstitutionMutation() {
     },
     onSettled() {
       queryClient.invalidateQueries({ queryKey: ['institutions'] })
+    },
+  })
+}
+
+// Since we don't have information on the new institution, this is not an optimistic update
+export function useAcceptInstitutionInviteMutation() {
+  const { $client } = useNuxtApp()
+  const queryClient = useQueryClient()
+
+  return useMutation<
+    DefaultUser,
+    TRPCClientError,
+    AcceptInstitutionInviteInput
+  >({
+    mutationFn: invite => $client.institutionInvite.accept.mutate(invite),
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ['me'] })
     },
   })
 }

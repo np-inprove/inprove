@@ -12,5 +12,7 @@ import Divider from 'primevue/divider'
     </p>
 
     <Divider :pt="{ root: { class: 'before:border-solid!' } }" />
+
+    This page is a work in progress. Check back soon!
   </div>
 </template>

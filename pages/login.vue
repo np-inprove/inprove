@@ -4,6 +4,7 @@ import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import { TRPCClientError } from '@trpc/client'
 
+const route = useRoute()
 const config = useRuntimeConfig()
 const { $client } = useNuxtApp()
 
@@ -52,7 +53,11 @@ async function verifyOtp() {
       email: formData.email,
       otp: formData.otp,
     })
-    navigateTo('/dashboard')
+
+    if (route.query.redirectTo)
+      navigateTo(route.query.redirectTo as string)
+    else
+      navigateTo('/dashboard')
   }
   catch (err) {
     console.error(err)

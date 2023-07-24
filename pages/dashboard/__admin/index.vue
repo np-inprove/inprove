@@ -98,7 +98,7 @@ await suspense()
     <ErrorCard v-else-if="institutionsError" v-bind="institutionsError" />
     <template v-else-if="institutions">
       <LazyWrapper>
-        <Dialog v-model:visible="createForm.visible" modal header="New institution" class="min-w-lg">
+        <Dialog v-model:visible="createForm.visible" modal header="New institution" class="min-w-sm">
           <form @submit.prevent="createInstitution">
             <div class="flex flex-col gap-2">
               <label for="name">Name</label>
@@ -115,7 +115,7 @@ await suspense()
           </form>
         </Dialog>
 
-        <Dialog v-model:visible="updateForm.visible" modal header="Update institution" class="min-w-lg">
+        <Dialog v-model:visible="updateForm.visible" modal header="Update institution" class="min-w-sm">
           <form @submit.prevent="updateInstitution">
             <div class="flex flex-col gap-2">
               <label for="name">Name</label>

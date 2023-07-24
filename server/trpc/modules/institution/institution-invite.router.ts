@@ -1,11 +1,12 @@
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
-import { InstitutionRole } from '@prisma/client'
+import { InstitutionRole, Prisma } from '@prisma/client'
 import { assertInstitutionRole } from '../rbac'
+import { defaultUserSelect } from '../user/user.select'
 import { defaultInstitutionSelect } from './institution.select'
 import { defaultInstitutionInviteSelect } from './institution-invite.select'
-import { createInstitutionInviteInput, deleteInstitutionInviteInput } from '~/shared/institution'
-import { protectedProcedure, router } from '~/server/trpc/trpc'
+import { acceptInstitutionInviteInput, createInstitutionInviteInput, deleteInstitutionInviteInput, getInstitutionInviteInput } from '~/shared/institution'
+import { protectedProcedure, publicProcedure, router } from '~/server/trpc/trpc'
 
 const baseProcedure = protectedProcedure.input(
   z.object({
@@ -64,6 +65,71 @@ export const institutionInviteRouter = router({
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to list institution invites',
+        })
+      }
+    }),
+
+  // Public as users need to access the invite link
+  get: publicProcedure
+    .input(getInstitutionInviteInput)
+    .query(async ({ ctx, input }) => {
+      try {
+        return await ctx.prisma.institutionInvite.findUniqueOrThrow({
+          where: { id: input.inviteId },
+          select: {
+            ...defaultInstitutionInviteSelect,
+            institution: true,
+          },
+        })
+      }
+      catch (err) {
+        if (err instanceof Prisma.PrismaClientKnownRequestError) {
+          if (err.code === 'P2025') { // Not found
+            throw new TRPCError({
+              code: 'NOT_FOUND',
+              message: 'Invite does not exist',
+            })
+          }
+        }
+
+        ctx.logger.error({ err, msg: 'failed to get institution invite' })
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to get invite',
+        })
+      }
+    }),
+
+  accept: protectedProcedure
+    .input(acceptInstitutionInviteInput)
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const invite = await ctx.prisma.institutionInvite.findUniqueOrThrow({
+          where: { id: input.inviteId },
+          select: {
+            ...defaultInstitutionInviteSelect,
+            institutionId: true,
+          },
+        })
+
+        const data = await ctx.prisma.user.update({
+          where: { id: ctx.session.user.id },
+          data: {
+            institutionRole: invite.role,
+            institutionId: invite.institutionId,
+          },
+          select: defaultUserSelect,
+        })
+
+        await ctx.cache.users.setItem(ctx.session.user.id, data)
+
+        return data
+      }
+      catch (err) {
+        ctx.logger.error({ err, msg: 'failed to accept institution invite' })
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to accept institution invite',
         })
       }
     }),

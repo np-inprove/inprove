@@ -21,6 +21,12 @@ const institutionInviteInputBase = z.object({
   institutionId: z.string().cuid(),
 })
 
+export const getInstitutionInviteInput = z.object({
+  inviteId: z.string().cuid(),
+})
+
+export const acceptInstitutionInviteInput = getInstitutionInviteInput
+
 export const createInstitutionInviteInput = institutionInviteInputBase.extend({
   role: z.nativeEnum(InstitutionRole),
 })
@@ -31,3 +37,4 @@ export const deleteInstitutionInviteInput = institutionInviteInputBase.extend({
 
 export type CreateInstitutionInviteInput = z.infer<typeof createInstitutionInviteInput>
 export type DeleteInstitutionInviteInput = z.infer<typeof deleteInstitutionInviteInput>
+export type AcceptInstitutionInviteInput = z.infer<typeof acceptInstitutionInviteInput>
