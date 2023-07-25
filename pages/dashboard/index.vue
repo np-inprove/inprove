@@ -1,45 +1,26 @@
 <script setup lang="ts">
 import Skeleton from 'primevue/skeleton'
-import Card from 'primevue/card'
-import Button from 'primevue/button'
 import { useQuery } from '@tanstack/vue-query'
 
 const { $client } = useNuxtApp()
 
-const { data: me, error: meError, isLoading: meIsLoading, refetch, suspense } = useQuery({
+const { data: me, error: meError, isLoading: meIsLoading, refetch } = useQuery({
   queryKey: ['me'],
   queryFn: () => $client.me.get.query(),
 })
 
-await suspense()
+const { data: groups, error: groupsError, isLoading: groupsIsLoading } = useGroups()
 </script>
 
 <template>
-  <main h-full flex items-center justify-center px6>
-    <div v-if="meIsLoading" mb15 w-full>
-      <Skeleton v-if="meIsLoading" class="w-full md:max-w-lg" height="200px" />
+  <main flex flex-1>
+    <div mb4 flex-1 border rounded-2xl border-solid p8 class="border-$surface-border">
+      <Skeleton v-if="groupsIsLoading" height="50px" width="100%" />
+      <template v-else-if="me?.institution">
+        <h2 text-2xl font-semibold>
+          Hello, {{ me.name }}
+        </h2>
+      </template>
     </div>
-    <ErrorCard v-else-if="meError" v-bind="meError" />
-    <template v-else>
-      <!-- Not a part of any institution -->
-      <Card v-if="!me?.institutionRole" class="mb15 max-w-md text-center">
-        <template #title>
-          You are not in any institution.
-        </template>
-        <template #subtitle>
-          Please check you've used the correct email, or contact your institution administrator for help.
-        </template>
-        <template #content>
-          <div flex justify-center gap3>
-            <Button outlined size="small" label="Read our FAQs" />
-            <Button size="small" label="Reload" @click="refetch()" />
-          </div>
-        </template>
-      </Card>
-
-      <div v-else>
-        {{ me.institutionRole }}
-      </div>
-    </template>
   </main>
 </template>

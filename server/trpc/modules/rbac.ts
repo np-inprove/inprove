@@ -3,6 +3,13 @@ import { TRPCError } from '@trpc/server'
 import type { DefaultUser } from './user/user.select'
 
 export function assertInstitutionRole(user: DefaultUser, roles: InstitutionRole[]) {
+  if (!user.institution?.id) {
+    throw new TRPCError({
+      code: 'UNAUTHORIZED',
+      message: 'User does not have sufficient permissions.',
+    })
+  }
+
   if (!user.institutionRole) {
     throw new TRPCError({
       code: 'UNAUTHORIZED',

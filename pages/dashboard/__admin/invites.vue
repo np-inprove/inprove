@@ -3,6 +3,7 @@ import Menu from 'primevue/menu'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Skeleton from 'primevue/skeleton'
+import Toast from 'primevue/toast'
 import Button from 'primevue/button'
 import Divider from 'primevue/divider'
 import Card from 'primevue/card'
@@ -75,6 +76,8 @@ if (route.query.institutionId)
 
 <template>
   <div>
+    <Toast />
+
     <div flex justify-between>
       <div>
         <h2 text-lg font-medium>

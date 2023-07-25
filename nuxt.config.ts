@@ -24,6 +24,7 @@ export default defineNuxtConfig({
     '@unocss/reset/tailwind-compat.css',
     '~/styles/global.css',
   ],
+
   app: {
     head: {
       charset: 'utf-8',

@@ -5,5 +5,7 @@ import type { AppRouter } from '~/server/trpc/modules'
 export type { DefaultInstitution } from '~/server/trpc/modules/institution/institution.select'
 export type { DefaultInstitutionInvite } from '~/server/trpc/modules/institution/institution-invite.select'
 export type { DefaultUser } from '~/server/trpc/modules/user/user.select'
+export type { DefaultGroup } from '~/server/trpc/modules/group/group.select'
+export type { DefaultGroupUsers } from '~/server/trpc/modules/group/group-users.select'
 
 export type TRPCClientError = __TRPCClientError<AppRouter>

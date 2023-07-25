@@ -11,4 +11,4 @@ export const defaultGroupSelect = Prisma.validator<Prisma.GroupSelect>()({
   description: true,
 })
 
-type DefaultGroup = Prisma.GroupGetPayload<{ select: typeof defaultGroupSelect }>
+export type DefaultGroup = Prisma.GroupGetPayload<{ select: typeof defaultGroupSelect }>

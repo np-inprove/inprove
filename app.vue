@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import ConfirmPopup from 'primevue/confirmpopup'
-import Toast from 'primevue/toast'
-
 const config = useRuntimeConfig()
 useHead({
   titleTemplate: (titleChunk) => {
@@ -26,10 +23,8 @@ const resolvedTheme = computed(() => {
 <template>
   <div class="h-full">
     <Head>
-      <link rel="stylesheet" :href="resolvedTheme">
+      <Link rel="stylesheet" :href="resolvedTheme" />
     </Head>
-    <Toast />
-    <ConfirmPopup />
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>

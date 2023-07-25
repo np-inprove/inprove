@@ -3,6 +3,7 @@ import Column from 'primevue/column'
 import Card from 'primevue/card'
 import Button from 'primevue/button'
 import Divider from 'primevue/divider'
+import Toast from 'primevue/toast'
 import Skeleton from 'primevue/skeleton'
 import Dialog from 'primevue/dialog'
 import DataTable from 'primevue/datatable'
@@ -85,6 +86,8 @@ await suspense()
 
 <template>
   <div>
+    <Toast />
+
     <h2 text-lg font-medium>
       Institutions
     </h2>

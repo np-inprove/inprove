@@ -10,6 +10,7 @@ const props = defineProps<{
 
 const config = useRuntimeConfig()
 const { $client } = useNuxtApp()
+const { visible } = useSidebar()
 
 const menuVisible = ref(false)
 const menu = ref()
@@ -41,6 +42,12 @@ function toggle(event: any) {
       <div flex items-center gap-6>
         <Button v-if="props.admin" link label="Admin" @click="$router.push('/dashboard/__admin')" />
 
+        <div md:hidden>
+          <Button text size="small" :pt="{ root: { style: 'padding: 0 !important' } }" @click="visible = !visible">
+            <div v-if="visible" class="text-xl" i-tabler-layout-sidebar-left-collapse />
+            <div v-else class="text-xl" i-tabler-layout-sidebar-left-expand />
+          </Button>
+        </div>
         <!-- For some reason, adding a chevron indicator breaks everything -->
         <div flex cursor-pointer items-center gap2 aria-haspopup="true" aria-controls="Dashboard__TheHeaderMenu">
           <Avatar

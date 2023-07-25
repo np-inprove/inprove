@@ -1,4 +1,6 @@
 import { Prisma } from '@prisma/client'
+import { defaultUserSelect } from '../user/user.select'
+import { defaultGroupSelect } from './group.select'
 
 /**
  * Default selector for GroupUsers.
@@ -7,9 +9,15 @@ import { Prisma } from '@prisma/client'
  */
 export const defaultGroupUsersSelect = Prisma.validator<Prisma.GroupUsersSelect>()({
   id: true,
+  role: true,
   groupId: true,
   userId: true,
-  role: true,
+  group: {
+    select: defaultGroupSelect,
+  },
+  user: {
+    select: defaultUserSelect,
+  },
 })
 
-type DefaultGroupUsers = Prisma.GroupUsersGetPayload<{ select: typeof defaultGroupUsersSelect }>
+export type DefaultGroupUsers = Prisma.GroupUsersGetPayload<{ select: typeof defaultGroupUsersSelect }>
