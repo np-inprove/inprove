@@ -8,19 +8,30 @@ const { data: me, error: meError, isLoading: meIsLoading, refetch } = useQuery({
   queryKey: ['me'],
   queryFn: () => $client.me.get.query(),
 })
-
-const { data: groups, error: groupsError, isLoading: groupsIsLoading } = useGroups()
 </script>
 
 <template>
-  <main flex flex-1>
-    <div mb4 flex-1 border rounded-2xl border-solid p8 class="border-$surface-border">
-      <Skeleton v-if="groupsIsLoading" height="50px" width="100%" />
-      <template v-else-if="me?.institution">
-        <h2 text-2xl font-semibold>
-          Hello, {{ me.name }}
-        </h2>
-      </template>
+  <DashboardVeryRoundCard mb4>
+    <Skeleton v-if="meIsLoading" height="35px" />
+    <div v-else-if="meError" flex flex-1 items-center justify-center>
+      <ErrorCard v-bind="meError" />
     </div>
-  </main>
+    <Transition v-else-if="me" appear>
+      <h2 text-2xl font-semibold>
+        Hello, {{ me.name }}
+      </h2>
+    </Transition>
+  </DashboardVeryRoundCard>
 </template>
+
+<style scoped>
+.v-enter-active,
+.v-leave-active {
+  transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
+</style>

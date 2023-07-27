@@ -21,4 +21,4 @@ export const defaultForumPostSelect = Prisma.validator<Prisma.ForumPostSelect>()
   },
 })
 
-type DefaultForumPost = Prisma.ForumPostGetPayload<{ select: typeof defaultForumPostSelect }>
+export type DefaultForumPost = Prisma.ForumPostGetPayload<{ select: typeof defaultForumPostSelect }>

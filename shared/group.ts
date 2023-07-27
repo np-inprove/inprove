@@ -6,4 +6,9 @@ export const createGroupInput = z.object({
   description: z.string(),
 })
 
+export const getGroupInput = z.object({
+  groupId: z.string().cuid(),
+})
+
 export type CreateGroupInput = z.infer<typeof createGroupInput>
+export type GetGroupInput = z.infer<typeof getGroupInput>

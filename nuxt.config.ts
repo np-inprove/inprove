@@ -1,5 +1,9 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  vue: {
+    defineModel: true,
+  },
+
   devtools: { enabled: true },
 
   modules: [

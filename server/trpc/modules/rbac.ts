@@ -1,8 +1,16 @@
-import type { InstitutionRole } from '@prisma/client'
+import type { GroupRole, InstitutionRole } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import type { DefaultUser } from './user/user.select'
+import type { DefaultGroupUsers } from './group/group-users.select'
 
-export function assertInstitutionRole(user: DefaultUser, roles: InstitutionRole[]) {
+/**
+ * Helper to check institution roles and then throw TRPC errors
+ *
+ *
+ * @param user user object
+ * @param roles allowed roles
+ */
+export function assertInstitutionRole(user: DefaultUser, ...roles: InstitutionRole[]): void {
   if (!user.institution?.id) {
     throw new TRPCError({
       code: 'UNAUTHORIZED',
@@ -18,6 +26,15 @@ export function assertInstitutionRole(user: DefaultUser, roles: InstitutionRole[
   }
 
   if (!roles.includes(user.institutionRole)) {
+    throw new TRPCError({
+      code: 'UNAUTHORIZED',
+      message: 'User does not have sufficient permissions.',
+    })
+  }
+}
+
+export function assertGroupRole(groupUser: DefaultGroupUsers, ...roles: GroupRole[]) {
+  if (!roles.includes(groupUser.role)) {
     throw new TRPCError({
       code: 'UNAUTHORIZED',
       message: 'User does not have sufficient permissions.',

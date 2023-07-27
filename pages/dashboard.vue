@@ -10,14 +10,12 @@ definePageMeta({
 
 const { $client } = useNuxtApp()
 
-const { data: me, isLoading: meIsLoading, error: meError, refetch } = useQuery({
+const { data: me, status: meStatus, isLoading: meIsLoading, refetch } = useQuery({
   queryKey: ['me'],
   queryFn: () => $client.me.get.query(),
 })
 
-const { data: groups, error: groupsError, isLoading: groupsIsLoading } = useGroups({
-  enabled: !!me.value?.institution,
-})
+const { data: groups, error: groupsError, isLoading: groupsIsLoading } = useGroups()
 
 const { visible } = useSidebar()
 const [SidebarTemplate, ReuseSidebar] = createReusableTemplate()
@@ -49,7 +47,7 @@ const createGroupAllowedRoles = ['Admin', 'Educator']
         {{ title }}
       </NuxtLink>
 
-      <div mb2 mt8 flex items-center justify-between>
+      <div mb4 mt8 flex items-center justify-between>
         <small>Groups</small>
         <Button
           v-if="me?.institutionRole && createGroupAllowedRoles.indexOf(me?.institutionRole) > -1" size="small"
@@ -60,27 +58,28 @@ const createGroupAllowedRoles = ['Admin', 'Educator']
       </div>
 
       <Skeleton v-if="groupsIsLoading" height="300px" />
-      <NuxtLink
-        v-for="group in groups"
-        v-else
-        :key="group.id" :to="`/dashboard/${group.id}`"
-        exact-active-class="bg-$highlight-bg text-$highlight-text-color hover:no-underline"
-        class="w-full inline-flex cursor-pointer items-center justify-start gap2 rounded-md px-4 py-2 font-normal transition-colors disabled:pointer-events-none hover:bg-$highlight-bg font-medium! hover:text-$highlight-text-color hover:underline disabled:opacity-50 focus-visible:outline-none focus-visible:ring-1"
-      >
-        {{ group.name }}
-      </NuxtLink>
+      <TransitionGroup v-else appear>
+        <NuxtLink
+          v-for="group in groups"
+          :key="group.id" :to="`/dashboard/${group.id}`"
+          exact-active-class="bg-$highlight-bg text-$highlight-text-color hover:no-underline"
+          class="w-full inline-flex cursor-pointer items-center justify-start gap2 rounded-md px-4 py-2 font-normal transition-colors disabled:pointer-events-none hover:bg-$highlight-bg font-medium! hover:text-$highlight-text-color hover:underline disabled:opacity-50 focus-visible:outline-none focus-visible:ring-1"
+        >
+          {{ group.name }}
+        </NuxtLink>
+      </TransitionGroup>
     </nav>
   </SidebarTemplate>
 
   <div class="h-full flex flex-col">
     <DashboardHeader :name="me?.name" :admin="me?.admin" />
 
-    <div v-if="meError || groupsError" flex flex-1 items-center justify-center>
+    <div v-if="groupsError" flex flex-1 items-center justify-center>
       <!-- Error -->
-      <ErrorCard v-bind="meError || groupsError" />
+      <ErrorCard v-bind="groupsError" />
     </div>
 
-    <div v-else-if="!meIsLoading && !me?.institution" flex flex-1 items-center justify-center>
+    <div v-else-if="meStatus === 'success' && !me?.institution" flex flex-1 items-center justify-center>
       <!-- No institution -->
       <DashboardNoInstitutionCard @refresh="refetch" />
     </div>
@@ -103,3 +102,21 @@ const createGroupAllowedRoles = ['Admin', 'Educator']
     </div>
   </div>
 </template>
+
+<style scoped>
+.v-move, /* apply transition to moving elements */
+.v-enter-active,
+.v-leave-active {
+  transition: all 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+  transform: translateY(15px);
+}
+
+.v-leave-active {
+  position: absolute;
+}
+</style>

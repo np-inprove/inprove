@@ -6,8 +6,9 @@ import Dialog from 'primevue/dialog'
 
 const props = defineProps<{
   institutionId: string
+  visible: boolean
 }>()
-const modelValue = defineModel<boolean>('visible')
+const emit = defineEmits(['update:visible'])
 const { mutate, isLoading } = useCreateGroupMutation()
 
 const formData = reactive({
@@ -23,13 +24,17 @@ function create() {
   }, {
     onSettled(data) {
       navigateTo(`/dashboard/${data?.id}`)
+      emit('update:visible', false)
     },
   })
 }
 </script>
 
 <template>
-  <Dialog v-model:visible="modelValue" modal header="New group" style="min-width: 300px;">
+  <Dialog
+    :visible="props.visible" modal header="New group" style="min-width: 300px;"
+    @update:visible="emit('update:visible', $event)"
+  >
     <form flex flex-col space-y-6 @submit.prevent="create">
       <div class="flex flex-col gap-2">
         <label for="name">Group name</label>

@@ -115,14 +115,14 @@ model Group {
 }
 
 model GroupUsers {
-  id String @id @default(cuid())
-
   groupId String
   group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
   userId  String
   user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   role GroupRole
+
+  @@unique([groupId, userId])
 }
 
 // ======
@@ -145,6 +145,7 @@ model ForumPost {
 
   title   String
   content String
+  timestamp DateTime @default(now())
 
   // Optional relation in the event user is deleted
   authorId String?
@@ -153,7 +154,7 @@ model ForumPost {
   forumId String
   forum   Forum  @relation(fields: [forumId], references: [id], onDelete: Cascade)
 
-  parentId String
+  parentId String?
   parent   ForumPost?  @relation("ParentChildren", fields: [parentId], references: [id], onDelete: Cascade)
   children ForumPost[] @relation("ParentChildren")
 

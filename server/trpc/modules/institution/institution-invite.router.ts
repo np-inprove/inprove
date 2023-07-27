@@ -8,6 +8,7 @@ import { defaultInstitutionInviteSelect } from './institution-invite.select'
 import { acceptInstitutionInviteInput, createInstitutionInviteInput, deleteInstitutionInviteInput, getInstitutionInviteInput } from '~/shared/institution'
 import { protectedProcedure, publicProcedure, router } from '~/server/trpc/trpc'
 
+// TODO update to use shared input etc.
 const baseProcedure = protectedProcedure.input(
   z.object({
     institutionId: z.string().cuid(),
@@ -52,7 +53,7 @@ export const institutionInviteRouter = router({
   list: baseProcedure
     .query(async ({ ctx, input }) => {
       if (!ctx.session.user.admin)
-        assertInstitutionRole(ctx.session.user, [InstitutionRole.Admin, InstitutionRole.Educator])
+        assertInstitutionRole(ctx.session.user, InstitutionRole.Admin, InstitutionRole.Educator)
 
       try {
         return await ctx.prisma.institutionInvite.findMany({
@@ -138,7 +139,7 @@ export const institutionInviteRouter = router({
     .input(createInstitutionInviteInput)
     .mutation(async ({ ctx, input }) => {
       if (!ctx.session.user.admin)
-        assertInstitutionRole(ctx.session.user, [InstitutionRole.Admin, InstitutionRole.Educator])
+        assertInstitutionRole(ctx.session.user, InstitutionRole.Admin, InstitutionRole.Educator)
 
       try {
         return await ctx.prisma.institutionInvite.create({
@@ -162,7 +163,7 @@ export const institutionInviteRouter = router({
     .input(deleteInstitutionInviteInput)
     .mutation(async ({ ctx, input }) => {
       if (!ctx.session.user.admin)
-        assertInstitutionRole(ctx.session.user, [InstitutionRole.Admin, InstitutionRole.Educator])
+        assertInstitutionRole(ctx.session.user, InstitutionRole.Admin, InstitutionRole.Educator)
 
       const invite = await ctx.prisma.institutionInvite.findUnique({
         where: { id: input.inviteId },

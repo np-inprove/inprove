@@ -15,6 +15,15 @@ export function useGroups(opts?: Omit<UseGroupsUseQueryOptions, 'queryKey' | 'qu
   })
 }
 
+export function useGroup(id: string) {
+  const { $client } = useNuxtApp()
+
+  return useQuery({
+    queryKey: ['groups', id],
+    queryFn: () => $client.group.get.query({ groupId: id }),
+  })
+}
+
 export function useCreateGroupMutation() {
   const { $client } = useNuxtApp()
   const queryClient = useQueryClient()
