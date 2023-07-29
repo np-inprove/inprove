@@ -37,8 +37,9 @@ model User {
   groups            GroupUsers[]
   posts             ForumPost[]
   reactions         ForumPostReaction[]
-  deadlinesAuthored Deadline[]           @relation("DeadlinesAuthored")
-  deadlinesUpvoted  Deadline[]           @relation("DeadlinesUpvoted")
+  deadlinesAuthored Deadline[]          @relation("DeadlinesAuthored")
+  deadlinesUpvoted  Deadline[]          @relation("DeadlinesUpvoted")
+  quizzes           Quiz[]
 }
 
 // ===========
@@ -112,6 +113,7 @@ model Group {
   deadlines Deadline[]
   events    Event[]
   invites   GroupInvite[]
+  quizzes      Quiz[]
 }
 
 model GroupUsers {
@@ -143,8 +145,8 @@ model Forum {
 model ForumPost {
   id String @id @default(cuid())
 
-  title   String
-  content String
+  title     String
+  content   String
   timestamp DateTime @default(now())
 
   // Optional relation in the event user is deleted
@@ -204,6 +206,43 @@ model Event {
 
   groupId String
   group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+}
+
+// =======
+// Quizzes
+// =======
+
+model Quiz {
+  id          String @id @default(cuid())
+  name        String
+  description String
+
+  questions Question[]
+
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  groupId  String
+  group    Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+}
+
+model Question {
+  id String @id @default(cuid())
+
+  content    String
+  descrption String
+  options    Option[]
+
+  quizId String
+  quiz   Quiz   @relation(fields: [quizId], references: [id], onDelete: Cascade)
+}
+
+model Option {
+  id      String  @id @default(cuid())
+  name    String
+  correct Boolean
+
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
 }
 
 // =============
