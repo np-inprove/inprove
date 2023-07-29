@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/vue-query'
 import type { UseQueryOptions } from '@tanstack/vue-query'
-import type { DefaultForum } from '~/shared/types'
+import type { DefaultForum, DefaultForumPost } from '~/shared/types'
 
 type UseForumsUseQueryOptions = UseQueryOptions<DefaultForum[], Error>
 
@@ -20,5 +20,14 @@ export function useForum(forumId: string) {
   return useQuery<DefaultForum, Error>({
     queryKey: ['forums', forumId],
     queryFn: () => $client.forum.get.query({ forumId }),
+  })
+}
+
+export function useForumPosts(forumId: string, parentId?: string) {
+  const { $client } = useNuxtApp()
+
+  return useQuery<DefaultForumPost[], Error>({
+    queryKey: ['forums', forumId, 'posts', parentId],
+    queryFn: () => $client.forumPost.list.query({ forumId, parentId }),
   })
 }

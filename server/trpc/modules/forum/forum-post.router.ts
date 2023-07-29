@@ -3,32 +3,34 @@ import { z } from 'zod'
 import { defaultForumPostSelect } from './forum-post.select'
 import { protectedProcedure, router } from '~/server/trpc/trpc'
 
-export const forumRouter = router({
+export const forumPostRouter = router({
   list: protectedProcedure
     .input(
       z.object({
-        id: z.string(),
+        forumId: z.string(),
         parentId: z.string().cuid().optional(),
         pagination: z.object({
           cursor: z.string().cuid(),
           take: z.number().min(1).max(50).default(30),
-        }),
+        }).optional(),
       }),
     )
     .query(async ({ ctx, input }) => {
       try {
         return await ctx.prisma.forumPost.findMany({
           where: {
-            forumId: input.id,
+            forumId: input.forumId,
             parentId: input.parentId,
           },
           orderBy: {
             timestamp: 'desc',
           },
-          cursor: {
-            id: input.pagination.cursor,
-          },
-          take: input.pagination.take,
+          cursor: input.pagination?.cursor
+            ? {
+                id: input.pagination?.cursor,
+              }
+            : undefined,
+          take: input.pagination?.take,
           select: defaultForumPostSelect,
         })
       }

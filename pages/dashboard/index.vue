@@ -11,17 +11,17 @@ const { data: me, error: meError, isLoading: meIsLoading, refetch } = useQuery({
 </script>
 
 <template>
-  <DashboardVeryRoundCard mb4>
+  <VeryRoundCard mb4>
     <Skeleton v-if="meIsLoading" height="35px" />
     <div v-else-if="meError" flex flex-1 items-center justify-center>
-      <ErrorCard v-bind="meError" />
+      <LazyErrorCard v-bind="meError" />
     </div>
     <Transition v-else-if="me" appear>
       <h2 text-2xl font-semibold>
         Hello, {{ me.name }}
       </h2>
     </Transition>
-  </DashboardVeryRoundCard>
+  </VeryRoundCard>
 </template>
 
 <style scoped>

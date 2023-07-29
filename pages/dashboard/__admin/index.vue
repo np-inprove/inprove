@@ -98,7 +98,7 @@ await suspense()
     <Divider :pt="{ root: { class: 'before:border-solid!' } }" />
 
     <Skeleton v-if="institutionsIsLoading" height="200px" />
-    <ErrorCard v-else-if="institutionsError" v-bind="institutionsError" />
+    <LazyErrorCard v-else-if="institutionsError" v-bind="institutionsError" />
     <template v-else-if="institutions">
       <LazyWrapper>
         <Dialog v-model:visible="createForm.visible" modal header="New institution" class="min-w-sm">

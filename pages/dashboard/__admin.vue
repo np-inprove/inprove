@@ -31,7 +31,7 @@ const items = [
 
     <div mt6 flex flex-col pl4 lg:flex-row space-y-8 lg:space-x-12 lg:space-y-0>
       <!-- Styles copied from ui.shadcn.com -->
-      <aside class="-ml4 lg:w-1/5">
+      <aside class="-ml4">
         <nav flex flex-row lg:flex-col space-x-2 lg:space-x-0 lg:space-y-1>
           <NuxtLink
             v-for="{ to, match, name } in items" :key="to" :to="to"

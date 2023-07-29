@@ -60,9 +60,8 @@ const createGroupAllowedRoles = ['Admin', 'Educator']
       <Skeleton v-if="groupsIsLoading" height="300px" />
       <TransitionGroup v-else appear>
         <NuxtLink
-          v-for="group in groups"
-          :key="group.id" :to="`/dashboard/${group.id}`"
-          exact-active-class="bg-$highlight-bg text-$highlight-text-color hover:no-underline"
+          v-for="group in groups" :key="group.id" :to="`/dashboard/${group.id}`"
+          :class="{ 'bg-$highlight-bg text-$highlight-text-color hover:no-underline': $route.params.groupId === group.id }"
           class="w-full inline-flex cursor-pointer items-center justify-start gap2 rounded-md px-4 py-2 font-normal transition-colors disabled:pointer-events-none hover:bg-$highlight-bg font-medium! hover:text-$highlight-text-color hover:underline disabled:opacity-50 focus-visible:outline-none focus-visible:ring-1"
         >
           {{ group.name }}
@@ -76,7 +75,7 @@ const createGroupAllowedRoles = ['Admin', 'Educator']
 
     <div v-if="groupsError" flex flex-1 items-center justify-center>
       <!-- Error -->
-      <ErrorCard v-bind="groupsError" />
+      <LazyErrorCard v-bind="groupsError" />
     </div>
 
     <div v-else-if="meStatus === 'success' && !me?.institution" flex flex-1 items-center justify-center>
@@ -88,7 +87,10 @@ const createGroupAllowedRoles = ['Admin', 'Educator']
       <!-- Sidebar and page -->
       <!-- Let page handle loading skeleton -->
 
-      <LazyDashboardCreateGroupDialog v-if="me?.institution?.id" v-model:visible="dialogs.createGroup" :institution-id="me.institution.id" />
+      <LazyDashboardCreateGroupDialog
+        v-if="me?.institution?.id" v-model:visible="dialogs.createGroup"
+        :institution-id="me.institution.id"
+      />
 
       <Sidebar v-model:visible="visible" class="md:hidden">
         <ReuseSidebar />
@@ -104,7 +106,8 @@ const createGroupAllowedRoles = ['Admin', 'Educator']
 </template>
 
 <style scoped>
-.v-move, /* apply transition to moving elements */
+.v-move,
+/* apply transition to moving elements */
 .v-enter-active,
 .v-leave-active {
   transition: all 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);

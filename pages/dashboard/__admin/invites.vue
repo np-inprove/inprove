@@ -112,7 +112,7 @@ if (route.query.institutionId)
     </Card>
 
     <Skeleton v-else-if="invitesIsLoading" height="300px" />
-    <ErrorCard v-else-if="invitesError" v-bind="invitesError" />
+    <LazyErrorCard v-else-if="invitesError" v-bind="invitesError" />
 
     <template v-else>
       <Card v-if="invites?.length === 0">

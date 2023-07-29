@@ -12,6 +12,7 @@ export const defaultForumPostSelect = Prisma.validator<Prisma.ForumPostSelect>()
   title: true,
   content: true,
   authorId: true,
+  timestamp: true,
   author: {
     select: defaultUserSelect,
   },

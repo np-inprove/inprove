@@ -50,7 +50,7 @@ function join() {
 
     <div mb-20 h-full flex items-center justify-center px3 lg:mb30>
       <Skeleton v-if="inviteIsLoading" width="300px" height="200px" />
-      <ErrorCard v-else-if="inviteError" v-bind="inviteError" />
+      <LazyErrorCard v-else-if="inviteError" v-bind="inviteError" />
       <Card v-else-if="invite?.institution.id === me?.institution?.id" class="min-w-md">
         <template #title>
           {{ invite?.institution.name }}

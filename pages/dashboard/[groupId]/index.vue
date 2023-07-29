@@ -10,9 +10,9 @@ const { data: forums, isLoading: forumsIsLoading, error: forumsError } = useForu
 </script>
 
 <template>
-  <DashboardVeryRoundCard>
+  <VeryRoundCard>
     <div v-if="groupError || forumsError" h-full flex items-center justify-center pb25>
-      <ErrorCard v-bind="groupError || forumsError" />
+      <LazyErrorCard v-bind="groupError || forumsError" />
     </div>
 
     <div v-else space-y-6>
@@ -37,30 +37,22 @@ const { data: forums, isLoading: forumsIsLoading, error: forumsError } = useForu
         <Skeleton v-if="forumsIsLoading" height="150px" />
         <ScrollPanel v-else class="h-sm max-w-full">
           <TransitionGroup appear>
-            <Card
-              v-for="(forum, idx) in forums"
-              :key="idx" :pt="{
-                root: {
-                  class: 'rounded-lg! w-[200px]! hover:bg-$highlight-bg transition duration-150',
-                },
-                content: {
-                  class: 'py2!',
-                },
-              }"
-              @click="$router.push(`/dashboard/${route.params.groupId}/forums/${forum.id}`)"
-            >
-              <template #subtitle>
-                # {{ forum.name }}
-              </template>
-              <template #content>
-                {{ forum.description }}
-              </template>
-            </Card>
+            <div class="w-[200px]" v-for="(forum, idx) in forums" :key="idx">
+              <Card :pt="$pt.clickableCard"
+                @click="$router.push(`/dashboard/${route.params.groupId}/forums/${forum.id}`)">
+                <template #subtitle>
+                  # {{ forum.name }}
+                </template>
+                <template #content>
+                  {{ forum.description }}
+                </template>
+              </Card>
+            </div>
           </TransitionGroup>
         </ScrollPanel>
       </section>
     </div>
-  </DashboardVeryRoundCard>
+  </VeryRoundCard>
 </template>
 
 <style scoped>

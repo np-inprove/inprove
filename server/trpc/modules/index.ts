@@ -6,6 +6,7 @@ import { institutionRouter } from './institution/institution.router'
 import { institutionInviteRouter } from './institution/institution-invite.router'
 import { groupRouter } from './group/group.router'
 import { forumRouter } from './forum/forum.router'
+import { forumPostRouter } from './forum/forum-post.router'
 
 export const appRouter = router({
   hello: publicProcedure
@@ -32,6 +33,7 @@ export const appRouter = router({
   // Group
   group: groupRouter,
   forum: forumRouter,
+  forumPost: forumPostRouter,
 })
 
 // export type definition of API
