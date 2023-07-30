@@ -1,4 +1,5 @@
 import { Prisma } from '@prisma/client'
+import { defaultInstitutionSelect } from '../institution/institution.select'
 
 /**
  * Default selector for User.
@@ -14,7 +15,9 @@ export const defaultUserSelect = Prisma.validator<Prisma.UserSelect>()({
   pointsAwardedCount: true,
   pointsAwardedResetTime: true,
   institutionRole: true,
-  institution: true,
+  institution: {
+    select: defaultInstitutionSelect,
+  },
 })
 
 export type DefaultUser = Prisma.UserGetPayload<{ select: typeof defaultUserSelect }>

@@ -20,7 +20,7 @@ const items = [
 </script>
 
 <template>
-  <main h-full flex flex-col p6>
+  <main w-full flex flex-col p6>
     <h1 text-2xl font-bold tracking-tight>
       Admin dashboard
     </h1>

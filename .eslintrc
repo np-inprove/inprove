@@ -2,5 +2,12 @@
   "extends": [
     "@antfu",
     "@unocss"
-  ]
+  ],
+  "rules": {
+    // https://github.com/antfu/eslint-config/pull/214
+    "n/prefer-global/process": [
+      "off",
+      "never"
+    ]
+  }
 }

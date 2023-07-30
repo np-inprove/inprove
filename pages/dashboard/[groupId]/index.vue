@@ -5,7 +5,7 @@ import Skeleton from 'primevue/skeleton'
 
 const route = useRoute()
 
-const { data: group, isLoading: groupIsLoading, error: groupError } = useGroup(route.params.groupId as string)
+const { data: group, isLoading: groupIsLoading, error: groupError } = await useGroup(route.params.groupId as string)
 const { data: forums, isLoading: forumsIsLoading, error: forumsError } = useForums(route.params.groupId as string)
 </script>
 
@@ -37,9 +37,11 @@ const { data: forums, isLoading: forumsIsLoading, error: forumsError } = useForu
         <Skeleton v-if="forumsIsLoading" height="150px" />
         <ScrollPanel v-else class="h-sm max-w-full">
           <TransitionGroup appear>
-            <div class="w-[200px]" v-for="(forum, idx) in forums" :key="idx">
-              <Card :pt="$pt.clickableCard"
-                @click="$router.push(`/dashboard/${route.params.groupId}/forums/${forum.id}`)">
+            <div v-for="(forum, idx) in forums" :key="idx" class="w-[200px]">
+              <Card
+                :pt="$pt.clickableCard"
+                @click="$router.push(`/dashboard/${route.params.groupId}/forums/${forum.id}`)"
+              >
                 <template #subtitle>
                   # {{ forum.name }}
                 </template>

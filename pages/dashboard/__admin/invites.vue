@@ -48,7 +48,7 @@ const menuItems = [
   },
 ]
 
-const { data: invites, isLoading: invitesIsLoading, error: invitesError, suspense } = useQuery({
+const { data: invites, isLoading: invitesIsLoading, error: invitesError } = useQuery({
   queryKey: ['institutions', route.query.institutionId, 'invites'],
   queryFn: () => $client.institutionInvite.list.query({ institutionId: route.query.institutionId as string }),
   enabled: !!route.query.institutionId,
@@ -69,9 +69,6 @@ async function copyInvite(id: string) {
     life: 3000,
   })
 }
-
-if (route.query.institutionId)
-  await suspense()
 </script>
 
 <template>
@@ -88,7 +85,7 @@ if (route.query.institutionId)
         </p>
       </div>
 
-      <LazyWrapper v-if="invites">
+      <template v-if="invites">
         <div>
           <Button
             type="button" label="New" size="small" aria-haspopup="true" aria-controls="overlay_menu"
@@ -96,7 +93,7 @@ if (route.query.institutionId)
           />
         </div>
         <Menu id="overlay_menu" ref="menu" :model="menuItems" :popup="true" />
-      </LazyWrapper>
+      </template>
     </div>
 
     <!-- For some reason, the divider does not appear -->

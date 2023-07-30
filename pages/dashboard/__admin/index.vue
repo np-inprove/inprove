@@ -5,15 +5,16 @@ import Button from 'primevue/button'
 import Divider from 'primevue/divider'
 import Toast from 'primevue/toast'
 import Skeleton from 'primevue/skeleton'
-import Dialog from 'primevue/dialog'
 import DataTable from 'primevue/datatable'
 import InputText from 'primevue/inputtext'
 import { useToast } from 'primevue/usetoast'
 
+const Dialog = defineAsyncComponent(() => import('primevue/dialog'))
+
 const toast = useToast()
 const router = useRouter()
 
-const { data: institutions, isLoading: institutionsIsLoading, error: institutionsError, suspense } = useInstitutions()
+const { data: institutions, isLoading: institutionsIsLoading, error: institutionsError } = useInstitutions()
 
 const { mutate: createMutate } = useCreateInstitutionMutation()
 const { mutate: deleteMutate } = useDeleteInstitutionMutation()
@@ -80,8 +81,6 @@ function openUpdateForm(id: string) {
 function openInvites(id: string) {
   router.push({ path: '/dashboard/__admin/invites', query: { institutionId: id } })
 }
-
-await suspense()
 </script>
 
 <template>
@@ -100,41 +99,39 @@ await suspense()
     <Skeleton v-if="institutionsIsLoading" height="200px" />
     <LazyErrorCard v-else-if="institutionsError" v-bind="institutionsError" />
     <template v-else-if="institutions">
-      <LazyWrapper>
-        <Dialog v-model:visible="createForm.visible" modal header="New institution" class="min-w-sm">
-          <form @submit.prevent="createInstitution">
-            <div class="flex flex-col gap-2">
-              <label for="name">Name</label>
-              <InputText
-                id="name" v-model="createForm.name" autofocus :required="true" placeholder="Big Learner Corp."
-                aria-describedby="name-help"
-              />
-              <small id="name-help" class="sr-only">Enter the name of the institution</small>
-            </div>
+      <Dialog v-model:visible="createForm.visible" modal header="New institution" class="min-w-sm">
+        <form @submit.prevent="createInstitution">
+          <div class="flex flex-col gap-2">
+            <label for="name">Name</label>
+            <InputText
+              id="name" v-model="createForm.name" autofocus :required="true" placeholder="Big Learner Corp."
+              aria-describedby="name-help"
+            />
+            <small id="name-help" class="sr-only">Enter the name of the institution</small>
+          </div>
 
-            <div mt6>
-              <Button type="submit" size="small" label="Create" />
-            </div>
-          </form>
-        </Dialog>
+          <div mt6>
+            <Button type="submit" size="small" label="Create" />
+          </div>
+        </form>
+      </Dialog>
 
-        <Dialog v-model:visible="updateForm.visible" modal header="Update institution" class="min-w-sm">
-          <form @submit.prevent="updateInstitution">
-            <div class="flex flex-col gap-2">
-              <label for="name">Name</label>
-              <InputText
-                id="name" v-model="updateForm.name" autofocus :required="true" placeholder="Big Learner Corp."
-                aria-describedby="name-help"
-              />
-              <small id="name-help" class="sr-only">Enter the name of the institution</small>
-            </div>
+      <Dialog v-model:visible="updateForm.visible" modal header="Update institution" class="min-w-sm">
+        <form @submit.prevent="updateInstitution">
+          <div class="flex flex-col gap-2">
+            <label for="name">Name</label>
+            <InputText
+              id="name" v-model="updateForm.name" autofocus :required="true" placeholder="Big Learner Corp."
+              aria-describedby="name-help"
+            />
+            <small id="name-help" class="sr-only">Enter the name of the institution</small>
+          </div>
 
-            <div mt6>
-              <Button type="submit" size="small" label="Update" />
-            </div>
-          </form>
-        </Dialog>
-      </LazyWrapper>
+          <div mt6>
+            <Button type="submit" size="small" label="Update" />
+          </div>
+        </form>
+      </Dialog>
 
       <Card v-if="institutions?.length === 0">
         <template #title>
@@ -149,6 +146,7 @@ await suspense()
       </Card>
 
       <template v-else>
+        <!-- TODO doesn't overflow properly on mobile -->
         <DataTable :value="institutions">
           <Column field="id" header="ID" style="width: 30%" />
           <Column field="name" header="Name" />

@@ -1,20 +1,49 @@
 import { TRPCError } from '@trpc/server'
-import { z } from 'zod'
 import { defaultForumPostSelect } from './forum-post.select'
 import { protectedProcedure, router } from '~/server/trpc/trpc'
+import { baseForumPostInput, createForumPostInput, listForumPostInput } from '~/shared/forum-post'
+
+const userIsInGroup = protectedProcedure
+  .input(baseForumPostInput)
+  .use(async ({ next, ctx, input }) => {
+    try {
+      const group = await ctx.prisma.forum.findUnique({
+        where: {
+          id: input.forumId,
+          group: {
+            users: {
+              some: {
+                userId: ctx.session.user.id,
+              },
+            },
+          },
+        },
+      })
+
+      if (group === null) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+        })
+      }
+
+      return next({
+        ctx: {
+          group,
+        },
+      })
+    }
+    catch (err) {
+      ctx.logger.error({ msg: 'failed to verify user in group', err })
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Failed to list forum posts',
+      })
+    }
+  })
 
 export const forumPostRouter = router({
-  list: protectedProcedure
-    .input(
-      z.object({
-        forumId: z.string(),
-        parentId: z.string().cuid().optional(),
-        pagination: z.object({
-          cursor: z.string().cuid(),
-          take: z.number().min(1).max(50).default(30),
-        }).optional(),
-      }),
-    )
+  list: userIsInGroup
+    .input(listForumPostInput)
     .query(async ({ ctx, input }) => {
       try {
         return await ctx.prisma.forumPost.findMany({
@@ -25,12 +54,12 @@ export const forumPostRouter = router({
           orderBy: {
             timestamp: 'desc',
           },
-          cursor: input.pagination?.cursor
+          cursor: input.paginator?.cursor
             ? {
-                id: input.pagination?.cursor,
+                id: input.paginator.cursor,
               }
             : undefined,
-          take: input.pagination?.take,
+          take: input.paginator?.take,
           select: defaultForumPostSelect,
         })
       }
@@ -43,16 +72,9 @@ export const forumPostRouter = router({
       }
     }),
 
-  create: protectedProcedure
-    .input(
-      z.object({
-        forumId: z.string().cuid(),
-        parentId: z.string().cuid().optional(),
-        title: z.string().nonempty(),
-        content: z.string().nonempty(),
-      }),
-    )
-    .query(async ({ ctx, input }) => {
+  create: userIsInGroup
+    .input(createForumPostInput)
+    .mutation(async ({ ctx, input }) => {
       try {
         return await ctx.prisma.forumPost.create({
           data: {

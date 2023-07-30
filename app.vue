@@ -1,10 +1,5 @@
 <script setup lang="ts">
 const config = useRuntimeConfig()
-useHead({
-  titleTemplate: (titleChunk) => {
-    return titleChunk ? `${config.public.appName} - ${titleChunk}` : config.public.appName
-  },
-})
 
 const cookieRaw = useCookie('theme')
 const route = useRoute()
@@ -18,15 +13,22 @@ const resolvedTheme = computed(() => {
 
   return `/themes/${theme}/theme.css`
 })
+
+useHead({
+  titleTemplate: (titleChunk) => {
+    return titleChunk ? `${config.public.appName} - ${titleChunk}` : config.public.appName
+  },
+  link: [
+    {
+      rel: 'stylesheet',
+      href: resolvedTheme,
+    },
+  ],
+})
 </script>
 
 <template>
-  <div class="h-full">
-    <Head>
-      <Link rel="stylesheet" :href="resolvedTheme" />
-    </Head>
-    <NuxtLayout>
-      <NuxtPage />
-    </NuxtLayout>
-  </div>
+  <NuxtLayout>
+    <NuxtPage />
+  </NuxtLayout>
 </template>

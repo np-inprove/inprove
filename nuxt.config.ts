@@ -4,7 +4,13 @@ export default defineNuxtConfig({
     defineModel: true,
   },
 
-  devtools: { enabled: true },
+  devtools: {
+    enabled: true,
+
+    timeline: {
+      enabled: true,
+    },
+  },
 
   modules: [
     '@unocss/nuxt',

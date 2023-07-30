@@ -38,6 +38,9 @@ export default defineConfig({
     transformerDirectives(),
     transformerVariantGroup(),
   ],
+  shortcuts: {
+    header: 'min-h-[57px]',
+  },
   rules: [
     [/^content-space$/, () => ({ content: '" "' })],
   ],
