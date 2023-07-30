@@ -172,6 +172,8 @@ model ForumPostReaction {
   user   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   emoji String
+
+  @@unique([postId, userId])
 }
 
 // =========

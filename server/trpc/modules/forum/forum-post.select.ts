@@ -11,13 +11,7 @@ export const defaultForumPostSelect = Prisma.validator<Prisma.ForumPostSelect>()
   content: true,
   authorId: true,
   timestamp: true,
-  // author: {
-  //   select: defaultUserSelect,
-  // },
   forumId: true,
-  // forum: {
-  //   select: defaultForumSelect,
-  // },
 })
 
 export type DefaultForumPost = Prisma.ForumPostGetPayload<{ select: typeof defaultForumPostSelect }>

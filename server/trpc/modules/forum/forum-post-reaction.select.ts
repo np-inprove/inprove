@@ -1,6 +1,4 @@
 import { Prisma } from '@prisma/client'
-import { defaultUserSelect } from '../user/user.select'
-import { defaultForumPostSelect } from './forum-post.select'
 
 /**
  * Default selector for ForumPostReaction.
@@ -10,14 +8,8 @@ import { defaultForumPostSelect } from './forum-post.select'
 export const defaultForumPostReactionSelect = Prisma.validator<Prisma.ForumPostReactionSelect>()({
   id: true,
   postId: true,
-  post: {
-    select: defaultForumPostSelect,
-  },
   userId: true,
-  user: {
-    select: defaultUserSelect,
-  },
   emoji: true,
 })
 
-type DefaultForumPostReaction = Prisma.ForumPostReactionGetPayload<{ select: typeof defaultForumPostReactionSelect }>
+export type DefaultForumPostReaction = Prisma.ForumPostReactionGetPayload<{ select: typeof defaultForumPostReactionSelect }>
