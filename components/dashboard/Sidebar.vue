@@ -6,14 +6,15 @@
 
 import ScrollPanel from 'primevue/scrollpanel'
 import Skeleton from 'primevue/skeleton'
-import { InstitutionRole } from '@prisma/client'
+import type { InstitutionRole } from '~/shared/institution'
+import { institutionRole } from '~/shared/institution'
 
 const props = withDefaults(defineProps<{
   createGroupAllowedRoles?: InstitutionRole[]
 }>(), {
   createGroupAllowedRoles: () => [
-    InstitutionRole.Admin,
-    InstitutionRole.Educator,
+    institutionRole.Admin,
+    institutionRole.Educator,
   ],
 })
 

@@ -1,5 +1,12 @@
-import { InstitutionRole } from '@prisma/client'
 import { z } from 'zod'
+
+export const institutionRole = {
+  Admin: 'Admin',
+  Educator: 'Educator',
+  Member: 'Member',
+}
+
+export type InstitutionRole = (typeof institutionRole)[keyof typeof institutionRole]
 
 export const createInstitutionInput = z.object({
   name: z.string().nonempty(),
@@ -28,7 +35,7 @@ export const getInstitutionInviteInput = z.object({
 export const acceptInstitutionInviteInput = getInstitutionInviteInput
 
 export const createInstitutionInviteInput = institutionInviteInputBase.extend({
-  role: z.nativeEnum(InstitutionRole),
+  role: z.nativeEnum(institutionRole),
 })
 
 export const deleteInstitutionInviteInput = institutionInviteInputBase.extend({
