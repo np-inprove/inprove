@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Card from 'primevue/card'
-import formatRelative from 'date-fns/formatRelative'
+import formatRelative from 'date-fns/formatRelative/index'
 
 const props = defineProps<{
   title: string
