@@ -133,8 +133,10 @@ export const forumPostRouter = router({
       try {
         return await ctx.prisma.forumPost.create({
           data: {
+            authorId: ctx.session.user.id,
             forumId: input.forumId,
             parentId: input.parentId,
+
             title: input.title,
             content: input.content,
           },

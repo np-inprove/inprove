@@ -8,6 +8,7 @@ import Skeleton from 'primevue/skeleton'
 import DataTable from 'primevue/datatable'
 import InputText from 'primevue/inputtext'
 import { useToast } from 'primevue/usetoast'
+import type { TRPCClientError } from '~/shared/types'
 
 const Dialog = defineAsyncComponent(() => import('primevue/dialog'))
 
@@ -38,7 +39,7 @@ function createInstitution() {
       toast.add({
         severity: 'error',
         summary: 'Error',
-        detail: err.message,
+        detail: (err as TRPCClientError).message,
       })
     },
     onSettled() {
@@ -53,7 +54,7 @@ function deleteInstitution(id: string) {
       toast.add({
         severity: 'error',
         summary: 'Error',
-        detail: err.message,
+        detail: (err as TRPCClientError).message,
       })
     },
   })
@@ -66,7 +67,7 @@ function updateInstitution() {
       toast.add({
         severity: 'error',
         summary: 'Error',
-        detail: err.message,
+        detail: (err as TRPCClientError).message,
       })
     },
   })

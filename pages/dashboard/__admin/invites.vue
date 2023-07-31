@@ -7,15 +7,13 @@ import Toast from 'primevue/toast'
 import Button from 'primevue/button'
 import Divider from 'primevue/divider'
 import Card from 'primevue/card'
-import { useQuery } from '@tanstack/vue-query'
 import { useToast } from 'primevue/usetoast'
 
 const route = useRoute()
 const toast = useToast()
-const { $client } = useNuxtApp()
 
-const { mutate: createMutate } = useCreateInstitutionInviteMutation()
-const { mutate: deleteMutate } = useDeleteInstitutionInviteMutation()
+const { mutate: createMutate } = useCreateInstitutionInviteMutation(route.query.institutionId as string)
+const { mutate: deleteMutate } = useDeleteInstitutionInviteMutation(route.query.institutionId as string)
 
 const menu = ref()
 const menuItems = [
@@ -23,7 +21,6 @@ const menuItems = [
     label: 'Admin',
     command: () => {
       createMutate({
-        institutionId: route.query.institutionId as string,
         role: 'Admin',
       })
     },
@@ -32,7 +29,6 @@ const menuItems = [
     label: 'Educator',
     command: () => {
       createMutate({
-        institutionId: route.query.institutionId as string,
         role: 'Educator',
       })
     },
@@ -41,22 +37,16 @@ const menuItems = [
     label: 'Member',
     command: () => {
       createMutate({
-        institutionId: route.query.institutionId as string,
         role: 'Member',
       })
     },
   },
 ]
 
-const { data: invites, isLoading: invitesIsLoading, error: invitesError } = useQuery({
-  queryKey: ['institutions', route.query.institutionId, 'invites'],
-  queryFn: () => $client.institutionInvite.list.query({ institutionId: route.query.institutionId as string }),
-  enabled: !!route.query.institutionId,
-})
+const { data: invites, isLoading: invitesIsLoading, error: invitesError } = useInstitutionInvites(route.query.institutionId as string)
 
 function deleteInvite(id: string) {
   deleteMutate({
-    institutionId: route.query.institutionId as string,
     inviteId: id,
   })
 }

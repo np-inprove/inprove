@@ -31,3 +31,9 @@ docs/.vitepress/cache
 
 # Email
 .react-email
+
+# Vercel
+.vercel
+
+# Netlify
+.netlify

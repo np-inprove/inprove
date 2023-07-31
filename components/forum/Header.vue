@@ -2,6 +2,7 @@
 import Skeleton from 'primevue/skeleton'
 import Button from 'primevue/button'
 import { useToast } from 'primevue/usetoast'
+import type { TRPCClientError } from '~/shared/types'
 
 const props = defineProps<{
   groupId: string
@@ -34,7 +35,7 @@ function createPost() {
       toast.add({
         severity: 'error',
         summary: 'Error',
-        detail: err.message,
+        detail: (err as TRPCClientError).message,
       })
     },
     onSettled() {
@@ -61,7 +62,7 @@ function createPost() {
         <InputText
           id="title" v-model="formData.title" :pt="{
             root: {
-              class: 'border-none! outline-none! shadow-none! border-none! py-0.75rem! font-semibold! text-xl',
+              class: 'bg-transparent border-none! outline-none! shadow-none! border-none! py-0.75rem! font-semibold! text-xl',
             },
           }" :required="true" placeholder="Post title" aria-describedby="title-help" unstyled autofocus
         />
@@ -72,7 +73,7 @@ function createPost() {
         <Textarea
           id="content" v-model="formData.content" :rows="5" :pt="{
             root: {
-              class: 'border-none! outline-none! shadow-none! border-none! p0! py-0.75rem',
+              class: 'bg-transparent border-none! outline-none! shadow-none! border-none! p0! py-0.75rem',
             },
           }" :required="true" placeholder="Add some content..." aria-describedby="content-help"
         />

@@ -23,7 +23,7 @@ export async function verifyToken(
 
     if (
       verificationToken.expires.valueOf() < Date.now()
-      || !compareHash(token, email, verificationToken.token)
+      || !(await compareHash(token, email, verificationToken.token))
     )
       throw new VerificationError('Token is invalid or has expired')
 

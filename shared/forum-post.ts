@@ -16,7 +16,7 @@ export const getForumPostInput = baseForumPostInput.extend({
 
 export const createForumPostInput = baseForumPostInput.extend({
   parentId: z.string().cuid().optional(),
-  title: z.string().nonempty(),
+  title: z.string(),
   content: z.string().nonempty(),
 })
 

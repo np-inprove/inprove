@@ -18,7 +18,7 @@ const { data: posts, isLoading: postsIsLoading, error: postsError } = useForumPo
       "
     />
 
-    <div v-if="postsIsLoading" space-y-4>
+    <div v-if="postsIsLoading" p4 space-y-4>
       <Skeleton v-for="_, idx in Array.from({ length: 10 })" :key="idx" height="100px" />
     </div>
 

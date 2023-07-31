@@ -6,6 +6,11 @@ const route = useRoute()
 
 const { error: groupError } = useGroup(route.params.groupId as string)
 const { data: forums, isLoading: forumsIsLoading, error: forumsError } = useForums(route.params.groupId as string)
+
+const Tab = {
+  WorkDue: 'work-due',
+  StudyPlan: 'study-plan',
+}
 </script>
 
 <template>
@@ -43,6 +48,28 @@ const { data: forums, isLoading: forumsIsLoading, error: forumsError } = useForu
               </Card>
             </div>
           </TransitionGroup>
+        </section>
+
+        <section space-y-4>
+          <div flex gap2>
+            <NuxtLink
+              :class="{ 'bg-$highlight-bg text-$highlight-text-color hover:no-underline': !route.query.tab || route.query.tab === Tab.WorkDue }"
+              class="h-9 inline-flex cursor-pointer items-center justify-start rounded-md px-4 py-2 font-normal transition-colors disabled:pointer-events-none hover:bg-$highlight-bg font-medium! hover:text-$highlight-text-color hover:underline disabled:opacity-50 focus-visible:outline-none focus-visible:ring-1"
+              to="?tab=work-due"
+            >
+              Work due
+            </NuxtLink>
+            <NuxtLink
+              :class="{ 'bg-$highlight-bg text-$highlight-text-color hover:no-underline': route.query.tab === Tab.StudyPlan }"
+              class="h-9 inline-flex cursor-pointer items-center justify-start rounded-md px-4 py-2 font-normal transition-colors disabled:pointer-events-none hover:bg-$highlight-bg font-medium! hover:text-$highlight-text-color hover:underline disabled:opacity-50 focus-visible:outline-none focus-visible:ring-1"
+              to="?tab=study-plan"
+            >
+              Study plan
+            </NuxtLink>
+          </div>
+
+          <LazyDashboardWorkDue v-if="!route.query.tab || route.query.tab === Tab.WorkDue" />
+          <LazyDashboardStudyPlan v-else-if="route.query.tab === Tab.StudyPlan" />
         </section>
       </div>
     </template>
