@@ -81,7 +81,8 @@ function openContextMenu(event: any) {
     <div v-else space-y-2>
       <NuxtLink
         v-for="{ title, icon, match, to } in sidebarItems"
-        :key="title" :to="to" :class="{ 'bg-$highlight-bg text-$highlight-text-color hover:no-underline': match.includes($route.path) }"
+        :key="title"
+        prefetch :to="to" :class="{ 'bg-$highlight-bg text-$highlight-text-color hover:no-underline': match.includes($route.path) }"
         class="w-full inline-flex cursor-pointer items-center justify-start gap2 rounded-md px-4 py-2 font-normal transition-colors disabled:pointer-events-none hover:bg-$highlight-bg font-medium! hover:text-$highlight-text-color hover:underline disabled:opacity-50 focus-visible:outline-none focus-visible:ring-1"
       >
         <div :class="icon" />
@@ -104,7 +105,8 @@ function openContextMenu(event: any) {
       <ScrollPanel v-else style="height: 100%; padding-right: 16px;">
         <TransitionGroup appear>
           <NuxtLink
-            v-for="group in groups" :key="group.id" :to="`/dashboard/${group.id}`"
+            v-for="group in groups"
+            :key="group.id" prefetch :to="`/dashboard/${group.id}`"
             :class="{ 'bg-$highlight-bg text-$highlight-text-color hover:no-underline': $route.params.groupId === group.id }"
             class="mt2 w-full inline-flex cursor-pointer items-center justify-start gap2 rounded-md px-4 py-2 font-normal transition-colors disabled:pointer-events-none hover:bg-$highlight-bg font-medium! hover:text-$highlight-text-color hover:underline disabled:opacity-50 focus-visible:outline-none focus-visible:ring-1"
             @contextmenu="openContextMenu"
