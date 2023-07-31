@@ -30,6 +30,14 @@ export default defineNuxtConfig({
     ],
   },
 
+  vite: {
+    optimizeDeps: {
+      exclude: [
+        'date-fns', // https://vite.nuxtjs.org/misc/common-issues/#uncaught-syntaxerror-the-requested-module--does-not-provide-an-export-named-default
+      ],
+    },
+  },
+
   css: [
     '@unocss/reset/tailwind-compat.css',
     '~/styles/global.css',
