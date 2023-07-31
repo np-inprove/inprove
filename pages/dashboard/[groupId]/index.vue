@@ -68,7 +68,14 @@ const Tab = {
             </NuxtLink>
           </div>
 
-          <LazyDashboardWorkDue v-if="!route.query.tab || route.query.tab === Tab.WorkDue" />
+          <LazyDashboardWorkDue
+            v-if="
+              !route.query.tab || route.query.tab === Tab.WorkDue
+            "
+            :group-id="
+              route.params.groupId as string
+            "
+          />
           <LazyDashboardStudyPlan v-else-if="route.query.tab === Tab.StudyPlan" />
         </section>
       </div>
