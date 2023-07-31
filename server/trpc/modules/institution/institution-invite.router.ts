@@ -144,7 +144,7 @@ export const institutionInviteRouter = router({
       try {
         return await ctx.prisma.institutionInvite.create({
           data: {
-            role: input.role,
+            role: input.role as InstitutionRole, // TODO this is bad, but eh, it works I suppose?
             institutionId: input.institutionId,
           },
           select: defaultInstitutionInviteSelect,

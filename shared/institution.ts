@@ -1,5 +1,6 @@
 import { z } from 'zod'
 
+// TODO this is also bad - should find a way to keep this in sync with Prisma schema
 export const institutionRole = {
   Admin: 'Admin',
   Educator: 'Educator',
