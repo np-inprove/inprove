@@ -32,7 +32,7 @@ const Tab = {
             Forums
           </h3>
 
-          <Skeleton v-if="forumsIsLoading" height="150px" />
+          <Skeleton v-if="forumsIsLoading" height="100px" />
           <TransitionGroup v-else appear>
             <div v-for="(forum, idx) in forums" :key="idx" class="w-[200px]">
               <Card
@@ -53,6 +53,7 @@ const Tab = {
         <section space-y-4>
           <div flex gap2>
             <NuxtLink
+              prefetch
               :class="{ 'bg-$highlight-bg text-$highlight-text-color hover:no-underline': !route.query.tab || route.query.tab === Tab.WorkDue }"
               class="h-9 inline-flex cursor-pointer items-center justify-start rounded-md px-4 py-2 font-normal transition-colors disabled:pointer-events-none hover:bg-$highlight-bg font-medium! hover:text-$highlight-text-color hover:underline disabled:opacity-50 focus-visible:outline-none focus-visible:ring-1"
               to="?tab=work-due"
@@ -60,6 +61,7 @@ const Tab = {
               Work due
             </NuxtLink>
             <NuxtLink
+              prefetch
               :class="{ 'bg-$highlight-bg text-$highlight-text-color hover:no-underline': route.query.tab === Tab.StudyPlan }"
               class="h-9 inline-flex cursor-pointer items-center justify-start rounded-md px-4 py-2 font-normal transition-colors disabled:pointer-events-none hover:bg-$highlight-bg font-medium! hover:text-$highlight-text-color hover:underline disabled:opacity-50 focus-visible:outline-none focus-visible:ring-1"
               to="?tab=study-plan"
