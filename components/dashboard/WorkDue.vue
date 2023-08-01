@@ -58,7 +58,7 @@ function addDueDate() {
   <div space-y-2>
     <Dialog v-model:visible="formData.dueDateVisible" header="Set due date" modal class="min-w-sm">
       <div grid="~ cols-1 md:cols-2 gap4">
-        <Calendar v-model="formData.dueDate" show-week inline hour-format="12" :min-date="new Date()" />
+        <Calendar v-model="formData.dueDate" inline hour-format="12" :min-date="new Date()" />
         <ScrollPanel class="h-200px w-full md:h-359px">
           <div
             v-for="timing, idx in timings" :key="idx" rounded p2
