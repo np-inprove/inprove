@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import Calendar from 'primevue/calendar'
 import InputText from 'primevue/inputtext'
+import Inplace from 'primevue/inplace'
+import Button from 'primevue/button'
+
+import formatRelative from 'date-fns/formatRelative/index'
 
 const props = defineProps<{
   groupId: string
 }>()
 
 const { data: deadlines, isLoading: deadlinesIsLoading, error: deadlinesError } = useDeadlines(props.groupId)
+const { data: group } = useGroup(props.groupId)
 const { mutate: createMutate } = useCreateDeadlineMutation(props.groupId)
 
 const formData = reactive({
@@ -20,25 +25,48 @@ function createDeadline() {
 </script>
 
 <template>
-  <div class="rounded-md bg-$surface-card shadow-md">
-    <form flex flex-wrap @submit.prevent="createDeadline">
-      <InputText v-model="formData.name" />
-      <Calendar v-model="formData.dueDate" show-time hour-format="12" />
-      <button type="submit">
-        fu
-      </button>
+  <div space-y-2>
+    <form flex items-center space-x-3 @submit.prevent="createDeadline">
+      <InputText
+        id="task"
+        v-model="formData.name"
+        :pt="{
+          root: {
+            class: 'border-none! shadow-none! rounded-md',
+          },
+        }"
+        size="small"
+        class="flex-1"
+        autofocus :required="true" :placeholder="`Add deadline to ${group?.name}`"
+      />
+      <Inplace>
+        <template #display>
+          <Button size="small" label="Due date" outlined />
+        </template>
+        <template #content>
+          <Calendar v-model="formData.dueDate" show-time hour-format="12" />
+        </template>
+      </Inplace>
     </form>
 
-    <template v-if="deadlines">
-      <div v-if="deadlines.length === 0">
-        <div class="p-4">
-          <p class="text-center text-$text-color-secondary">
-            No work due
-          </p>
+    <div class="rounded-md bg-$surface-card shadow-md">
+      <template v-if="deadlines">
+        <div v-if="deadlines.length === 0">
+          <div class="p-4">
+            <p class="text-center text-$text-color-secondary">
+              No work due
+            </p>
+          </div>
         </div>
-      </div>
-      <div v-else />
-      {{ deadlines }}
-    </template>
+        <div v-else divide-y-2 class="border-$text-color-secondary!">
+          <div v-for="deadline in deadlines" :key="deadline.id" flex justify-between p3>
+            {{ deadline.name }}
+            <small class="text-$text-color-secondary">
+              {{ formatRelative(deadline.dueDate, new Date) }}
+            </small>
+          </div>
+        </div>
+      </template>
+    </div>
   </div>
 </template>
