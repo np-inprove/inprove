@@ -28,19 +28,23 @@ const { data: posts, isLoading: postsIsLoading, error: postsError } = useForumPo
       <div style="height: 100%; overflow-y: auto">
         <ScrollPanel style="height: 100%">
           <div p4 space-y-4>
-            <ForumPostCard
+            <NuxtLink
               v-for="post in posts"
               :key="post.id"
-              :forum-id="
-                route.params.forumId as string
-              "
-              :post-id="post.id"
-              :title="post.title"
-              :content="post.content"
-              :author-name="post.author?.name ?? ''"
-              :timestamp="post.timestamp"
-              @click="$router.push(`${$route.path}/posts/${post.id}`)"
-            />
+              :to="`${$route.path}/posts/${post.id}`"
+              prefetch
+            >
+              <ForumPostCard
+                :forum-id="
+                  route.params.forumId as string
+                "
+                :post-id="post.id"
+                :title="post.title"
+                :content="post.content"
+                :author-name="post.author?.name ?? ''"
+                :timestamp="post.timestamp"
+              />
+            </NuxtLink>
           </div>
         </ScrollPanel>
       </div>

@@ -103,13 +103,7 @@ function createPost() {
           </strong>
         </NuxtLink>
         <span>
-          /
-        </span>
-        <span>
-          Forums
-        </span>
-        <span>
-          /
+          <div i-tabler-chevron-right />
         </span>
         <span font-semibold>
           # {{ forum.name }}
@@ -120,7 +114,7 @@ function createPost() {
       </span>
     </Transition>
 
-    <div flex flex-1 items-center gap3>
+    <div flex flex-1 items-center justify-end gap3>
       <Button :pt="{ root: { style: 'padding: 6px !important' } }" size="small" outlined type="button" label="New post" @click="formData.visible = true" />
     </div>
   </header>

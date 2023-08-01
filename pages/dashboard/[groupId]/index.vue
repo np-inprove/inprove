@@ -34,18 +34,17 @@ const Tab = {
 
           <Skeleton v-if="forumsIsLoading" height="100px" />
           <TransitionGroup v-else appear>
-            <div v-for="(forum, idx) in forums" :key="idx" class="w-[200px]">
-              <Card
-                :pt="$pt.clickableCard"
-                @click="$router.push(`/dashboard/${route.params.groupId}/forums/${forum.id}`)"
-              >
-                <template #subtitle>
-                  # {{ forum.name }}
-                </template>
-                <template #content>
-                  {{ forum.description }}
-                </template>
-              </Card>
+            <div class="w-[200px]">
+              <NuxtLink v-for="(forum, idx) in forums" :key="idx" prefetch :to="`/dashboard/${route.params.groupId}/forums/${forum.id}`">
+                <Card :pt="$pt.clickableCard">
+                  <template #subtitle>
+                    # {{ forum.name }}
+                  </template>
+                  <template #content>
+                    {{ forum.description }}
+                  </template>
+                </Card>
+              </NuxtLink>
             </div>
           </TransitionGroup>
         </section>
@@ -71,7 +70,7 @@ const Tab = {
           </div>
 
           <KeepAlive>
-            <LazyDashboardWorkDue
+            <DashboardWorkDue
               v-if="
                 !route.query.tab || route.query.tab === Tab.WorkDue
               "
@@ -79,7 +78,7 @@ const Tab = {
                 route.params.groupId as string
               "
             />
-            <LazyDashboardStudyPlan v-else-if="route.query.tab === Tab.StudyPlan" />
+            <DashboardStudyPlan v-else-if="route.query.tab === Tab.StudyPlan" />
           </KeepAlive>
         </section>
       </div>

@@ -9,15 +9,13 @@ const props = defineProps<{
   timestamp: Date
 }>()
 
-const emit = defineEmits(['click'])
-
 const relativeTimestamp = computed(() => {
   return formatRelative(props.timestamp, new Date())
 })
 </script>
 
 <template>
-  <Card :pt="$pt.clickableCard" @click="emit('click')">
+  <Card :pt="$pt.clickableCard">
     <template #title>
       <span flex items-center justify-between>
         <span>
