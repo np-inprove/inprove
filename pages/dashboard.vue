@@ -31,7 +31,7 @@ const { visible } = useSidebar()
         <DashboardSidebar />
       </Sidebar>
 
-      <div class="hidden min-w-[250px] w-[250px]" md:flex border-r="1 solid $surface-border">
+      <div class="min-w-[250px] w-[250px] !hidden md:flex!" border-r="1 solid $surface-border">
         <DashboardSidebar />
       </div>
 

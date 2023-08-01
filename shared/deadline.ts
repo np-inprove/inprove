@@ -6,7 +6,7 @@ export const baseDeadlineInput = z.object({
 
 export const createDeadlineInput = baseDeadlineInput.extend({
   name: z.string().min(1),
-  dueDate: z.date().min(new Date()),
+  dueDate: z.date().min(new Date()).nullable(),
 })
 
 export const toggleVoteDeadlineInput = baseDeadlineInput.extend({

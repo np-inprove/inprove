@@ -5,7 +5,7 @@ const props = defineProps<{
   id: string
   groupId: string
   name: string
-  dueDate: Date
+  dueDate: Date | null
   authorName: string
   upvotes: {
     id: string
@@ -34,7 +34,7 @@ function upvote() {
       </span>
     </div>
 
-    <small class="text-$text-color-secondary">
+    <small v-if="props.dueDate" class="text-$text-color-secondary">
       {{ formatRelative(props.dueDate, new Date) }}
     </small>
 

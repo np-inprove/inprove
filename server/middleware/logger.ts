@@ -1,5 +1,6 @@
 import type { HttpLogger } from 'pino-http'
 import pinoHttp from 'pino-http'
+import { isDevelopment } from 'std-env'
 
 let httpLogger: HttpLogger
 
@@ -11,7 +12,16 @@ declare module 'h3' {
 
 export default defineEventHandler(async (event) => {
   if (!httpLogger) {
-    httpLogger = pinoHttp()
+    if (isDevelopment) {
+      httpLogger = pinoHttp({
+        transport: {
+          target: 'pino-pretty',
+        },
+      })
+    }
+    else {
+      httpLogger = pinoHttp()
+    }
   }
 
   httpLogger(event.node.req, event.node.res)

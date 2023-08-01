@@ -183,7 +183,7 @@ model ForumPostReaction {
 model Deadline {
   id      String   @id @default(cuid())
   name    String
-  dueDate DateTime
+  dueDate DateTime?
 
   // Optional reference in the event user is deleted
   authorId String?
