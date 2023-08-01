@@ -4,8 +4,6 @@ import InputText from 'primevue/inputtext'
 import Inplace from 'primevue/inplace'
 import Button from 'primevue/button'
 
-import formatRelative from 'date-fns/formatRelative/index'
-
 const props = defineProps<{
   groupId: string
 }>()
@@ -28,16 +26,11 @@ function createDeadline() {
   <div space-y-2>
     <form flex items-center space-x-3 @submit.prevent="createDeadline">
       <InputText
-        id="task"
-        v-model="formData.name"
-        :pt="{
+        id="task" v-model="formData.name" :pt="{
           root: {
-            class: 'border-none! shadow-none! rounded-md',
+            class: 'border-none! shadow-none! rounded-md bg-$surface-card!',
           },
-        }"
-        size="small"
-        class="flex-1"
-        autofocus :required="true" :placeholder="`Add deadline to ${group?.name}`"
+        }" size="small" class="flex-1" autofocus :required="true" :placeholder="`Add deadline to ${group?.name}`"
       />
       <Inplace>
         <template #display>
@@ -58,13 +51,11 @@ function createDeadline() {
             </p>
           </div>
         </div>
-        <div v-else divide-y-2 class="border-$text-color-secondary!">
-          <div v-for="deadline in deadlines" :key="deadline.id" flex justify-between p3>
-            {{ deadline.name }}
-            <small class="text-$text-color-secondary">
-              {{ formatRelative(deadline.dueDate, new Date) }}
-            </small>
-          </div>
+        <div v-else divide-y>
+          <DashboardWorkDueItem
+            v-for="deadline in deadlines" :key="deadline.id" v-bind="deadline"
+            :author-name="deadline.author?.name ?? ''"
+          />
         </div>
       </template>
     </div>

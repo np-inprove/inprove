@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
-import type { CreateDeadlineInput, DeleteDeadlineInput, UpdateDeadlineInput, UpvoteDeadlineInput } from '~/shared/deadline'
+import type { CreateDeadlineInput, DeleteDeadlineInput, ToggleVoteDeadlineInput, UpdateDeadlineInput } from '~/shared/deadline'
 
 export function useDeadlines(groupId: string) {
   const { $client } = useNuxtApp()
@@ -39,27 +39,12 @@ export function useUpdateDeadlineMutation(groupId: string) {
   })
 }
 
-export function useUpvoteDeadlineMutation(groupId: string) {
+export function useToggleVoteDeadlineMutation(groupId: string) {
   const queryClient = useQueryClient()
   const { $client } = useNuxtApp()
 
   return useMutation({
-    mutationFn: (deadline: Omit<UpvoteDeadlineInput, 'groupId'>) => $client.deadline.upvote.mutate({
-      groupId,
-      ...deadline,
-    }),
-    onSuccess() {
-      queryClient.invalidateQueries(['deadline', 'list', groupId])
-    },
-  })
-}
-
-export function useDownvoteDeadlineMutation(groupId: string) {
-  const queryClient = useQueryClient()
-  const { $client } = useNuxtApp()
-
-  return useMutation({
-    mutationFn: (deadline: Omit<UpvoteDeadlineInput, 'groupId'>) => $client.deadline.downvote.mutate({
+    mutationFn: (deadline: Omit<ToggleVoteDeadlineInput, 'groupId'>) => $client.deadline.toggleVote.mutate({
       groupId,
       ...deadline,
     }),
@@ -74,7 +59,7 @@ export function useDeleteDeadlineMutation(groupId: string) {
   const { $client } = useNuxtApp()
 
   return useMutation({
-    mutationFn: (deadline: Omit<DeleteDeadlineInput, 'groupId'>) => $client.deadline.upvote.mutate({
+    mutationFn: (deadline: Omit<DeleteDeadlineInput, 'groupId'>) => $client.deadline.delete.mutate({
       groupId,
       ...deadline,
     }),

@@ -122,8 +122,6 @@ export const institutionInviteRouter = router({
           select: defaultUserSelect,
         })
 
-        await ctx.cache.users.setItem(ctx.session.user.id, data)
-
         return data
       }
       catch (err) {

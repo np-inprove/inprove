@@ -9,7 +9,7 @@ export const createDeadlineInput = baseDeadlineInput.extend({
   dueDate: z.date().min(new Date()),
 })
 
-export const upvoteDeadlineInput = baseDeadlineInput.extend({
+export const toggleVoteDeadlineInput = baseDeadlineInput.extend({
   deadlineId: z.string().cuid(),
 })
 
@@ -27,5 +27,5 @@ export const listDeadlineInput = baseDeadlineInput.extend({})
 
 export type CreateDeadlineInput = z.infer<typeof createDeadlineInput>
 export type UpdateDeadlineInput = z.infer<typeof updateDeadlineInput>
-export type UpvoteDeadlineInput = z.infer<typeof upvoteDeadlineInput>
+export type ToggleVoteDeadlineInput = z.infer<typeof toggleVoteDeadlineInput>
 export type DeleteDeadlineInput = z.infer<typeof deleteDeadlineInput>

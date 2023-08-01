@@ -11,7 +11,6 @@
 import { TRPCError, initTRPC } from '@trpc/server'
 import superjson from 'superjson'
 
-import type { DefaultUser } from './modules/user/user.select'
 import { defaultUserSelect } from './modules/user/user.select'
 import type { Context } from './context'
 import type { Meta } from './meta'
@@ -27,13 +26,10 @@ const authMiddleware = t.middleware(async ({ next, ctx, meta }) => {
   if (!ctx.session.data.id)
     throw new TRPCError({ code: 'UNAUTHORIZED' })
 
-  let user = await ctx.cache.users.getItem<DefaultUser>(ctx.session.data.id)
-  user ??= await ctx.prisma.user.findUnique({
+  const user = await ctx.prisma.user.findUnique({
     where: { id: ctx.session.data.id },
     select: defaultUserSelect,
   })
-
-  await ctx.cache.users.setItem(ctx.session.data.id, user)
 
   if (user === null)
     throw new TRPCError({ code: 'UNAUTHORIZED' })

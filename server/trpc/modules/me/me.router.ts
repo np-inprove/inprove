@@ -23,7 +23,6 @@ export const meRouter = router({
             name: input.name,
           },
         })
-        await ctx.cache.users.setItem(ctx.session.user.id, user)
         return user
       }
       catch (err) {

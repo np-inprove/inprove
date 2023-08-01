@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server'
 import { defaultDeadlineSelect } from './deadline.select'
 import { protectedProcedure, router } from '~/server/trpc/trpc'
-import { baseDeadlineInput, createDeadlineInput, listDeadlineInput, updateDeadlineInput, upvoteDeadlineInput } from '~/shared/deadline'
+import { baseDeadlineInput, createDeadlineInput, listDeadlineInput, toggleVoteDeadlineInput, updateDeadlineInput } from '~/shared/deadline'
 
 const userIsInGroup = protectedProcedure
   .input(baseDeadlineInput)
@@ -35,7 +35,7 @@ const userIsInGroup = protectedProcedure
       ctx.logger.error({ msg: 'failed to verify user in group', err })
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
-        message: 'Failed to list forum posts',
+        message: 'Failed to verify user in group',
       })
     }
   })
@@ -45,11 +45,15 @@ export const deadlineRouter = router({
     .input(listDeadlineInput)
     .query(async ({ ctx, input }) => {
       try {
+        // TODO there's no way to nicely aggregate number of upvotes in Prisma, so just return all to client and let it process the data
         return await ctx.prisma.deadline.findMany({
           where: {
             groupId: input.groupId,
           },
-          select: defaultDeadlineSelect,
+          select: {
+            ...defaultDeadlineSelect,
+            upvotes: true,
+          },
         })
       }
       catch (err) {
@@ -84,17 +88,43 @@ export const deadlineRouter = router({
       }
     }),
 
-  upvote: userIsInGroup
-    .input(upvoteDeadlineInput)
+  toggleVote: userIsInGroup
+    .input(toggleVoteDeadlineInput)
     .mutation(async ({ ctx, input }) => {
       try {
+        const upvoted = await ctx.prisma.deadline.findUnique({
+          where: {
+            id: input.deadlineId,
+            upvotes: {
+              some: {
+                id: ctx.session.user.id,
+              },
+            },
+          },
+        })
+
+        if (upvoted === null) {
+          return await ctx.prisma.deadline.update({
+            where: {
+              id: input.deadlineId,
+            },
+            data: {
+              upvotes: {
+                connect: {
+                  id: ctx.session.user.id,
+                },
+              },
+            },
+          })
+        }
+
         return await ctx.prisma.deadline.update({
           where: {
             id: input.deadlineId,
           },
           data: {
             upvotes: {
-              connect: {
+              disconnect: {
                 id: ctx.session.user.id,
               },
             },
@@ -111,35 +141,8 @@ export const deadlineRouter = router({
       }
     }),
 
-  downvote: userIsInGroup
-    .input(upvoteDeadlineInput)
-    .mutation(async ({ ctx, input }) => {
-      try {
-        return await ctx.prisma.deadline.update({
-          where: {
-            id: input.deadlineId,
-          },
-          data: {
-            upvotes: {
-              delete: {
-                id: ctx.session.user.id,
-              },
-            },
-          },
-          select: defaultDeadlineSelect,
-        })
-      }
-      catch (err) {
-        ctx.logger.error({ msg: 'failed to downvote deadline', err })
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to downvote deadline',
-        })
-      }
-    }),
-
   delete: userIsInGroup
-    .input(upvoteDeadlineInput)
+    .input(toggleVoteDeadlineInput)
     .use(async ({ next, ctx, input }) => {
       const deadline = await ctx.prisma.deadline.findUnique({
         where: {

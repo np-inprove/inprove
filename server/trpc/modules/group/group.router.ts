@@ -13,7 +13,7 @@ export const groupRouter = router({
         return await ctx.prisma.group.findMany({
           where: {
             users: {
-              every: {
+              some: {
                 userId: ctx.session.user.id,
               },
             },

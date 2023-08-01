@@ -10,8 +10,13 @@ declare module 'h3' {
 }
 
 export default defineEventHandler(async (event) => {
-  if (!httpLogger)
-    httpLogger = pinoHttp()
+  if (!httpLogger) {
+    httpLogger = pinoHttp({
+      transport: {
+        target: 'pino-pretty',
+      },
+    })
+  }
 
   httpLogger(event.node.req, event.node.res)
 
