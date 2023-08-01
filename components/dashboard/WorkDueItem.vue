@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Button from 'primevue/button'
 import formatRelative from 'date-fns/formatRelative/index'
 
 const props = defineProps<{
@@ -35,19 +36,28 @@ function upvote() {
     </div>
 
     <small v-if="props.dueDate" class="text-$text-color-secondary">
-      {{ formatRelative(props.dueDate, new Date) }}
+      Due {{ formatRelative(props.dueDate, new Date) }}
     </small>
 
-    <div
-      as="button"
-      flex
-      :class="{
-        'text-$primary-text': upvotedByUser,
+    <Button
+      unstyled
+      size="small"
+      :pt="{
+        root: { class: 'bg-transparent flex' },
       }"
       @click="upvote"
     >
-      <div i-tabler-chevron-up />
-      <span>{{ props.upvotes.length }}</span>
-    </div>
+      <div
+        :class="{
+          'text-$primary-color': upvotedByUser,
+        }"
+        i-tabler-chevron-up
+      />
+      <span
+        :class="{
+          'text-$primary-color': upvotedByUser,
+        }"
+      >{{ props.upvotes.length }}</span>
+    </Button>
   </div>
 </template>

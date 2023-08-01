@@ -20,11 +20,13 @@ const formData = reactive<{
   name: string
   dueDate: Date | null
 
+  tempDueDateSelectedTimingIdx: number
   dueDateVisible: boolean
 }>({
   name: '',
   dueDate: null,
 
+  tempDueDateSelectedTimingIdx: -1,
   dueDateVisible: false,
 })
 
@@ -34,23 +36,46 @@ function createDeadline() {
 
 const base = new Date(2004, 8, 14, 0, 0, 0, 0)
 
-const timings = Array.from({ length: 48 }).map((_, idx) => format(add(base, { minutes: idx * 30 }), 'hh:mm'))
+const timings = Array.from({ length: 48 }).map((_, idx) => format(add(base, { minutes: idx * 30 }), 'HH:mm'))
+
+function selectTiming(idx: number) {
+  if (idx === formData.tempDueDateSelectedTimingIdx)
+    formData.tempDueDateSelectedTimingIdx = -1
+  else
+    formData.tempDueDateSelectedTimingIdx = idx
+}
+
+function addDueDate() {
+  formData.dueDateVisible = false
+  if (!formData.dueDate)
+    return
+
+  formData.dueDate = add(formData.dueDate, { minutes: formData.tempDueDateSelectedTimingIdx * 30 })
+}
 </script>
 
 <template>
   <div space-y-2>
     <Dialog v-model:visible="formData.dueDateVisible" header="Set due date" modal class="min-w-sm">
       <div grid="~ cols-1 md:cols-2 gap4">
-        <Calendar v-model="formData.dueDate" show-week inline hour-format="12" />
-        <ScrollPanel class="h-200px w-full md:h-359px md:w-xs">
-          <div v-for="timing, idx in timings" :key="idx" rounded p2 class="hover:bg-$surface-hover">
+        <Calendar v-model="formData.dueDate" show-week inline hour-format="12" :min-date="new Date()" />
+        <ScrollPanel class="h-200px w-full md:h-359px">
+          <div
+            v-for="timing, idx in timings" :key="idx" rounded p2
+            :class="{
+              'bg-$highlight-bg': idx === formData.tempDueDateSelectedTimingIdx,
+              'hover:bg-$surface-hover': idx !== formData.tempDueDateSelectedTimingIdx,
+            }"
+            @click="selectTiming(idx)"
+          >
             {{ timing }}
           </div>
         </ScrollPanel>
       </div>
       <template #footer>
-        <div>
-          <Button size="small" label="Done" />
+        <div flex justify-between>
+          <Button size="small" label="Clear" text raised @click="formData.dueDate = null; formData.dueDateVisible = false" />
+          <Button size="small" label="Done" @click="addDueDate()" />
         </div>
       </template>
     </Dialog>
@@ -63,7 +88,14 @@ const timings = Array.from({ length: 48 }).map((_, idx) => format(add(base, { mi
           },
         }" size="small" class="flex-1" autofocus :required="true" :placeholder="`Add deadline to ${group?.name}`"
       />
-      <Button size="small" label="Due date" raised text @click="formData.dueDateVisible = true" />
+
+      <Button
+        size="small" :label="
+          formData.dueDate
+            ? format(formData.dueDate, 'MMM d, yyyy HH:mm')
+            : 'Set due date'
+        " raised text @click="formData.dueDateVisible = true"
+      />
     </form>
 
     <div class="rounded-md bg-$surface-card shadow-md">
