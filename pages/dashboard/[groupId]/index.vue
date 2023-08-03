@@ -34,7 +34,7 @@ const Tab = {
                 Upcoming events
               </h3>
 
-              <DashboardUpcomingEvents
+              <LazyDashboardUpcomingEvents
                 :group-id="
                   route.params.groupId as string
                 "

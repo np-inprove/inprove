@@ -24,14 +24,7 @@ const attributes = computed(() => events.value?.map(e => ({
   <div>
     <Skeleton v-if="eventsIsLoading" height="300px" />
     <div v-else>
-      <Calendar
-        :attributes="attributes"
-        title-position="left"
-        borderless
-        transparent
-        expanded
-        :is-dark="isDark"
-      />
+      <Calendar :attributes="attributes" title-position="left" borderless transparent expanded :is-dark="isDark" />
 
       <NuxtLink prefetch :to="`/dashboard/${props.groupId}/events/new`">
         <Button label="Create" />
