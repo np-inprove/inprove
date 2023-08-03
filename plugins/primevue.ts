@@ -1,8 +1,6 @@
 // @unocss-include
 
 import PrimeVue from 'primevue/config'
-import ToastService from 'primevue/toastservice'
-import ConfirmationService from 'primevue/confirmationservice'
 import type { CardPassThroughOptions } from 'primevue/card'
 
 const clickableCard: CardPassThroughOptions = {
@@ -30,6 +28,11 @@ export default defineNuxtPlugin({
         },
       },
     })
+
+    const [{ default: ToastService }, { default: ConfirmationService }] = await Promise.all([
+      import('primevue/toastservice'),
+      import('primevue/confirmationservice'),
+    ])
 
     nuxtApp.vueApp.use(ToastService)
     nuxtApp.vueApp.use(ConfirmationService)

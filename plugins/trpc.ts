@@ -1,11 +1,12 @@
-import { createTRPCNuxtClient, httpBatchLink } from 'trpc-nuxt/client'
-import superjson from 'superjson'
 import type { AppRouter } from '~/server/trpc/modules'
 
 export default defineNuxtPlugin({
   parallel: true,
   async setup() {
-  /**
+    const { createTRPCNuxtClient, httpBatchLink } = await import('trpc-nuxt/client')
+    const { default: superjson } = await import('superjson')
+
+    /**
    * createTRPCNuxtClient adds a `useQuery` composable
    * built on top of `useAsyncData`.
    */
