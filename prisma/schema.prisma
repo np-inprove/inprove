@@ -113,7 +113,7 @@ model Group {
   deadlines Deadline[]
   events    Event[]
   invites   GroupInvite[]
-  quizzes      Quiz[]
+  quizzes   Quiz[]
 }
 
 model GroupUsers {
@@ -181,7 +181,7 @@ model ForumPostReaction {
 // =========
 
 model Deadline {
-  id      String   @id @default(cuid())
+  id      String    @id @default(cuid())
   name    String
   dueDate DateTime?
 
@@ -199,12 +199,12 @@ model Deadline {
 // ======
 
 model Event {
-  id            String   @id @default(cuid())
-  name          String
-  startTime     DateTime
-  endTime       DateTime
-  location      String
-  repeatPattern String
+  id        String   @id @default(cuid())
+  name      String
+  startTime DateTime
+  endTime   DateTime
+  location  String
+  repeat    Json
 
   groupId String
   group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)

@@ -12,7 +12,7 @@ export const defaultEventSelect = Prisma.validator<Prisma.EventSelect>()({
   startTime: true,
   endTime: true,
   location: true,
-  repeatPattern: true,
+  repeat: true,
   groupId: true,
   group: {
     select: defaultGroupSelect,

@@ -3,6 +3,10 @@ export default defineNuxtConfig({
   ssr: false,
   spaLoadingTemplate: false,
 
+  experimental: {
+    componentIslands: true,
+  },
+
   vue: {
     defineModel: true,
   },

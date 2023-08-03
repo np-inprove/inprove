@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const config = useRuntimeConfig()
 
-const cookieRaw = useCookie('theme')
+const { cookieRaw } = useTheme()
 const route = useRoute()
 const resolvedTheme = computed(() => {
   let theme = 'lara-dark-indigo'

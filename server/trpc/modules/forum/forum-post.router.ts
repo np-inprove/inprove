@@ -52,7 +52,7 @@ export const forumPostRouter = router({
         return await ctx.prisma.forumPost.findMany({
           where: {
             forumId: input.forumId,
-            parentId: input.parentId,
+            parentId: input.parentId ?? null,
           },
           orderBy: {
             timestamp: 'desc',

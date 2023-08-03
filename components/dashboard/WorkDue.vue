@@ -1,4 +1,6 @@
 <script setup lang="ts">
+// TODO clean up this file
+
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import add from 'date-fns/add/index'
@@ -31,7 +33,12 @@ const formData = reactive<{
 })
 
 function createDeadline() {
-  createMutate(formData)
+  createMutate(formData, {
+    onSuccess() {
+      formData.name = ''
+      formData.dueDate = null
+    },
+  })
 }
 
 const base = new Date(2004, 8, 14, 0, 0, 0, 0)
@@ -50,6 +57,7 @@ function addDueDate() {
   if (!formData.dueDate)
     return
 
+  formData.dueDate.setHours(0, 0, 0, 0)
   formData.dueDate = add(formData.dueDate, { minutes: formData.tempDueDateSelectedTimingIdx * 30 })
 }
 </script>
