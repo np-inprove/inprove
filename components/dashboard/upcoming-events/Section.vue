@@ -66,9 +66,12 @@ function handleDayclick(day: CalendarDay, event: MouseEvent) {
       />
 
       <template v-if="events">
-        <div v-for="deadline in events?.deadlines" :key="deadline.id">
-          {{ deadline.name }}
-        </div>
+        <DashboardUpcomingEventsEventCard
+          v-for="deadline in events.deadlines" :key="deadline.id"
+          :name="deadline.name"
+          :deadline="true"
+          :end-date="deadline.dueDate"
+        />
       </template>
     </div>
   </section>

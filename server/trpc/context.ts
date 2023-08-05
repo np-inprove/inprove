@@ -64,6 +64,7 @@ export async function createContext(_event: H3Event) {
   const config: SessionConfig = {
     name: useRuntimeConfig().sessionName,
     password: useRuntimeConfig().sessionSecret,
+    maxAge: 60 * 60 * 24 * 30, // 30 days
   }
 
   const contextInner = createContextInner({
