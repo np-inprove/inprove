@@ -49,7 +49,9 @@ export const updateEventInput = baseEventInput.extend({
   rrule: z.string(),
 })
 
-export const listEventInput = baseEventInput.extend({})
+export const upcomingEventsInput = baseEventInput.extend({
+  date: z.date().optional(), // Specific date to list events on
+})
 
 export type CreateEventInput = z.infer<typeof createEventInput>
 export type UpdateEventInput = z.infer<typeof updateEventInput>

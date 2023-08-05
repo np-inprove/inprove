@@ -1,0 +1,75 @@
+<script setup lang="ts">
+import Skeleton from 'primevue/skeleton'
+import Button from 'primevue/button'
+import type { CalendarDay } from 'v-calendar/dist/types/src/utils/page'
+
+const props = defineProps<{
+  groupId: string
+}>()
+
+const selectedDate = ref<Date>()
+
+const attributes = computed(() => {
+  const today = new Date()
+  const a: object[] = [
+    {
+      key: 'today',
+      dates: new Date(),
+      highlight: true,
+    },
+  ]
+
+  if (selectedDate.value) {
+    if (selectedDate.value.getFullYear() !== today.getFullYear()
+    || selectedDate.value.getMonth() !== today.getMonth()
+    || selectedDate.value.getDate() !== today.getDate()) {
+      a.push({
+        key: 'selected',
+        dates: selectedDate.value,
+        bar: true,
+      })
+    }
+  }
+
+  return a
+})
+
+const { data: events, isLoading: eventsIsLoading, error: eventsError } = useUpcomingEvents(props.groupId, selectedDate)
+
+function handleDayclick(day: CalendarDay, event: MouseEvent) {
+  selectedDate.value = day.date
+}
+</script>
+
+<template>
+  <section max-w-sm w-sm space-y-4>
+    <div flex items-center justify-between>
+      <h3 font-semibold>
+        Upcoming events
+      </h3>
+
+      <NuxtLink prefetch :to="`/dashboard/${props.groupId}/events/new`">
+        <Button icon="" size="small" text as="div">
+          <div i-tabler-plus />
+        </Button>
+      </NuxtLink>
+    </div>
+
+    <Skeleton v-if="eventsIsLoading" height="300px" />
+    <div v-else>
+      <!-- @vue-expect-error Bad types on attributes -->
+      <DashboardUpcomingEventsVCalendar
+        :attributes="
+          attributes
+        "
+        @dayclick="handleDayclick"
+      />
+
+      <template v-if="events">
+        <div v-for="deadline in events?.deadlines" :key="deadline.id">
+          {{ deadline.name }}
+        </div>
+      </template>
+    </div>
+  </section>
+</template>

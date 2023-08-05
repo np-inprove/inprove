@@ -26,20 +26,14 @@ const Tab = {
         "
       />
 
-      <div overflow-auto p4 md:p8>
-        <ScrollPanel style="height: 100%">
+      <div overflow-auto p4 class="pr0!" md:p8>
+        <ScrollPanel style="height: 100%" class="pr6">
           <div min-h-md flex flex-wrap gap6>
-            <section max-w-sm w-sm space-y-4>
-              <h3 font-semibold>
-                Upcoming events
-              </h3>
-
-              <LazyDashboardUpcomingEvents
-                :group-id="
-                  route.params.groupId as string
-                "
-              />
-            </section>
+            <LazyDashboardUpcomingEventsSection
+              :group-id="
+                route.params.groupId as string
+              "
+            />
 
             <section flex-1 space-y-4>
               <h3 font-semibold>

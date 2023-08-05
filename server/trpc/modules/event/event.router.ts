@@ -1,7 +1,9 @@
 import { TRPCError } from '@trpc/server'
+import addDays from 'date-fns/addDays/index'
+import { defaultDeadlineSelect } from '../deadline/deadline.select'
 import { defaultEventSelect } from './event.select'
 import { protectedProcedure, router } from '~/server/trpc/trpc'
-import { baseEventInput, eventRepeatConfig, listEventInput } from '~/shared/event'
+import { baseEventInput, eventRepeatConfig, upcomingEventsInput } from '~/shared/event'
 
 const userIsInGroup = protectedProcedure
   .input(baseEventInput)
@@ -41,24 +43,53 @@ const userIsInGroup = protectedProcedure
   })
 
 export const eventRouter = router({
+  // By default, will list events that occur in the next 3 days,
+  // unless otherwise specified by input.date
   upcoming: userIsInGroup
-    .input(listEventInput)
+    .input(upcomingEventsInput)
     .query(async ({ ctx, input }) => {
       try {
+        const today = (() => {
+          const d = new Date()
+          d.setHours(0, 0, 0, 0)
+          return d
+        })()
+
+        const deadlines = await ctx.prisma.deadline.findMany({
+          where: {
+            dueDate: {
+              lt: addDays(today, 3),
+            },
+          },
+          select: defaultDeadlineSelect,
+        })
+
         const events = await ctx.prisma.event.findMany({
           where: {
             groupId: input.groupId,
-            endTime: {
-              lt: new Date(),
-            },
+            OR: [
+              {
+                startTime: {
+                  gt: today,
+                  lt: addDays(today, 3),
+                },
+              }, {
+                endTime: {
+                  lt: addDays(today, 3),
+                },
+              },
+            ],
           },
           select: defaultEventSelect,
         })
 
-        return events.map(event => ({
-          ...event,
-          repeat: eventRepeatConfig.parse(event.repeat),
-        }))
+        return {
+          deadlines,
+          events: events.map(event => ({
+            ...event,
+            repeat: eventRepeatConfig.parse(event.repeat),
+          })),
+        }
       }
       catch (err) {
         ctx.logger.error({ msg: 'failed to list events', err })

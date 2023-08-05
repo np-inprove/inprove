@@ -33,3 +33,15 @@ useHead({
     <NuxtPage />
   </NuxtLayout>
 </template>
+
+<style>
+.page-enter-active,
+.page-leave-active {
+  transition: all 0.15s cubic-bezier(0.445, 0.05, 0.55, 0.95);
+}
+.page-enter-from,
+.page-leave-to {
+  opacity: 0;
+  filter: blur(0.3rem);
+}
+</style>

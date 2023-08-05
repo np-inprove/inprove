@@ -20,7 +20,7 @@ export default defineNuxtPlugin({
       pt: {
         button: {
           root: {
-            class: 'py2! px3!',
+            class: 'py2! px3! min-w-unset',
           },
           label: {
             class: 'font-semibold!',

@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/vue-query'
 
-export function useUpcomingEvents(groupId: string) {
+export function useUpcomingEvents(groupId: string, date?: Ref<Date | undefined>) {
   const { $client } = useNuxtApp()
   return useQuery({
-    queryKey: ['event', 'upcoming', groupId],
-    queryFn: () => $client.event.upcoming.query({ groupId }),
+    queryKey: ['event', 'upcoming', groupId, date?.value],
+    queryFn: () => $client.event.upcoming.query({ groupId, date: date?.value }),
   })
 }
