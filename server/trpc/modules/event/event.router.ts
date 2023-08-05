@@ -1,5 +1,5 @@
 import { TRPCError } from '@trpc/server'
-import addDays from 'date-fns/addDays'
+import addDays from 'date-fns/addDays/index.js'
 import { defaultDeadlineSelect } from '../deadline/deadline.select'
 import { defaultEventSelect } from './event.select'
 import { protectedProcedure, router } from '~/server/trpc/trpc'
