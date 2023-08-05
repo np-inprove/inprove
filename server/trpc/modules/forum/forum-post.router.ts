@@ -156,23 +156,37 @@ export const forumPostRouter = router({
     .input(reactForumPostInput)
     .mutation(async ({ ctx, input }) => {
       try {
-        return await ctx.prisma.forumPostReaction.upsert({
-          where: {
-            postId_userId: {
+        if (!ctx.config.forum.reactions.includes(input.emoji))
+          throw new TRPCError({ code: 'BAD_REQUEST' })
+
+        const isRedeemableReaction = input.emoji === ctx.config.forum.redeemableReaction
+        if (isRedeemableReaction) {
+          if (ctx.session.user.pointsAwardedCount >= ctx.config.points.userMax) {
+            throw new TRPCError({
+              code: 'BAD_REQUEST',
+              message: 'Max points awarded count reached',
+            })
+          }
+        }
+        else {
+          await ctx.prisma.forumPostReaction.upsert({
+            where: {
+              postId_userId: {
+                postId: input.postId,
+                userId: ctx.session.user.id,
+              },
+            },
+            update: {
+              emoji: input.emoji,
+            },
+            create: {
+              emoji: input.emoji,
               postId: input.postId,
               userId: ctx.session.user.id,
             },
-          },
-          update: {
-            emoji: input.emoji,
-          },
-          create: {
-            emoji: input.emoji,
-            postId: input.postId,
-            userId: ctx.session.user.id,
-          },
-          select: defaultForumPostReactionSelect,
-        })
+            select: defaultForumPostReactionSelect,
+          })
+        }
       }
       catch (err) {
         ctx.logger.error({ msg: 'failed to react to forum post', err })

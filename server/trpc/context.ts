@@ -4,6 +4,7 @@ import type { inferAsyncReturnType } from '@trpc/server'
 import type { H3Event, SessionConfig, SessionData } from 'h3'
 import type { Storage } from 'unstorage'
 import type { Resend } from 'resend'
+import type { AppConfig } from 'nuxt/schema'
 import type { UserSessionData } from '~/shared/session'
 
 /**
@@ -34,6 +35,9 @@ interface CreateInnerContextOptions {
 
   // Auth
   session: UseSessionReturn<UserSessionData>
+
+  // Static configuration that should be provided through AppConfig
+  config: AppConfig
 
   // External services
   prisma: PrismaClient
@@ -73,6 +77,7 @@ export async function createContext(_event: H3Event) {
     session: await useSession(_event, config),
     prisma: _event.context.prisma,
     resend: _event.context.resend,
+    config: useAppConfig(),
   })
 
   return {

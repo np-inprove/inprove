@@ -7,16 +7,7 @@ const props = defineProps<{
   forumId: string
 }>()
 
-// This list is ChatGPT generated
-const allowedEmojis = [
-  '🥞', '👍', '👎', '😂', '😮', '😢',
-  '😡', '👏', '👌', '🎉', '🔥', '🚀',
-  '👀', '💯', '🤔', '🙌', '💩', '👻',
-  '💕', '👑', '🍻', '🚨', '👇', '👈',
-  '👉', '👆', '🙏', '🤦', '🤷', '🤯',
-  '🤬', '🤢', '🤮', '👋', '🤝', '👊',
-  '✊', '🤘', '👏',
-]
+const { forum } = useAppConfig()
 
 const op = ref()
 const { data: post } = useForumPost(props.forumId, props.postId)
@@ -43,7 +34,7 @@ function react(emoji: string) {
     <OverlayPanel ref="op" :pt="{ content: { class: 'p2!' } }">
       <div grid="~ cols-6">
         <Button
-          v-for="emoji in allowedEmojis" :key="emoji" unstyled
+          v-for="emoji in forum.reactions" :key="emoji" unstyled
           :pt="{ root: { class: 'bg-transparent hover:bg-$surface-hover rounded-md' } }" @click="react(emoji)"
         >
           {{ emoji }}
