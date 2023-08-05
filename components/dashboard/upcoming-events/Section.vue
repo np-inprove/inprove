@@ -39,10 +39,15 @@ const { data: events, error: eventsError } = useUpcomingEvents(props.groupId, se
 function handleDayclick(day: CalendarDay, event: MouseEvent) {
   selectedDate.value = day.date
 }
+
+const visible = ref(false)
 </script>
 
 <template>
   <section max-w-sm w-sm space-y-4>
+    <!-- TODO combine this with add event button -->
+    <LazyDashboardUpcomingEventsCreateSidebar v-model:visible="visible" />
+
     <div flex items-center justify-between>
       <h3 font-semibold>
         Upcoming events
@@ -70,6 +75,7 @@ function handleDayclick(day: CalendarDay, event: MouseEvent) {
         :end-date="deadline.dueDate"
       />
     </div>
-    <Button label="Add event" outlined size="small" />
+
+    <Button label="Add event" outlined size="small" @click="visible = true" />
   </section>
 </template>

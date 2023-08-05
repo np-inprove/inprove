@@ -1,18 +1,22 @@
 <script setup lang="ts">
-import Button from 'primevue/button'
+import Sidebar from 'primevue/sidebar'
 import InputText from 'primevue/inputtext'
 import Calendar from 'primevue/calendar'
+import Button from 'primevue/button'
 
-const route = useRoute()
+const formData = reactive({
+  title: '',
+  startTime: new Date(),
+  endTime: new Date(),
+  location: '',
+  repeat: '',
+})
+
+const visible = defineModel<boolean>('visible', { required: true })
 </script>
 
 <template>
-  <div w-full flex flex-col>
-    <GroupHeader
-      :group-id="route.params.groupId as string
-      "
-    />
-
+  <Sidebar v-model:visible="visible" position="right">
     <div p4>
       <h1 text-2xl font-bold tracking-tight>
         Create a new event
@@ -51,5 +55,5 @@ const route = useRoute()
         </div>
       </form>
     </div>
-  </div>
+  </Sidebar>
 </template>
