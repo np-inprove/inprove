@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import Skeleton from 'primevue/skeleton'
 import Button from 'primevue/button'
+import Skeleton from 'primevue/skeleton'
 import type { CalendarDay } from 'v-calendar/dist/types/src/utils/page'
 
 const props = defineProps<{
@@ -34,7 +34,7 @@ const attributes = computed(() => {
   return a
 })
 
-const { data: events, isLoading: eventsIsLoading, error: eventsError } = useUpcomingEvents(props.groupId, selectedDate)
+const { data: events, error: eventsError } = useUpcomingEvents(props.groupId, selectedDate)
 
 function handleDayclick(day: CalendarDay, event: MouseEvent) {
   selectedDate.value = day.date
@@ -47,16 +47,12 @@ function handleDayclick(day: CalendarDay, event: MouseEvent) {
       <h3 font-semibold>
         Upcoming events
       </h3>
-
-      <NuxtLink prefetch :to="`/dashboard/${props.groupId}/events/new`">
-        <Button icon="" size="small" text as="div">
-          <div i-tabler-plus />
-        </Button>
-      </NuxtLink>
     </div>
 
-    <Skeleton v-if="eventsIsLoading" height="300px" />
-    <div v-else>
+    <ClientOnly>
+      <template #fallback>
+        <Skeleton height="110px" />
+      </template>
       <!-- @vue-expect-error Bad types on attributes -->
       <DashboardUpcomingEventsVCalendar
         :attributes="
@@ -64,15 +60,16 @@ function handleDayclick(day: CalendarDay, event: MouseEvent) {
         "
         @dayclick="handleDayclick"
       />
+    </ClientOnly>
 
-      <template v-if="events">
-        <DashboardUpcomingEventsEventCard
-          v-for="deadline in events.deadlines" :key="deadline.id"
-          :name="deadline.name"
-          :deadline="true"
-          :end-date="deadline.dueDate"
-        />
-      </template>
+    <div v-if="events" space-y-1>
+      <DashboardUpcomingEventsEventCard
+        v-for="deadline in events.deadlines" :key="deadline.id"
+        :name="deadline.name"
+        :deadline="true"
+        :end-date="deadline.dueDate"
+      />
     </div>
+    <Button label="Add event" outlined size="small" />
   </section>
 </template>

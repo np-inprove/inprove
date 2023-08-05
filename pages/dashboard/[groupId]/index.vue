@@ -28,7 +28,7 @@ const Tab = {
 
       <div overflow-auto p4 class="pr0!" md:p8>
         <ScrollPanel style="height: 100%" class="pr6">
-          <div min-h-md flex flex-wrap gap6>
+          <div mb16 flex flex-wrap gap6>
             <LazyDashboardUpcomingEventsSection
               :group-id="
                 route.params.groupId as string

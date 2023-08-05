@@ -57,8 +57,9 @@ export const eventRouter = router({
 
         const deadlines = await ctx.prisma.deadline.findMany({
           where: {
+            groupId: input.groupId,
             dueDate: {
-              lt: addDays(today, 3),
+              lt: addDays(input.date ?? today, 3),
             },
           },
           select: defaultDeadlineSelect,
@@ -71,11 +72,12 @@ export const eventRouter = router({
               {
                 startTime: {
                   gt: today,
-                  lt: addDays(today, 3),
+                  lt: addDays(input.date ?? today, 3),
                 },
-              }, {
+              },
+              {
                 endTime: {
-                  lt: addDays(today, 3),
+                  lt: addDays(input.date ?? today, 3),
                 },
               },
             ],
