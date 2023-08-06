@@ -3,10 +3,6 @@ import Button from 'primevue/button'
 import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
 
-definePageMeta({
-  layout: 'landing',
-})
-
 interface Faq {
   title: string
   content: string

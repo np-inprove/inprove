@@ -5,18 +5,14 @@ interface Author {
   picture: string
 }
 
-definePageMeta({
-  layout: 'landing',
-})
-
-const theme = useThemeStore()
+const theme = useTheme()
 
 const textColor = computed(() => {
-  return theme.mode === 'dark' ? 'text-black' : 'text-white'
+  return theme.cookieRaw.value === 'dark' ? 'text-black' : 'text-white'
 })
 
 const bgColor = computed(() => {
-  return theme.mode === 'dark' ? 'bg-white' : 'bg-black'
+  return theme.cookieRaw.value === 'dark' ? 'bg-white' : 'bg-black'
 })
 
 const authors = [
@@ -91,7 +87,7 @@ const authors = [
         </p>
         <p pt-5>
           The NP represents the school which this learning platform was created under. While the use of the colour
-          <span px-1 :class="[textColor, bgColor]">{{ theme.mode === 'dark' ? 'WHITE' : 'BLACK' }}</span> represents
+          <span px-1 :class="[textColor, bgColor]">{{ theme.cookieRaw.value === 'dark' ? 'WHITE' : 'BLACK' }}</span> represents
           that there is still some formality.
         </p>
         <p pt-5>
