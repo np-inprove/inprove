@@ -1,5 +1,4 @@
 import { Prisma } from '@prisma/client'
-import { defaultGroupSelect } from '../group/group.select'
 
 /**
  * Default selector for Event.
@@ -12,11 +11,8 @@ export const defaultEventSelect = Prisma.validator<Prisma.EventSelect>()({
   startTime: true,
   endTime: true,
   location: true,
-  repeat: true,
+  rrule: true,
   groupId: true,
-  group: {
-    select: defaultGroupSelect,
-  },
 })
 
 export type DefaultEvent = Prisma.EventGetPayload<{ select: typeof defaultEventSelect }>
