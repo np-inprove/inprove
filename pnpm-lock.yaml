@@ -4,6 +4,9 @@ devDependencies:
   '@antfu/eslint-config':
     specifier: ^0.40.0
     version: 0.40.0(eslint@8.46.0)(typescript@5.1.6)
+  '@iconify-json/fluent-emoji':
+    specifier: ^1.1.14
+    version: 1.1.14
   '@iconify-json/fluent-emoji-flat':
     specifier: ^1.1.12
     version: 1.1.12
@@ -1258,6 +1261,12 @@ packages:
 
   /@iconify-json/fluent-emoji-flat@1.1.12:
     resolution: {integrity: sha512-uycWBxIs0ZTAz3v0srig0Gke+4TUoalxWyxOu/jXeBdYsmTmeeH+FF/JhvD628aE6ixN2Zght2V5lXpAQm1J5w==}
+    dependencies:
+      '@iconify/types': 2.0.0
+    dev: true
+
+  /@iconify-json/fluent-emoji@1.1.14:
+    resolution: {integrity: sha512-O2xpoThuWEWO6ZD9VJCGMQ9dkFHUC6lPv7rtZwR1fXfTOGwk/cOIuRziEjKrvQ8hfTVaiKfDNzQtCMuExfGfdw==}
     dependencies:
       '@iconify/types': 2.0.0
     dev: true
