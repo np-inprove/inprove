@@ -20,6 +20,11 @@ const cards = [
     description: 'Share and create your study plan',
   },
   {
+    icon: 'i-fluent-emoji-trophy',
+    title: 'Partake in quizzes',
+    description: 'Test your knowledge and earn points through quizzes',
+  },
+  {
     icon: 'i-fluent-emoji-pancakes',
     title: 'Participation pancakes',
     description: 'Praise your peers for helping!',
