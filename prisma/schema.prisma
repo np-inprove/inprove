@@ -204,7 +204,7 @@ model Event {
   startTime DateTime
   endTime   DateTime
   location  String
-  repeat    Json
+  rrule     String
 
   groupId String
   group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)

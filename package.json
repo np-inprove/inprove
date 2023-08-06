@@ -49,6 +49,7 @@
     "prisma": "^5.1.1",
     "qrcode": "^1.5.3",
     "resend": "^0.17.2",
+    "rrule": "^2.7.2",
     "sass": "^1.64.2",
     "sharp": "^0.32.4",
     "simple-git-hooks": "^2.9.0",

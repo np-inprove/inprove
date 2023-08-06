@@ -107,6 +107,9 @@ devDependencies:
   resend:
     specifier: ^0.17.2
     version: 0.17.2
+  rrule:
+    specifier: ^2.7.2
+    version: 2.7.2
   sass:
     specifier: ^1.64.2
     version: 1.64.2
@@ -9015,6 +9018,12 @@ packages:
     hasBin: true
     optionalDependencies:
       fsevents: 2.3.2
+    dev: true
+
+  /rrule@2.7.2:
+    resolution: {integrity: sha512-NkBsEEB6FIZOZ3T8frvEBOB243dm46SPufpDckY/Ap/YH24V1zLeMmDY8OA10lk452NdrF621+ynDThE7FQU2A==}
+    dependencies:
+      tslib: 2.6.1
     dev: true
 
   /run-applescript@5.0.0:
