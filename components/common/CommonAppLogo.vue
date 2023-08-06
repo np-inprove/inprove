@@ -1,8 +1,10 @@
 <script setup lang="ts">
-const theme = useThemeStore()
+const { cookieRaw } = useTheme()
+const isDark = computed(() => cookieRaw.value?.includes('dark') ?? true)
 
 const cls1 = computed(() => {
-  if (theme.mode === 'dark')
+  // if (theme.mode === 'dark')
+  if (isDark)
     return 'fill-white'
 
   else

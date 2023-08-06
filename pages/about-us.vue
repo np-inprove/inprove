@@ -5,14 +5,23 @@ interface Author {
   picture: string
 }
 
-const theme = useTheme()
+const { cookieRaw } = useTheme()
+const isDark = computed(() => cookieRaw.value?.includes('dark') ?? true)
 
 const textColor = computed(() => {
-  return theme.cookieRaw.value === 'dark' ? 'text-black' : 'text-white'
+  if (isDark.value)
+    return 'text-black'
+
+  else
+    return 'text-white'
 })
 
 const bgColor = computed(() => {
-  return theme.cookieRaw.value === 'dark' ? 'bg-white' : 'bg-black'
+  if (isDark.value)
+    return 'bg-white'
+
+  else
+    return 'bg-black'
 })
 
 const authors = [
@@ -87,7 +96,7 @@ const authors = [
         </p>
         <p pt-5>
           The NP represents the school which this learning platform was created under. While the use of the colour
-          <span px-1 :class="[textColor, bgColor]">{{ theme.cookieRaw.value === 'dark' ? 'WHITE' : 'BLACK' }}</span> represents
+          <span px-1 :class="[textColor, bgColor]">{{ isDark === true ? 'WHITE' : 'BLACK' }}</span> represents
           that there is still some formality.
         </p>
         <p pt-5>
