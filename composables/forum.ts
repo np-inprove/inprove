@@ -10,12 +10,13 @@ export function useForums(groupId: string) {
   })
 }
 
-export function useForum(forumId: string) {
+export function useForum(forumId?: string) {
   const { $client } = useNuxtApp()
 
   return useQuery({
     queryKey: ['forum', 'get', forumId],
-    queryFn: () => $client.forum.get.query({ forumId }),
+    queryFn: () => $client.forum.get.query({ forumId: forumId! }),
+    enabled: !!forumId,
   })
 }
 

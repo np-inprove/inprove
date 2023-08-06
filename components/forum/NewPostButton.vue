@@ -1,32 +1,25 @@
 <script setup lang="ts">
-import Skeleton from 'primevue/skeleton'
 import Button from 'primevue/button'
 import { useToast } from 'primevue/usetoast'
 import type { TRPCClientError } from '~/shared/types'
 
 const props = defineProps<{
-  groupId: string
   forumId: string
 }>()
 
-const route = useRoute()
-const { visible } = useSidebar()
 const toast = useToast()
 
 const Dialog = defineAsyncComponent(() => import('primevue/dialog'))
 const InputText = defineAsyncComponent(() => import('primevue/inputtext'))
 const Textarea = defineAsyncComponent(() => import('primevue/textarea'))
 
+const { mutate: createMutate } = useCreateForumPostMutation(props.forumId)
+
 const formData = reactive({
   visible: false,
   title: '',
   content: '',
 })
-
-const { mutate: createMutate } = useCreateForumPostMutation(route.params.forumId as string)
-
-const { data: group, isLoading: groupIsLoading } = useGroup(props.groupId)
-const { data: forum, isLoading: forumIsLoading } = useForum(props.forumId)
 
 function createPost() {
   formData.visible = false
@@ -47,6 +40,8 @@ function createPost() {
 </script>
 
 <template>
+  <Button :pt="{ root: { style: 'padding: 6px !important' } }" size="small" outlined type="button" label="New post" @click="formData.visible = true" />
+
   <Dialog
     v-model:visible="formData.visible" modal header="New post" :pt="{
       headerTitle: {
@@ -85,50 +80,4 @@ function createPost() {
       </div>
     </form>
   </Dialog>
-
-  <header class="header flex items-center border-b-1 border-b-$surface-border border-b-solid px6 py4">
-    <div md:hidden>
-      <Button text size="small" :pt="{ root: { style: 'padding: 0 !important' } }" @click="visible = !visible">
-        <div v-if="visible" class="text-xl" i-tabler-layout-sidebar-left-collapse />
-        <div v-else class="text-xl" i-tabler-layout-sidebar-left-expand />
-      </Button>
-    </div>
-
-    <Skeleton v-if="groupIsLoading || forumIsLoading" height="20px" width="30%" />
-    <Transition v-else-if="group && forum" appear>
-      <span flex="~ gap3 items-center">
-        <NuxtLink to="../..">
-          <strong>
-            {{ group.name }}
-          </strong>
-        </NuxtLink>
-        <span>
-          <div i-tabler-chevron-right />
-        </span>
-        <span font-semibold>
-          # {{ forum.name }}
-        </span>
-        <small>
-          {{ forum.description }}
-        </small>
-      </span>
-    </Transition>
-
-    <div flex flex-1 items-center justify-end gap3>
-      <Button :pt="{ root: { style: 'padding: 6px !important' } }" size="small" outlined type="button" label="New post" @click="formData.visible = true" />
-    </div>
-  </header>
 </template>
-
-<style scoped>
-.v-enter-active,
-.v-leave-active {
-  transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
-}
-
-.v-enter-from,
-.v-leave-to {
-  opacity: 0;
-  transform: translateY(8px);
-}
-</style>

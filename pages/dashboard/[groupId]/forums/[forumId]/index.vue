@@ -4,19 +4,29 @@ import ScrollPanel from 'primevue/scrollpanel'
 
 const route = useRoute()
 
+const { data: forum, isLoading: forumIsLoading } = useForum(route.params.forumId as string)
 const { data: posts, isLoading: postsIsLoading, error: postsError } = useForumPosts(route.params.forumId as string)
 </script>
 
 <template>
   <div w-full flex flex-col>
-    <ForumHeader
-      :group-id="
-        route.params.groupId as string
-      "
-      :forum-id="
-        route.params.forumId as string
-      "
-    />
+    <div flex justify-between p4>
+      <div>
+        <h3 class="scroll-m-20 text-2xl font-semibold tracking-tight">
+          # {{ forum?.name }}
+        </h3>
+        <p className="text-xl text-muted-foreground">
+          {{ forum?.description }}
+        </p>
+      </div>
+      <div>
+        <ForumNewPostButton
+          :forum-id="
+            route.params.forumId as string
+          "
+        />
+      </div>
+    </div>
 
     <div v-if="postsIsLoading" p4 space-y-4>
       <Skeleton v-for="_, idx in Array.from({ length: 10 })" :key="idx" height="100px" />

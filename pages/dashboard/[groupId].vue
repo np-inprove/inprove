@@ -13,7 +13,8 @@ const { error: forumsError } = useForums(route.params.groupId as string)
 
     <template v-else>
       <GroupHeader
-        :group-id="route.params.groupId as string
+        :group-id="
+          route.params.groupId as string
         "
       />
 
