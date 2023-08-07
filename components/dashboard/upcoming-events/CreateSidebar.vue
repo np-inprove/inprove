@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RRule } from 'rrule'
+// import * as rrule from 'rrule'
 import Button from 'primevue/button'
 import Checkbox from 'primevue/checkbox'
 import Sidebar from 'primevue/sidebar'
@@ -18,7 +18,7 @@ const formData = reactive({
   },
   recurrence: {
     enabled: false,
-    freq: RRule.DAILY,
+    // freq: rrule.RRule.DAILY,
     until: null,
     interval: 1,
   },
@@ -40,24 +40,24 @@ function createEvent() {
   })
 }
 
-const freq = [
-  { label: 'Daily', value: RRule.DAILY },
-  { label: 'Weekly', value: RRule.WEEKLY },
-  { label: 'Monthly', value: RRule.MONTHLY },
-  { label: 'Yearly', value: RRule.YEARLY },
-]
+// const freq = [
+//   { label: 'Daily', value: rrule.RRule.DAILY },
+//   { label: 'Weekly', value: rrule.RRule.WEEKLY },
+//   { label: 'Monthly', value: rrule.RRule.MONTHLY },
+//   { label: 'Yearly', value: rrule.RRule.YEARLY },
+// ]
 
-const recurrencePresets = computed(() => [
-  {
-    label: 'Daily',
-    rrule: new RRule({
-      freq: RRule.DAILY,
-      interval: 1,
-      dtstart: formData.range.start,
-      until: formData.recurrence.until,
-    }),
-  },
-])
+// const recurrencePresets = computed(() => [
+//   {
+//     label: 'Daily',
+//     rrule: new rrule.RRule({
+//       freq: rrule.RRule.DAILY,
+//       interval: 1,
+//       dtstart: formData.range.start,
+//       until: formData.recurrence.until,
+//     }),
+//   },
+// ])
 </script>
 
 <template>
