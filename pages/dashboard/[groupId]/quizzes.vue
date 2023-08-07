@@ -1,15 +1,11 @@
 <script setup lang="ts">
-import ScrollPanel from 'primevue/scrollpanel'
-
 const route = useRoute()
 </script>
 
 <template>
-  <div class="pr0!" overflow-x-hidden overflow-y-auto p4 md:p8>
-    <div h-full>
-      <ScrollPanel style="height: 100%" class="pr6">
-        Quizzes
-      </ScrollPanel>
-    </div>
+  <div p4 md:p8>
+    <h3 class="scroll-m-20 text-2xl font-semibold tracking-tight">
+      Quizzes
+    </h3>
   </div>
 </template>
