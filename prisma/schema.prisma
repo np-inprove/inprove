@@ -203,8 +203,8 @@ model Event {
   name      String
   startTime DateTime
   endTime   DateTime
-  location  String
-  rrule     String
+  location  String?
+  rrule     String?
 
   groupId String
   group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)

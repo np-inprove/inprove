@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import Button from 'primevue/button'
-import Skeleton from 'primevue/skeleton'
 import type { CalendarDay } from 'v-calendar/dist/types/src/utils/page'
 
 const props = defineProps<{
@@ -58,18 +57,13 @@ const visible = ref(false)
       </h3>
     </div>
 
-    <ClientOnly>
-      <template #fallback>
-        <Skeleton height="110px" />
-      </template>
-      <!-- @vue-expect-error Bad types on attributes -->
-      <DashboardUpcomingEventsVCalendar
-        :attributes="
-          attributes
-        "
-        @dayclick="handleDayclick"
-      />
-    </ClientOnly>
+    <!-- @vue-expect-error Bad types on attributes -->
+    <VCalendar
+      :attributes="
+        attributes
+      "
+      @dayclick="handleDayclick"
+    />
 
     <div v-if="events" space-y-1>
       <DashboardUpcomingEventsEventCard
@@ -77,6 +71,12 @@ const visible = ref(false)
         :name="deadline.name"
         :deadline="true"
         :end-date="deadline.dueDate"
+      />
+      <DashboardUpcomingEventsEventCard
+        v-for="deadline in events.events" :key="deadline.id"
+        :name="deadline.name"
+        :deadline="true"
+        :end-date="deadline.endTime"
       />
     </div>
 
