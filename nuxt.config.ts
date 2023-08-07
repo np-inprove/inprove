@@ -31,6 +31,7 @@ export default defineNuxtConfig({
     transpile: [
       'primevue',
       'trpc-nuxt',
+      'tslib', // Used by rrule
       'rrule',
     ],
   },

@@ -2,12 +2,14 @@ import { TRPCError } from '@trpc/server'
 import addDays from 'date-fns/addDays/index.js'
 import intervalToDuration from 'date-fns/intervalToDuration/index.js'
 import add from 'date-fns/add/index.js'
-import * as RRule from 'rrule'
+import * as rrule from 'rrule'
 import { defaultDeadlineSelect } from '../deadline/deadline.select'
 import type { DefaultEvent } from './event.select'
 import { defaultEventSelect } from './event.select'
 import { protectedProcedure, router } from '~/server/trpc/trpc'
 import { baseEventInput, createEventInput, upcomingEventsInput } from '~/shared/event'
+
+const { rrulestr } = rrule
 
 const userIsInGroup = protectedProcedure
   .input(baseEventInput)
@@ -85,20 +87,26 @@ export const eventRouter = router({
                 },
               },
             ],
+            rrule: null,
           },
           select: defaultEventSelect,
         })
 
+        // Get all recurring events
+        const recurringEvents = await ctx.prisma.event.findMany({
+          where: {
+            groupId: input.groupId,
+            rrule: {
+              not: null,
+            },
+          },
+        })
+
         // Events + those which are repeated
-        const combinedEvents: DefaultEvent[] = []
+        const combinedEvents: DefaultEvent[] = events
 
-        events.forEach((event) => {
-          if (event.rrule.length === 0) {
-            combinedEvents.push(event)
-            return
-          }
-
-          const rrule = RRule.rrulestr(event.rrule)
+        recurringEvents.forEach((event) => {
+          const rrule = rrulestr(event.rrule!)
           const dates = rrule.between(input.date ?? today, addDays(input.date ?? today, 3))
           const interval = intervalToDuration({
             start: event.startTime,
