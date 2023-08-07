@@ -16,9 +16,9 @@ const props = defineProps<{
             <span>
               #
             </span>
-            <spam>
+            <span>
               {{ props.name }}
-            </spam>
+            </span>
           </CardTitle>
           <CardDescription>
             {{ props.description }}
