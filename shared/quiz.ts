@@ -5,16 +5,24 @@ export const baseQuizInput = z.object({
   groupId: z.string().cuid(),
 })
 
+export const listQuizzesInput = baseQuizInput.extend({})
+
+export type ListQuizInput = z.infer<typeof listQuizzesInput>
+
 export const createQuizInput = baseQuizInput.extend({
   name: z.string().min(1),
   description: z.string(),
 })
+
+export type CreateQuizInput = z.infer<typeof createQuizInput>
 
 export const baseQuestionInput = baseQuizInput.extend({
   quizId: z.string().cuid(),
 })
 
 export const listQuestionsInput = baseQuestionInput.extend({})
+
+export type ListQuestionsInput = z.infer<typeof listQuestionsInput>
 
 // Add question
 export const baseAddQuestionInput = baseQuestionInput.extend({
@@ -44,3 +52,5 @@ export const addQuestionInput = z.discriminatedUnion('type', [
     return true
   return value.correctOptions.every(i => i < value.options.length)
 })
+
+export type AddQuestionInput = z.infer<typeof addQuestionInput>
