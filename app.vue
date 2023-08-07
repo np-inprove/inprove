@@ -4,7 +4,7 @@ const config = useRuntimeConfig()
 const { cookieRaw } = useTheme()
 const route = useRoute()
 const resolvedTheme = computed(() => {
-  let theme = 'lara-dark-indigo'
+  let theme = 'mdc-dark-indigo'
   if (route.query.theme)
     theme = cookieRaw.value = route.query.theme as string
 
