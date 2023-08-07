@@ -46,6 +46,15 @@ const sidebarItems = computed(() => {
     })
   }
 
+  if (me?.value?.institutionRole === institutionRole.Admin) {
+    base.push({
+      title: 'Institution settings',
+      icon: 'i-tabler-building',
+      match: ['/dashboard/institution/settings'],
+      to: '/dashboard/institution/settings',
+    })
+  }
+
   return base
 })
 
