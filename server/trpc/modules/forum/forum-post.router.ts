@@ -1,4 +1,5 @@
 import { TRPCError } from '@trpc/server'
+import isYesterday from 'date-fns/isYesterday/index.js'
 import { defaultUserSelect } from '../user/user.select'
 import { defaultForumPostSelect } from './forum-post.select'
 import { defaultForumPostReactionSelect } from './forum-post-reaction.select'
@@ -161,6 +162,9 @@ export const forumPostRouter = router({
 
         const isRedeemableReaction = input.emoji === ctx.config.forum.redeemableReaction
         if (isRedeemableReaction) {
+          if (isYesterday(tx.session.user.pointsAwardedResetTime)) {
+            // TODO logic
+          } 
           if (ctx.session.user.pointsAwardedCount >= ctx.config.points.userMax) {
             throw new TRPCError({
               code: 'BAD_REQUEST',
