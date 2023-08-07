@@ -3,7 +3,7 @@ import { QuestionType } from '@prisma/client'
 import { defaultQuizSelect } from './quiz.select'
 import { defaultQuestionSelect } from './question.select'
 import { protectedProcedure, router } from '~/server/trpc/trpc'
-import { addQuestionInput, baseQuizInput, createQuizInput, listQuestionsInput } from '~/shared/quiz'
+import { addQuestionInput, baseQuizInput, createQuizInput, listQuestionsInput, listQuizzesInput } from '~/shared/quiz'
 
 const userIsInGroup = protectedProcedure
   .input(baseQuizInput)
@@ -43,6 +43,26 @@ const userIsInGroup = protectedProcedure
   })
 
 export const quizRouter = router({
+  list: userIsInGroup
+    .input(listQuizzesInput)
+    .query(async ({ ctx, input }) => {
+      try {
+        return await ctx.prisma.quiz.findMany({
+          where: {
+            groupId: input.groupId,
+          },
+          select: defaultQuizSelect,
+        })
+      }
+      catch (err) {
+        ctx.logger.error({ msg: 'failed to list quizzes', err })
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to list quizzes',
+        })
+      }
+    }),
+
   create: userIsInGroup
     .input(createQuizInput)
     .mutation(async ({ ctx, input }) => {
