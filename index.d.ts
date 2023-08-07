@@ -6,7 +6,7 @@ declare module 'nuxt/schema' {
     },
 
     points: {
-      userMax: number
+      dailyAllowance: number
     },
   }
 }
