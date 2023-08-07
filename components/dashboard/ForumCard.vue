@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import Card from 'primevue/card'
-
 const props = defineProps<{
   groupId: string
   forumId: string
@@ -11,13 +9,22 @@ const props = defineProps<{
 
 <template>
   <NuxtLink prefetch :to="`/dashboard/${props.groupId}/forums/${props.forumId}`">
-    <Card :pt="$pt.clickableCard">
-      <template #subtitle>
-        # {{ props.name }}
-      </template>
-      <template #content>
-        {{ props.description }}
-      </template>
+    <Card>
+      <CardHeader>
+        <div className="space-y-1">
+          <CardTitle class="flex gap-3">
+            <span>
+              #
+            </span>
+            <spam>
+              {{ props.name }}
+            </spam>
+          </CardTitle>
+          <CardDescription>
+            {{ props.description }}
+          </CardDescription>
+        </div>
+      </CardHeader>
     </Card>
   </NuxtLink>
 </template>

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import Card from 'primevue/card'
 import formatRelative from 'date-fns/formatRelative/index'
 
 const props = defineProps<{
@@ -15,21 +14,23 @@ const relativeTimestamp = computed(() => {
 </script>
 
 <template>
-  <Card :pt="$pt.clickableCard">
-    <template #title>
-      <span flex items-center justify-between>
-        <span>
+  <Card>
+    <CardHeader class="grid grid-cols-[1fr_175px] items-start gap-4 space-y-0">
+      <div className="space-y-1">
+        <CardTitle>
           {{ props.title }}
-        </span>
+        </CardTitle>
+        <CardDescription>
+          {{ content }}
+        </CardDescription>
+      </div>
+      <div className="flex items-center space-x-1 rounded-md">
         <span text-sm font-normal opacity-80>
           {{ props.authorName }}
           <br>
           {{ relativeTimestamp }}
         </span>
-      </span>
-    </template>
-    <template #content>
-      {{ content }}
-    </template>
+      </div>
+    </CardHeader>
   </Card>
 </template>
