@@ -29,6 +29,7 @@
     "@prisma/client": "^5.1.1",
     "@qingu/vue-email": "^1.0.23",
     "@tanstack/vue-query": "^4.32.6",
+    "@tiptap/extension-image": "^2.0.4",
     "@tiptap/pm": "^2.0.4",
     "@tiptap/starter-kit": "^2.0.4",
     "@tiptap/vue-3": "^2.0.4",

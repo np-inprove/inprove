@@ -43,6 +43,9 @@ devDependencies:
   '@tanstack/vue-query':
     specifier: ^4.32.6
     version: 4.32.6(vue@3.3.4)
+  '@tiptap/extension-image':
+    specifier: ^2.0.4
+    version: 2.0.4(@tiptap/core@2.0.4)
   '@tiptap/pm':
     specifier: ^2.0.4
     version: 2.0.4(@tiptap/core@2.0.4)
@@ -3221,6 +3224,14 @@ packages:
     dependencies:
       '@tiptap/core': 2.0.4(@tiptap/pm@2.0.4)
       '@tiptap/pm': 2.0.4(@tiptap/core@2.0.4)
+    dev: true
+
+  /@tiptap/extension-image@2.0.4(@tiptap/core@2.0.4):
+    resolution: {integrity: sha512-5iQ96pt9xppM8sWzwhGgc99PPoYPQuokTaCXAQKDI0Y1CFCjZ+/duUG3al1VUMpBXsjJw3/RVO1+7CEhRTd3mA==}
+    peerDependencies:
+      '@tiptap/core': ^2.0.0
+    dependencies:
+      '@tiptap/core': 2.0.4(@tiptap/pm@2.0.4)
     dev: true
 
   /@tiptap/extension-italic@2.0.4(@tiptap/core@2.0.4):
