@@ -16,6 +16,8 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.40.0",
+    "@aws-sdk/client-s3": "^3.386.0",
+    "@aws-sdk/s3-request-presigner": "^3.386.0",
     "@iconify-json/tabler": "^1.1.86",
     "@nuxt/devtools": "^0.7.4",
     "@nuxt/image": "^1.0.0-rc.1",
@@ -25,6 +27,9 @@
     "@prisma/client": "^5.1.1",
     "@qingu/vue-email": "^1.0.23",
     "@tanstack/vue-query": "^4.32.6",
+    "@tiptap/pm": "^2.0.4",
+    "@tiptap/starter-kit": "^2.0.4",
+    "@tiptap/vue-3": "^2.0.4",
     "@trpc/client": "^10.37.1",
     "@trpc/server": "^10.37.1",
     "@types/node": "^20.4.8",

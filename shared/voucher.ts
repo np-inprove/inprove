@@ -6,4 +6,9 @@ export const createVoucherInput = z.object({
   pointsRequired: z.number().min(0),
 })
 
+export const redeemVoucherInput = z.object({
+  voucherId: z.string().cuid(),
+})
+
 export type CreateVoucherInput = z.infer<typeof createVoucherInput>
+export type RedeemVoucherInput = z.infer<typeof redeemVoucherInput>

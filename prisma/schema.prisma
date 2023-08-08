@@ -42,6 +42,7 @@ model User {
   quizzes           Quiz[]
   quizAttempts      Attempt[]
   quizAnswers       Answer[]
+  redemptions       Redemption[]
 }
 
 // ===========
@@ -79,7 +80,18 @@ model Voucher {
   pointsRequired Int    @default(0)
 
   institutionId String
-  institution   Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  institution   Institution  @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  redemptions   Redemption[]
+}
+
+model Redemption {
+  id String @id @default(cuid())
+
+  voucherId String
+  voucher   Voucher @relation(fields: [voucherId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 // ============
@@ -150,9 +162,9 @@ model Forum {
 model ForumPost {
   id String @id @default(cuid())
 
-  title     String
-  content   String
-  timestamp DateTime @default(now())
+  title       String
+  richContent String
+  timestamp   DateTime @default(now())
 
   // Optional relation in the event user is deleted
   authorId String?
@@ -165,7 +177,20 @@ model ForumPost {
   parent   ForumPost?  @relation("ParentChildren", fields: [parentId], references: [id], onDelete: Cascade)
   children ForumPost[] @relation("ParentChildren")
 
-  reactions ForumPostReaction[]
+  reactions   ForumPostReaction[]
+  attachments ForumPostAttachment[]
+}
+
+model ForumPostAttachment {
+  id String @id @default(cuid())
+
+  // There is no guarantee that the forum post will exist
+  // Files are essentially kept forever, even when forum post is deleted
+  forumPostId String?
+  forumPost   ForumPost? @relation(fields: [forumPostId], references: [id])
+
+  url         String
+  displayName String? // Optional display name of the file
 }
 
 model ForumPostReaction {

@@ -18,7 +18,7 @@ const { mutate: createMutate } = useCreateForumPostMutation(props.forumId)
 const formData = reactive({
   visible: false,
   title: '',
-  content: '',
+  richContent: '',
 })
 
 function createPost() {
@@ -33,7 +33,7 @@ function createPost() {
     },
     onSettled() {
       formData.title = ''
-      formData.content = ''
+      formData.richContent = ''
     },
   })
 }
@@ -65,14 +65,16 @@ function createPost() {
       </div>
 
       <div class="flex flex-col gap-2">
-        <Textarea
-          id="content" v-model="formData.content" :rows="5" :pt="{
+        <!-- <Textarea
+          id="content" v-model="formData.richContent" :rows="5" :pt="{
             root: {
               class: 'bg-transparent border-none! outline-none! shadow-none! border-none! p0! py-0.75rem',
             },
           }" :required="true" placeholder="Add some content..." aria-describedby="content-help"
-        />
-        <small id="content-help" class="sr-only">Enter the content for the post</small>
+        /> -->
+        <!-- <small id="content-help" class="sr-only">Enter the content for the post</small> -->
+
+        <ForumTiptapEditor />
       </div>
 
       <div mt6>

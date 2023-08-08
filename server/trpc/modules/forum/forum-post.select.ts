@@ -8,7 +8,7 @@ import { Prisma } from '@prisma/client'
 export const defaultForumPostSelect = Prisma.validator<Prisma.ForumPostSelect>()({
   id: true,
   title: true,
-  content: true,
+  richContent: true,
   authorId: true,
   timestamp: true,
   forumId: true,

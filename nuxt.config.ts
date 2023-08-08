@@ -84,6 +84,15 @@ export default defineNuxtConfig({
       token: '',
     },
 
+    r2: {
+      accountId: '',
+      secretAccessKey: '',
+      accessKeyId: '',
+      buckets: {
+        forum: 'forum',
+      },
+    },
+
     redis: {
       enabled: false,
       host: '',

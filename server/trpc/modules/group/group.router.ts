@@ -53,7 +53,7 @@ export const groupRouter = router({
                   create: {
                     authorId: ctx.session.user.id,
                     title: `General forum for ${input.name}`,
-                    content: 'More exciting content to come!',
+                    richContent: 'More exciting content to come!',
                   },
                 },
               },
