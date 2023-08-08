@@ -47,7 +47,7 @@ const { data: posts, isLoading: postsIsLoading, error: postsError } = useForumPo
           "
           :post-id="post.id"
           :title="post.title"
-          :content="post.content"
+          :content="post.richContent"
           :author-name="post.author?.name ?? ''"
           :timestamp="post.timestamp"
         />
