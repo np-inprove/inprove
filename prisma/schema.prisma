@@ -67,13 +67,16 @@ model Institution {
 // ======
 // Prizes
 // ======
+// 
+// In retrospect, it probably would've been a good idea to use delegated types as well.
+// Oh well, too late
 
 model Voucher {
   id String @id @default(cuid())
 
   name           String
   description    String
-  pointsRequired String
+  pointsRequired Int    @default(0)
 
   institutionId String
   institution   Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
