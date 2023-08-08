@@ -12,3 +12,15 @@ export const getGroupInput = z.object({
 
 export type CreateGroupInput = z.infer<typeof createGroupInput>
 export type GetGroupInput = z.infer<typeof getGroupInput>
+
+export const listGroupUsersInput = z.object({
+  groupId: z.string().cuid(),
+})
+
+export const removeGroupUserInput = z.object({
+  groupId: z.string().cuid(),
+  userId: z.string().cuid(),
+})
+
+export type ListGroupUsersInput = z.infer<typeof listGroupUsersInput>
+export type RemoveGroupUserInput = z.infer<typeof removeGroupUserInput>
