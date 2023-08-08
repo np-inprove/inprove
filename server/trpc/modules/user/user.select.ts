@@ -15,6 +15,7 @@ export const defaultUserSelect = Prisma.validator<Prisma.UserSelect>()({
   pointsAwardedCount: true,
   pointsAwardedResetTime: true,
   institutionRole: true,
+  institutionId: true,
   institution: {
     select: defaultInstitutionSelect,
   },
