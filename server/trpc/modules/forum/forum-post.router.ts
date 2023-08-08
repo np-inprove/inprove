@@ -140,7 +140,7 @@ export const forumPostRouter = router({
             parentId: input.parentId,
 
             title: input.title,
-            content: input.content,
+            richContent: input.richContent,
           },
           select: defaultForumPostSelect,
         })
@@ -240,4 +240,5 @@ export const forumPostRouter = router({
         })
       }
     }),
+
 })
