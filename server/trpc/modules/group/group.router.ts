@@ -3,6 +3,7 @@ import { GroupRole, InstitutionRole } from '@prisma/client'
 import { assertInstitutionRole } from '../rbac'
 import { defaultGroupSelect } from './group.select'
 import { defaultGroupUsersSelect } from './group-users.select'
+import { groupUsersRouter } from './group-users.router'
 import { protectedProcedure, router } from '~/server/trpc/trpc'
 import { createGroupInput, getGroupInput } from '~/shared/group'
 
@@ -130,4 +131,6 @@ export const groupRouter = router({
         })
       }
     }),
+
+  users: groupUsersRouter,
 })
