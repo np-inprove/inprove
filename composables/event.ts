@@ -10,7 +10,7 @@ export function useUpcomingEvents(groupId: string, date?: Ref<Date | undefined>)
   })
 }
 
-export function useCreateEventMutation(groupId: string, onSuccess?: () => void) {
+export function useCreateEventMutation(groupId: string) {
   const queryClient = useQueryClient()
   const { $client } = useNuxtApp()
 
@@ -21,7 +21,6 @@ export function useCreateEventMutation(groupId: string, onSuccess?: () => void) 
     }),
     onSuccess() {
       queryClient.invalidateQueries(['event', 'list', groupId])
-      onSuccess?.()
     },
   })
 }
