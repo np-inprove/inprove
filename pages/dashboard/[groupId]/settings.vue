@@ -7,8 +7,11 @@ const router = useRouter()
 const { mutate, isLoading } = useDeleteGroupMutation(route.params.groupId as string)
 
 function deleteGroup() {
-  mutate()
-  router.replace('/dashboard')
+  mutate(undefined, {
+    onSuccess() {
+      router.replace('/dashboard')
+    },
+  })
 }
 </script>
 
