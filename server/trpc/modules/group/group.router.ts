@@ -153,6 +153,13 @@ export const groupRouter = router({
         })
       }
 
+      if (groupUser.role !== GroupRole.Owner && groupUser.role !== GroupRole.Educator) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'User does not have sufficient permissions.',
+        })
+      }
+
       return next({
         ctx: {
           groupUser,
