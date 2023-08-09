@@ -74,19 +74,13 @@ export const eventRouter = router({
         const events = await ctx.prisma.event.findMany({
           where: {
             groupId: input.groupId,
-            OR: [
-              {
-                startTime: {
-                  gt: today,
-                  lt: addDays(input.date ?? today, 3),
-                },
-              },
-              {
-                endTime: {
-                  lt: addDays(input.date ?? today, 3),
-                },
-              },
-            ],
+            startTime: {
+              gt: today,
+              lt: addDays(input.date ?? today, 3),
+            },
+            endTime: {
+              gt: input.date ?? today,
+            },
             rrule: null,
           },
           select: defaultEventSelect,
