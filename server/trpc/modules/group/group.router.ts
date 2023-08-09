@@ -1,6 +1,6 @@
 import { TRPCError } from '@trpc/server'
 import { GroupRole, InstitutionRole } from '@prisma/client'
-import { assertInstitutionRole } from '../rbac'
+import { assertGroupRole, assertInstitutionRole } from '../rbac'
 import { defaultGroupSelect } from './group.select'
 import { defaultGroupUsersSelect } from './group-users.select'
 import { groupUsersRouter } from './group-users.router'
@@ -153,12 +153,7 @@ export const groupRouter = router({
         })
       }
 
-      if (groupUser.role !== GroupRole.Owner && groupUser.role !== GroupRole.Educator) {
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: 'User does not have sufficient permissions.',
-        })
-      }
+      assertGroupRole(groupUser, GroupRole.Owner, GroupRole.Educator)
 
       return next({
         ctx: {
