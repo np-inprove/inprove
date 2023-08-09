@@ -87,7 +87,7 @@ export const eventRouter = router({
                 },
               },
             ],
-            rrule: null,
+            rrule: '',
           },
           select: defaultEventSelect,
         })
@@ -97,7 +97,7 @@ export const eventRouter = router({
           where: {
             groupId: input.groupId,
             rrule: {
-              not: null,
+              not: '',
             },
           },
         })
