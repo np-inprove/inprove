@@ -132,5 +132,49 @@ export const groupRouter = router({
       }
     }),
 
+  delete: protectedProcedure
+    .input(getGroupInput)
+    // Check whether user is in group
+    .use(async ({ next, ctx, input }) => {
+      const groupUser = await ctx.prisma.groupUsers.findUnique({
+        where: {
+          groupId_userId: {
+            userId: ctx.session.user.id,
+            groupId: input.groupId,
+          },
+        },
+        select: defaultGroupUsersSelect,
+      })
+
+      if (groupUser === null) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'User does not have sufficient permissions.',
+        })
+      }
+
+      return next({
+        ctx: {
+          groupUser,
+        },
+      })
+    })
+    .mutation(async ({ ctx, input }) => {
+      try {
+        await ctx.prisma.group.delete({
+          where: {
+            id: input.groupId,
+          },
+        })
+      }
+      catch (err) {
+        ctx.logger.error({ msg: 'failed to delete group', err })
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to delete group',
+        })
+      }
+    }),
+
   users: groupUsersRouter,
 })
