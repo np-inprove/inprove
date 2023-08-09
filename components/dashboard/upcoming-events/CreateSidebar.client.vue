@@ -44,7 +44,7 @@ const formData = reactive<{
 
 const visible = defineModel<boolean>('visible', { required: true })
 
-const { mutate: createEventMutate } = useCreateEventMutation(props.groupId)
+const { mutate: createEventMutate } = useCreateEventMutation(props.groupId, onCreateEventSuccess)
 
 function createEvent() {
   let rrule = ''
@@ -65,6 +65,10 @@ function createEvent() {
     location: formData.location,
     rrule,
   })
+}
+
+function onCreateEventSuccess() {
+  visible.value = false
 }
 
 const freq = [
