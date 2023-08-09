@@ -21,7 +21,7 @@ const relativeTimestamp = computed(() => {
           {{ props.title }}
         </CardTitle>
         <CardDescription>
-          {{ content }}
+          <ForumTiptapEditor disable-prose :model-value="props.content" :editable="false" />
         </CardDescription>
       </div>
       <div className="flex items-center space-x-1 rounded-md">
