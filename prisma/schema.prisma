@@ -44,6 +44,7 @@ model User {
   quizAttempts       Attempt[]
   quizAnswers        Answer[]
   redemptions        Redemption[]
+  forumPostReports   ForumPostReport[]
 }
 
 // ===========
@@ -180,6 +181,20 @@ model ForumPost {
 
   reactions   ForumPostReaction[]
   attachments ForumPostAttachment[]
+  reports     ForumPostReport[]
+}
+
+model ForumPostReport {
+  id String @id @default(cuid())
+
+  reason    String
+  timestamp DateTime @default(now())
+
+  postId String
+  post   ForumPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  reporterId String
+  reporter   User   @relation(fields: [reporterId], references: [id], onDelete: Cascade)
 }
 
 model ForumPostAttachment {
