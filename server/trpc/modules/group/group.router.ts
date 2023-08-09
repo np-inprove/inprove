@@ -4,6 +4,7 @@ import { assertGroupRole, assertInstitutionRole } from '../rbac'
 import { defaultGroupSelect } from './group.select'
 import { defaultGroupUsersSelect } from './group-users.select'
 import { groupUsersRouter } from './group-users.router'
+import { groupInviteRouter } from './group-invite.router'
 import { protectedProcedure, router } from '~/server/trpc/trpc'
 import { createGroupInput, getGroupInput } from '~/shared/group'
 
@@ -178,5 +179,8 @@ export const groupRouter = router({
       }
     }),
 
+  // TODO should rename to singular fof consistency
   users: groupUsersRouter,
+  // TODO should rename to singular for consistency
+  invites: groupInviteRouter,
 })
