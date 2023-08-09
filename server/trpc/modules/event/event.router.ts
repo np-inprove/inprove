@@ -79,9 +79,9 @@ export const eventRouter = router({
               lt: addDays(input.date ?? today, 3),
             },
             endTime: {
-              lt: input.date ?? today,
+              gt: input.date ?? today,
             },
-            rrule: '',
+            rrule: null,
           },
           select: defaultEventSelect,
         })
@@ -91,7 +91,7 @@ export const eventRouter = router({
           where: {
             groupId: input.groupId,
             rrule: {
-              not: '',
+              not: null,
             },
           },
         })
