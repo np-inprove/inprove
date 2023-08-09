@@ -25,6 +25,11 @@ function create() {
   }, {
     onSettled(data) {
       navigateTo(`/dashboard/${data?.id}`)
+
+      // Reset form data
+      formData.name = ''
+      formData.description = ''
+      formData.visible = false
     },
   })
 }
