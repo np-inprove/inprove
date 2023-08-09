@@ -25,6 +25,17 @@ export type CreateInstitutionInput = z.infer<typeof createInstitutionInput>
 export type UpdateInstitutionInput = z.infer<typeof updateInstitutionInput>
 export type DeleteInstitutionInput = z.infer<typeof deleteInstitutionInput>
 
+export const listUsersInput = z.object({
+  id: z.string().cuid(),
+})
+
+export const removeUserInput = z.object({
+  id: z.string().cuid(),
+  userId: z.string().cuid(),
+})
+
+export type ListUsersInput = z.infer<typeof listUsersInput>
+
 const institutionInviteInputBase = z.object({
   institutionId: z.string().cuid(),
 })

@@ -14,6 +14,6 @@ export default defineAppConfig({
   },
 
   points: {
-    userMax: 5, // Maximum points a user can award in a day
+    dailyAllowance: 5, // Maximum points a user can award in a day
   },
 })

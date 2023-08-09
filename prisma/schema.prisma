@@ -40,6 +40,9 @@ model User {
   deadlinesAuthored Deadline[]          @relation("DeadlinesAuthored")
   deadlinesUpvoted  Deadline[]          @relation("DeadlinesUpvoted")
   quizzes           Quiz[]
+  quizAttempts      Attempt[]
+  quizAnswers       Answer[]
+  redemptions       Redemption[]
 }
 
 // ===========
@@ -65,16 +68,30 @@ model Institution {
 // ======
 // Prizes
 // ======
+// 
+// In retrospect, it probably would've been a good idea to use delegated types as well.
+// Oh well, too late
 
 model Voucher {
   id String @id @default(cuid())
 
   name           String
   description    String
-  pointsRequired String
+  pointsRequired Int    @default(0)
 
   institutionId String
-  institution   Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  institution   Institution  @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  redemptions   Redemption[]
+}
+
+model Redemption {
+  id String @id @default(cuid())
+
+  voucherId String
+  voucher   Voucher @relation(fields: [voucherId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 // ============
@@ -145,9 +162,9 @@ model Forum {
 model ForumPost {
   id String @id @default(cuid())
 
-  title     String
-  content   String
-  timestamp DateTime @default(now())
+  title       String
+  richContent String
+  timestamp   DateTime @default(now())
 
   // Optional relation in the event user is deleted
   authorId String?
@@ -160,7 +177,20 @@ model ForumPost {
   parent   ForumPost?  @relation("ParentChildren", fields: [parentId], references: [id], onDelete: Cascade)
   children ForumPost[] @relation("ParentChildren")
 
-  reactions ForumPostReaction[]
+  reactions   ForumPostReaction[]
+  attachments ForumPostAttachment[]
+}
+
+model ForumPostAttachment {
+  id String @id @default(cuid())
+
+  // There is no guarantee that the forum post will exist
+  // Files are essentially kept forever, even when forum post is deleted
+  forumPostId String?
+  forumPost   ForumPost? @relation(fields: [forumPostId], references: [id])
+
+  url         String
+  displayName String? // Optional display name of the file
 }
 
 model ForumPostReaction {
@@ -203,8 +233,8 @@ model Event {
   name      String
   startTime DateTime
   endTime   DateTime
-  location  String
-  repeat    Json
+  location  String?
+  rrule     String?
 
   groupId String
   group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
@@ -219,32 +249,95 @@ model Quiz {
   name        String
   description String
 
-  questions Question[]
+  questionOrder String[] // id of questions, questions will only show if it is in this array
 
   authorId String
   author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
   groupId  String
   group    Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  attempts  Attempt[]
+  questions Question[]
 }
 
+enum QuestionType {
+  File
+  Text
+  Options
+}
+
+// Delegated type: https://github.com/prisma/prisma-examples/blob/latest/data-modeling/delegated-types/prisma/seed.ts
 model Question {
   id String @id @default(cuid())
 
-  content    String
-  descrption String
-  options    Option[]
+  content     String
+  description String
+  points      Int
+
+  type QuestionType
 
   quizId String
   quiz   Quiz   @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  answers Answer[]
 }
 
-model Option {
-  id      String  @id @default(cuid())
-  name    String
-  correct Boolean
+model FileQuestion {
+  id String @id @default(cuid())
+}
+
+model TextQuestion {
+  id     String @id @default(cuid())
+  answer String
+}
+
+model OptionsQuestion {
+  id String @id @default(cuid())
+
+  options        String[]
+  correctOptions Int[]
+}
+
+model Attempt {
+  id        String   @id @default(cuid())
+  timestamp DateTime @default(now())
+
+  quizId String
+  quiz   Quiz   @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  answers Answer[]
+}
+
+// Another delegated type: https://github.com/prisma/prisma-examples/blob/latest/data-modeling/delegated-types/prisma/seed.ts
+model Answer {
+  id String @id @default(cuid())
+
+  attemptId String
+  attempt   Attempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   questionId String
   question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+}
+
+model FileAnswer {
+  id      String @id @default(cuid())
+  fileUrl String
+}
+
+model TextAnswer {
+  id     String @id @default(cuid())
+  answer String
+}
+
+model OptionsAnswer {
+  id      String @id @default(cuid())
+  options Int[]
 }
 
 // =============

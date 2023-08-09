@@ -1,6 +1,6 @@
 import { TRPCError } from '@trpc/server'
 import { defaultInstitutionSelect } from './institution.select'
-import { createInstitutionInput, deleteInstitutionInput, updateInstitutionInput } from '~/shared/institution'
+import { createInstitutionInput, deleteInstitutionInput, listUsersInput, removeUserInput, updateInstitutionInput } from '~/shared/institution'
 import { protectedProcedure, router } from '~/server/trpc/trpc'
 
 export const institutionRouter = router({
@@ -74,6 +74,52 @@ export const institutionRouter = router({
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to create institution',
+        })
+      }
+    }),
+
+  listUsers: protectedProcedure
+    .meta({ admin: true })
+    .input(listUsersInput)
+    .query(async ({ ctx, input }) => {
+      try {
+        return await ctx.prisma.user.findMany({
+          where: {
+            institution: {
+              id: input.id,
+            },
+          },
+        })
+      }
+      catch (err) {
+        ctx.logger.error({ err, msg: 'failed to list institution users' })
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to list institution users',
+        })
+      }
+    }),
+
+  removeUser: protectedProcedure
+    .meta({ admin: true })
+    .input(removeUserInput)
+    .query(async ({ ctx, input }) => {
+      try {
+        return await ctx.prisma.user.update({
+          where: {
+            id: input.userId,
+          },
+          data: {
+            institutionId: null,
+            institutionRole: null,
+          },
+        })
+      }
+      catch (err) {
+        ctx.logger.error({ err, msg: 'failed to remove institution use' })
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to remove institution user',
         })
       }
     }),

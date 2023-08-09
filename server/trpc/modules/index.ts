@@ -9,6 +9,7 @@ import { forumRouter } from './forum/forum.router'
 import { forumPostRouter } from './forum/forum-post.router'
 import { deadlineRouter } from './deadline/deadline.router'
 import { eventRouter } from './event/event.router'
+import { quizRouter } from './quiz/quiz.router'
 
 export const appRouter = router({
   hello: publicProcedure
@@ -38,6 +39,7 @@ export const appRouter = router({
   forumPost: forumPostRouter,
   deadline: deadlineRouter,
   event: eventRouter,
+  quiz: quizRouter,
 })
 
 // export type definition of API

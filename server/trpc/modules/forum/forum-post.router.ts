@@ -1,4 +1,6 @@
 import { TRPCError } from '@trpc/server'
+import isBefore from 'date-fns/isBefore/index.js'
+import endOfYesterday from 'date-fns/endOfYesterday/index.js'
 import { defaultUserSelect } from '../user/user.select'
 import { defaultForumPostSelect } from './forum-post.select'
 import { defaultForumPostReactionSelect } from './forum-post-reaction.select'
@@ -138,7 +140,7 @@ export const forumPostRouter = router({
             parentId: input.parentId,
 
             title: input.title,
-            content: input.content,
+            richContent: input.richContent,
           },
           select: defaultForumPostSelect,
         })
@@ -152,6 +154,7 @@ export const forumPostRouter = router({
       }
     }),
 
+  // TODO this is kind of duct taped together
   react: userIsInGroup
     .input(reactForumPostInput)
     .mutation(async ({ ctx, input }) => {
@@ -159,34 +162,75 @@ export const forumPostRouter = router({
         if (!ctx.config.forum.reactions.includes(input.emoji))
           throw new TRPCError({ code: 'BAD_REQUEST' })
 
+        const post = await ctx.prisma.forumPost.findUniqueOrThrow({
+          where: { id: input.postId },
+        })
+
+        const txns = []
+
         const isRedeemableReaction = input.emoji === ctx.config.forum.redeemableReaction
-        if (isRedeemableReaction) {
-          if (ctx.session.user.pointsAwardedCount >= ctx.config.points.userMax) {
+        if (isRedeemableReaction && post.authorId) { // Emoji is pancake and author exiss
+          if (isBefore(ctx.session.user.pointsAwardedResetTime, endOfYesterday())) {
+            txns.push(ctx.prisma.user.update({
+              where: {
+                id: ctx.session.user.id,
+              },
+              data: {
+                pointsAwardedCount: 0,
+                pointsAwardedResetTime: new Date(),
+              },
+            }))
+          }
+          else if (ctx.session.user.pointsAwardedCount >= ctx.config.points.dailyAllowance) {
             throw new TRPCError({
               code: 'BAD_REQUEST',
               message: 'Max points awarded count reached',
             })
           }
-        }
-        else {
-          await ctx.prisma.forumPostReaction.upsert({
+
+          txns.push(ctx.prisma.user.update({
             where: {
-              postId_userId: {
-                postId: input.postId,
-                userId: ctx.session.user.id,
+              id: post.authorId,
+            },
+            data: {
+              points: {
+                increment: 1,
               },
             },
-            update: {
-              emoji: input.emoji,
+          }))
+
+          txns.push(ctx.prisma.user.update({
+            where: {
+              id: ctx.session.user.id,
             },
-            create: {
-              emoji: input.emoji,
+            data: {
+              pointsAwardedCount: {
+                increment: 1,
+              },
+            },
+          }))
+        }
+
+        txns.push(ctx.prisma.forumPostReaction.upsert({
+          where: {
+            postId_userId: {
               postId: input.postId,
               userId: ctx.session.user.id,
             },
-            select: defaultForumPostReactionSelect,
-          })
-        }
+          },
+          update: {
+            emoji: input.emoji,
+          },
+          create: {
+            emoji: input.emoji,
+            postId: input.postId,
+            userId: ctx.session.user.id,
+          },
+          select: defaultForumPostReactionSelect,
+        }))
+
+        const results = await ctx.prisma.$transaction(txns)
+        return results[results.length - 1] // Return forum post reaction data
       }
       catch (err) {
         ctx.logger.error({ msg: 'failed to react to forum post', err })
@@ -196,4 +240,5 @@ export const forumPostRouter = router({
         })
       }
     }),
+
 })

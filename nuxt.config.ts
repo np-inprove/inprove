@@ -31,6 +31,8 @@ export default defineNuxtConfig({
     transpile: [
       'primevue',
       'trpc-nuxt',
+      'tslib', // Used by rrule
+      'rrule',
     ],
   },
 
@@ -80,6 +82,15 @@ export default defineNuxtConfig({
     axiom: {
       dataset: '',
       token: '',
+    },
+
+    r2: {
+      accountId: '',
+      secretAccessKey: '',
+      accessKeyId: '',
+      buckets: {
+        forum: 'forum',
+      },
     },
 
     redis: {

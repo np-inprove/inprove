@@ -1,26 +1,94 @@
 <script setup lang="ts">
-import Skeleton from 'primevue/skeleton'
-import { useQuery } from '@tanstack/vue-query'
+import ScrollPanel from 'primevue/scrollpanel'
+import endOfToday from 'date-fns/endOfToday/index'
+import formatDistanceToNow from 'date-fns/formatDistanceToNow/index'
 
-const { $client } = useNuxtApp()
+const { data: me, error: meError } = useMe()
 
-const { data: me, error: meError, isLoading: meIsLoading, refetch } = useQuery({
-  queryKey: ['me'],
-  queryFn: () => $client.me.get.query(),
+const greeting = computed(() => {
+  const hour = new Date().getHours()
+  if (hour >= 5 && hour < 12)
+    return 'morning'
+
+  else if (hour >= 12 && hour < 18)
+    return 'afternoon'
+
+  else
+    return 'evening'
+})
+
+const timeTillReset = ref('')
+
+let interval: any
+onMounted(() => {
+  interval = setInterval(() => {
+    timeTillReset.value = formatDistanceToNow(endOfToday(), { includeSeconds: true })
+  }, 1000)
+})
+
+onUnmounted(() => {
+  clearInterval(interval)
 })
 </script>
 
 <template>
-  <div w-full p8>
-    <Skeleton v-if="meIsLoading" height="35px" />
-    <div v-else-if="meError" flex flex-1 items-center justify-center>
+  <div w-full flex flex-col>
+    <div v-if="meError" h-full flex items-center justify-center pb25>
       <LazyErrorCard v-bind="meError" />
     </div>
-    <Transition v-else-if="me" appear>
-      <h2 text-2xl font-semibold>
-        Hello, {{ me.name }}
-      </h2>
-    </Transition>
+
+    <template v-else>
+      <CommonHeader />
+
+      <div overflow-x-hidden overflow-y-auto>
+        <ScrollPanel style="height: 100%">
+          <div p4 space-y-8 md:p8>
+            <h3 class="text-3xl font-bold tracking-tight">
+              Good {{ greeting }}, {{ me?.name }}
+            </h3>
+
+            <div grid="~ cols-1 md:cols-2 lg:cols-3 gap-4">
+              <Card>
+                <CardHeader class="flex flex-row items-center justify-between pb-2 space-y-0">
+                  <CardTitle class="font-medium">
+                    🥞 Pancakes received
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {{ me?.points }}
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader class="flex flex-row items-center justify-between pb-2 space-y-0">
+                  <CardTitle class="font-medium">
+                    🎉 Pancakes awarded
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {{ me?.pointsAwardedCount }}
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader class="flex flex-row items-center justify-between pb-2 space-y-0">
+                  <CardTitle class="font-medium">
+                    ⌚ Time till reset
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {{ timeTillReset }}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </ScrollPanel>
+      </div>
+    </template>
   </div>
 </template>
 

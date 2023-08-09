@@ -1,9 +1,15 @@
 import { TRPCError } from '@trpc/server'
 import addDays from 'date-fns/addDays/index.js'
+import intervalToDuration from 'date-fns/intervalToDuration/index.js'
+import add from 'date-fns/add/index.js'
+import * as rrule from 'rrule'
 import { defaultDeadlineSelect } from '../deadline/deadline.select'
+import type { DefaultEvent } from './event.select'
 import { defaultEventSelect } from './event.select'
 import { protectedProcedure, router } from '~/server/trpc/trpc'
-import { baseEventInput, eventRepeatConfig, upcomingEventsInput } from '~/shared/event'
+import { baseEventInput, createEventInput, upcomingEventsInput } from '~/shared/event'
+
+const { rrulestr } = rrule
 
 const userIsInGroup = protectedProcedure
   .input(baseEventInput)
@@ -81,16 +87,45 @@ export const eventRouter = router({
                 },
               },
             ],
+            rrule: null,
           },
           select: defaultEventSelect,
         })
 
+        // Get all recurring events
+        const recurringEvents = await ctx.prisma.event.findMany({
+          where: {
+            groupId: input.groupId,
+            rrule: {
+              not: null,
+            },
+          },
+        })
+
+        // Events + those which are repeated
+        const combinedEvents: DefaultEvent[] = events
+
+        recurringEvents.forEach((event) => {
+          const rrule = rrulestr(event.rrule!)
+          const dates = rrule.between(input.date ?? today, addDays(input.date ?? today, 3))
+          const interval = intervalToDuration({
+            start: event.startTime,
+            end: event.endTime,
+          })
+
+          dates.forEach((start) => { // Start should have the same time as startTime, just repeated date
+            const startTime = new Date(start)
+            combinedEvents.push({
+              ...event,
+              startTime,
+              endTime: add(start, interval),
+            })
+          })
+        })
+
         return {
           deadlines,
-          events: events.map(event => ({
-            ...event,
-            repeat: eventRepeatConfig.parse(event.repeat),
-          })),
+          events: combinedEvents,
         }
       }
       catch (err) {
@@ -102,28 +137,30 @@ export const eventRouter = router({
       }
     }),
 
-  // create: userIsInGroup
-  //   .input(createDeadlineInput)
-  //   .mutation(async ({ ctx, input }) => {
-  //     try {
-  //       return await ctx.prisma.deadline.create({
-  //         data: {
-  //           name: input.name,
-  //           dueDate: input.dueDate,
-  //           groupId: input.groupId,
-  //           authorId: ctx.session.user.id,
-  //         },
-  //         select: defaultDeadlineSelect,
-  //       })
-  //     }
-  //     catch (err) {
-  //       ctx.logger.error({ msg: 'failed to create deadline', err })
-  //       throw new TRPCError({
-  //         code: 'INTERNAL_SERVER_ERROR',
-  //         message: 'Failed to create deadline',
-  //       })
-  //     }
-  //   }),
+  create: userIsInGroup
+    .input(createEventInput)
+    .mutation(async ({ ctx, input }) => {
+      try {
+        return await ctx.prisma.event.create({
+          data: {
+            name: input.name,
+            startTime: input.startTime,
+            endTime: input.endTime,
+            location: input.location,
+            groupId: input.groupId,
+            rrule: input.rrule,
+          },
+          select: defaultEventSelect,
+        })
+      }
+      catch (err) {
+        ctx.logger.error({ msg: 'failed to create event', err })
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to create event',
+        })
+      }
+    }),
 
   // toggleVote: userIsInGroup
   //   .input(toggleVoteDeadlineInput)

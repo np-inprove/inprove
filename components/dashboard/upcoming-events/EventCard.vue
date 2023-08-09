@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import formatRelative from 'date-fns/formatRelative/index'
+
 const props = defineProps<{
   name: string
   deadline: boolean
@@ -12,8 +14,8 @@ const props = defineProps<{
     <span>
       {{ props.name }}
     </span>
-    <small class="text-$text-color-secondary">
-      {{ props.deadline ? 'Deadline' : 'Event' }}
+    <small v-if="props.endDate" class="text-$text-color-secondary">
+      {{ formatRelative(props.endDate, new Date()) }}
     </small>
   </div>
 </template>

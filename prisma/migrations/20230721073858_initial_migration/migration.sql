@@ -42,7 +42,7 @@ CREATE TABLE "Voucher" (
     "id" STRING NOT NULL,
     "name" STRING NOT NULL,
     "description" STRING NOT NULL,
-    "pointsRequired" STRING NOT NULL,
+    "pointsRequired" INT4 NOT NULL DEFAULT 0,
     "institutionId" STRING NOT NULL,
 
     CONSTRAINT "Voucher_pkey" PRIMARY KEY ("id")
