@@ -34,15 +34,16 @@ model User {
   institutionId String?
   institution   Institution? @relation(fields: [institutionId], references: [id])
 
-  groups            GroupUsers[]
-  posts             ForumPost[]
-  reactions         ForumPostReaction[]
-  deadlinesAuthored Deadline[]          @relation("DeadlinesAuthored")
-  deadlinesUpvoted  Deadline[]          @relation("DeadlinesUpvoted")
-  quizzes           Quiz[]
-  quizAttempts      Attempt[]
-  quizAnswers       Answer[]
-  redemptions       Redemption[]
+  groups             GroupUsers[]
+  posts              ForumPost[]
+  reactions          ForumPostReaction[]
+  deadlinesAuthored  Deadline[]               @relation("DeadlinesAuthored")
+  deadlinesUpvoted   Deadline[]               @relation("DeadlinesUpvoted")
+  deadlinesCompleted UserCompletedDeadlines[]
+  quizzes            Quiz[]
+  quizAttempts       Attempt[]
+  quizAnswers        Answer[]
+  redemptions        Redemption[]
 }
 
 // ===========
@@ -221,7 +222,21 @@ model Deadline {
   groupId  String
   group    Group   @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
-  upvotes User[] @relation("DeadlinesUpvoted")
+  upvotes        User[]                   @relation("DeadlinesUpvoted")
+  completedUsers UserCompletedDeadlines[]
+}
+
+model UserCompletedDeadlines {
+  id        String   @id @default(cuid())
+  timestamp DateTime @default(now())
+
+  deadlineId String
+  deadline   Deadline @relation(fields: [deadlineId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([deadlineId, userId])
 }
 
 // ======

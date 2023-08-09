@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import Button from 'primevue/button'
-import Textarea from 'primevue/textarea'
 import Skeleton from 'primevue/skeleton'
 
 const route = useRoute()
@@ -10,13 +9,13 @@ const { data: post, isLoading: postIsLoading, error: postError } = useForumPost(
 const { mutate: createMutate } = useCreateForumPostMutation(route.params.forumId as string, route.params.postId as string)
 
 const formData = reactive({
-  content: '',
+  richContent: '',
 })
 
 function comment() {
   createMutate({
     title: '',
-    content: formData.content,
+    richContent: formData.richContent,
   })
 }
 </script>
@@ -37,7 +36,7 @@ function comment() {
       </h2>
 
       <p class="leading-7 [&:not(:first-child)]:mt-3">
-        {{ post.content }}
+        {{ post.richContent }}
       </p>
 
       <div mt4>
@@ -53,7 +52,8 @@ function comment() {
         <form @submit.prevent="comment">
           <div flex flex-col gap-4>
             <label for="comment">Leave a comment</label>
-            <Textarea id="comment" v-model="formData.content" class="w-full" placeholder="What are your thoughts?" />
+            <!-- TODO clean up class styles -->
+            <ForumTiptapEditor v-model="formData.richContent" placeholder="What are your thoughts?" class="w-full rounded-md bg-$surface-card p2" />
             <div self-end>
               <Button class="ml-auto" size="small" type="submit" label="Comment" />
             </div>

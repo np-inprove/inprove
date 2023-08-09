@@ -34,7 +34,7 @@ const { data: posts, isLoading: postsIsLoading, error: postsError } = useForumPo
 
     <LazyErrorCard v-else-if="postsError" v-bind="postsError" />
 
-    <div v-else-if="posts">
+    <div v-else-if="posts" flex flex-col gap4>
       <NuxtLink
         v-for="post in posts"
         :key="post.id"

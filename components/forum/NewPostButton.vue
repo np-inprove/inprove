@@ -65,16 +65,7 @@ function createPost() {
       </div>
 
       <div class="flex flex-col gap-2">
-        <!-- <Textarea
-          id="content" v-model="formData.richContent" :rows="5" :pt="{
-            root: {
-              class: 'bg-transparent border-none! outline-none! shadow-none! border-none! p0! py-0.75rem',
-            },
-          }" :required="true" placeholder="Add some content..." aria-describedby="content-help"
-        /> -->
-        <!-- <small id="content-help" class="sr-only">Enter the content for the post</small> -->
-
-        <ForumTiptapEditor />
+        <ForumTiptapEditor v-model="formData.richContent" placeholder="Some content here!" />
       </div>
 
       <div mt6>
