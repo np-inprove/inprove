@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
-import type { CreateForumPostInput, ReactForumPostInput } from '~/shared/forum-post'
+import type { CreateAttachmentPresignedUrl, CreateForumPostInput, ReactForumPostInput } from '~/shared/forum-post'
 
 export function useForums(groupId: string) {
   const { $client } = useNuxtApp()
@@ -66,6 +66,38 @@ export function useReactForumPostMutation(forumId: string, postId: string) {
     }),
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: ['forumPost', 'get', forumId, postId] })
+    },
+  })
+}
+
+// TODO really need to clean up this function.
+export function useUploadAttachment(forumId: string) {
+  const { $client } = useNuxtApp()
+
+  const presignMutate = useMutation({
+    mutationFn: (input: Omit<CreateAttachmentPresignedUrl, 'forumId'>) => $client.forumPost.createAttachmentPresignedUrl.mutate({
+      forumId,
+      ...input,
+    }),
+  })
+
+  return useMutation({
+    mutationFn: async (input: File[]) => {
+      const urls = await presignMutate.mutateAsync({
+        files: input.map(f => ({ name: f.name, contentType: f.type })),
+      })
+
+      await Promise.all(urls.map(async ({ presignedUrl }, idx) => {
+        return await fetch(presignedUrl, {
+          method: 'PUT',
+          body: input[idx],
+          headers: {
+            'Content-Type': input[idx].type,
+          },
+        })
+      }))
+
+      return urls
     },
   })
 }
