@@ -11,3 +11,7 @@ Also need to solve the timezone issue (i.e. time comparison on server should be 
 Should only allow presigned url creation when a forum post exists? If not seems easily abusable if people can keep uploading files without an existing forum post. 
 
 Need some way to check.
+
+Also should standardize upload RPC.
+
+Also should standardize to all CUID IDs in DB.
