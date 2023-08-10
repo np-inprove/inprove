@@ -1,16 +1,10 @@
 import {
-  PutObjectCommand,
-  type PutObjectCommandInput,
   S3Client,
 } from '@aws-sdk/client-s3'
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 
 declare module 'h3' {
   interface H3EventContext {
-    storage: {
-      client: S3Client
-      generateSignedPutUrl(params: PutObjectCommandInput): Promise<string>
-    }
+    storage: S3Client
   }
 }
 
@@ -28,14 +22,5 @@ export default defineEventHandler((event) => {
     })
   }
 
-  function generateSignedPutUrl(params: PutObjectCommandInput) {
-    return getSignedUrl(storage, new PutObjectCommand(params), {
-      expiresIn: 60 * 5, // 5 minutes
-    })
-  }
-
-  event.context.storage = {
-    client: storage,
-    generateSignedPutUrl,
-  }
+  event.context.storage = storage
 })

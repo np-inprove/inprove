@@ -87,7 +87,8 @@ export default defineNuxtConfig({
       accountId: '',
       secretAccessKey: '',
       accessKeyId: '',
-      buckets: {
+      bucketName: 'inprove',
+      folderNames: {
         forum: 'forum',
       },
     },

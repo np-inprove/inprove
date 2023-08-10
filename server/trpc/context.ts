@@ -5,6 +5,7 @@ import type { H3Event, SessionConfig, SessionData } from 'h3'
 import type { Storage } from 'unstorage'
 import type { Resend } from 'resend'
 import type { AppConfig } from 'nuxt/schema'
+import type { S3Client } from '@aws-sdk/client-s3'
 import type { UserSessionData } from '~/shared/session'
 
 /**
@@ -42,6 +43,7 @@ interface CreateInnerContextOptions {
   // External services
   prisma: PrismaClient
   resend: Resend
+  storage: S3Client
 }
 
 /**
@@ -78,6 +80,7 @@ export async function createContext(_event: H3Event) {
     prisma: _event.context.prisma,
     resend: _event.context.resend,
     config: useAppConfig(),
+    storage: _event.context.storage,
   })
 
   return {

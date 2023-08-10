@@ -18,6 +18,7 @@ export const createForumPostInput = baseForumPostInput.extend({
   parentId: z.string().cuid().optional(),
   title: z.string(),
   richContent: z.string().nonempty(),
+  attachments: z.array(z.string().cuid2()).optional(),
 })
 
 export const reactForumPostInput = baseForumPostInput.extend({
@@ -28,3 +29,12 @@ export const reactForumPostInput = baseForumPostInput.extend({
 export type ListForumPostInput = z.infer<typeof listForumPostInput>
 export type CreateForumPostInput = z.infer<typeof createForumPostInput>
 export type ReactForumPostInput = z.infer<typeof reactForumPostInput>
+
+export const createAttachmentPresignedUrlInput = baseForumPostInput.extend({
+  files: z.array(z.object({
+    name: z.string(),
+    contentType: z.string().refine(s => ['image/png', 'image/jpeg'].includes(s)),
+  })),
+})
+
+export type CreateAttachmentPresignedUrl = z.infer<typeof createAttachmentPresignedUrlInput>
