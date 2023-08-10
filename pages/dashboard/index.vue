@@ -47,6 +47,10 @@ onUnmounted(() => {
               Good {{ greeting }}, {{ me?.name }}
             </h3>
 
+            <!-- TODO move to own component -->
+            <h4 class="scroll-m-20 text-xl font-semibold tracking-tight">
+              Points
+            </h4>
             <div grid="~ cols-1 md:cols-2 lg:cols-3 gap-4">
               <Card>
                 <CardHeader class="flex flex-row items-center justify-between pb-2 space-y-0">
@@ -84,7 +88,10 @@ onUnmounted(() => {
                   </div>
                 </CardContent>
               </Card>
+            <!-- ENDTODO move to own component -->
             </div>
+
+            <DashboardVouchersOverview />
           </div>
         </ScrollPanel>
       </div>
