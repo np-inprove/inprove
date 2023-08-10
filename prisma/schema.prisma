@@ -87,7 +87,8 @@ model Voucher {
 }
 
 model Redemption {
-  id String @id @default(cuid())
+  id        String   @id @default(cuid())
+  timestamp DateTime @default(now())
 
   voucherId String
   voucher   Voucher @relation(fields: [voucherId], references: [id], onDelete: Cascade)

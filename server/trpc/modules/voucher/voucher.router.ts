@@ -1,6 +1,7 @@
 import { TRPCError } from '@trpc/server'
 import { InstitutionRole } from '@prisma/client'
 import { assertInstitutionRole } from '../rbac'
+import { defaultRedemptionSelect } from '../redemption/redemption.select'
 import { protectedProcedure, router } from '~/server/trpc/trpc'
 import { createVoucherInput, redeemVoucherInput } from '~/shared/voucher'
 
@@ -21,6 +22,25 @@ export const voucherRouter = router({
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to list vouchers',
+        })
+      }
+    }),
+
+  listRedeemed: protectedProcedure
+    .query(async ({ ctx }) => {
+      try {
+        return await ctx.prisma.redemption.findMany({
+          where: {
+            userId: ctx.session.user.id,
+          },
+          select: defaultRedemptionSelect,
+        })
+      }
+      catch (err) {
+        ctx.logger.error({ msg: 'failed to list redeemed vouchers', err })
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to list redeemed vouchers',
         })
       }
     }),
