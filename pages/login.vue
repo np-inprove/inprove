@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import { TRPCClientError } from '@trpc/client'
@@ -96,13 +95,15 @@ async function verifyOtp() {
 
         <div flex p-6 lg:px-30>
           <Card class="w-full md:max-w-lg">
-            <template #title>
-              Login
-            </template>
-            <template #subtitle>
-              Please enter your academic email address.
-            </template>
-            <template #content>
+            <CardHeader>
+              <CardTitle>
+                Login
+              </CardTitle>
+              <CardDescription>
+                Please enter your academic email address.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
               <form v-if="formData.stage === 'email'" @submit.prevent="generateOtp">
                 <div class="flex flex-col gap-2">
                   <InputText
@@ -115,7 +116,7 @@ async function verifyOtp() {
                 </div>
 
                 <div mt2>
-                  <Button type="submit" :loading="formData.pending" icon="" icon-pos="right" label="Get OTP" />
+                  <Button size="small" type="submit" :loading="formData.pending" icon="" icon-pos="right" label="Get OTP" />
                 </div>
               </form>
 
@@ -131,10 +132,10 @@ async function verifyOtp() {
                 </div>
 
                 <div mt2>
-                  <Button type="submit" :loading="formData.pending" icon="" icon-pos="right" label="Login" />
+                  <Button size="small" type="submit" :loading="formData.pending" icon="" icon-pos="right" label="Login" />
                 </div>
               </form>
-            </template>
+            </CardContent>
           </Card>
         </div>
       </div>

@@ -4,9 +4,6 @@ export default defineNuxtConfig({
     componentIslands: true,
   },
 
-  ssr: false,
-  spaLoadingTemplate: false,
-
   vue: {
     defineModel: true,
   },
@@ -24,6 +21,7 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@nuxtjs/html-validator',
     '@nuxt/image',
+    'nuxt-security',
   ],
 
   typescript: {
@@ -49,6 +47,16 @@ export default defineNuxtConfig({
       charset: 'utf-8',
       viewport: 'width=device-width,height=device-height,initial-scale=1,maximum-scale=1,user-scalable=no,shrink-to-fit=no,viewport-fit=cover',
       htmlAttrs: { lang: 'en' },
+    },
+  },
+
+  security: {
+    headers: {
+      crossOriginEmbedderPolicy: process.env.NODE_ENV === 'development' ? 'unsafe-none' : 'require-corp',
+    },
+    rateLimiter: {
+      tokensPerInterval: 10,
+      interval: 'minute',
     },
   },
 

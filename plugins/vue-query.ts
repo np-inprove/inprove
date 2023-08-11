@@ -1,13 +1,13 @@
-import { type DehydratedState, QueryCache, type VueQueryPluginOptions } from '@tanstack/vue-query'
+import { type DehydratedState, type VueQueryPluginOptions } from '@tanstack/vue-query'
+import { TRPCClientError } from '@trpc/client'
 
 // Nuxt 3 app aliases
-import { TRPCClientError } from '@trpc/client'
 import { useState } from '#app'
 
 export default defineNuxtPlugin({
   parallel: true,
   async setup(nuxt) {
-    const { QueryClient, VueQueryPlugin, dehydrate, hydrate } = await import('@tanstack/vue-query')
+    const { QueryCache, QueryClient, VueQueryPlugin, dehydrate, hydrate } = await import('@tanstack/vue-query')
 
     const vueQueryState = useState<DehydratedState | null>('vue-query')
 
