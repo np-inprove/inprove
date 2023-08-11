@@ -1,10 +1,6 @@
 <script setup lang="ts">
 import Divider from 'primevue/divider'
 
-definePageMeta({
-  middleware: ['auth', 'admin'],
-})
-
 const items = [
   {
     to: '/dashboard/__admin',
