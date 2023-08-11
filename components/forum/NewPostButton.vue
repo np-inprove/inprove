@@ -82,7 +82,7 @@ function uploader({ files }: { files: File | File[] }) {
             root: {
               class: 'bg-transparent border-none! outline-none! shadow-none! border-none! py-0.75rem! font-semibold! text-xl',
             },
-          }" :required="true" placeholder="Post title" aria-describedby="title-help" unstyled autofocus
+          }" :required="true" placeholder="Post title" aria-describedby="title-help" autofocus unstyled
         />
         <small id="title-help" class="sr-only">Enter the title for the post</small>
       </div>

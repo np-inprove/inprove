@@ -75,7 +75,15 @@ async function verifyOtp() {
   <div>
     <header class="h-24 flex items-center justify-between p-6 lg:px-30">
       <NuxtLink to="/">
-        <span font-semibold>{{ config.public.appName }}</span>
+        <span class="font-semibold">{{ config.public.appName }}</span>
+      </NuxtLink>
+
+      <NuxtLink to="/about-us">
+        About Us
+      </NuxtLink>
+
+      <NuxtLink to="/faqs">
+        FAQs
       </NuxtLink>
     </header>
 
