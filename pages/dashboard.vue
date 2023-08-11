@@ -1,10 +1,6 @@
 <script setup lang="ts">
 const Sidebar = defineAsyncComponent(() => import('primevue/sidebar'))
 
-definePageMeta({
-  middleware: ['auth'],
-})
-
 const { data: me, status: meStatus, refetch } = useMe()
 const { error: groupsError } = useGroups()
 

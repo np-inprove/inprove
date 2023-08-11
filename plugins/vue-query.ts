@@ -1,6 +1,7 @@
-import type { DehydratedState, VueQueryPluginOptions } from '@tanstack/vue-query'
+import { type DehydratedState, QueryCache, type VueQueryPluginOptions } from '@tanstack/vue-query'
 
 // Nuxt 3 app aliases
+import { TRPCClientError } from '@trpc/client'
 import { useState } from '#app'
 
 export default defineNuxtPlugin({
@@ -12,7 +13,28 @@ export default defineNuxtPlugin({
 
     // Modify your Vue Query global settings here
     const queryClient = new QueryClient({
-      defaultOptions: { queries: { staleTime: 30000 } },
+      defaultOptions: {
+        queries: {
+          staleTime: 30000,
+          retry(_, err) {
+            if (err instanceof TRPCClientError) {
+              if (err.data.code === 'UNAUTHORIZED' || err.data.code === 'FORBIDDEN')
+                return false
+            }
+            return true
+          },
+        },
+      },
+      queryCache: new QueryCache({
+        async onError(err) {
+          if (err instanceof TRPCClientError) {
+            if (err.data.code === 'UNAUTHORIZED')
+              await navigateTo('/login')
+            if (err.data.code === 'FORBIDDEN')
+              await navigateTo('/dashboard')
+          }
+        },
+      }),
     })
     const options: VueQueryPluginOptions = { queryClient }
 
