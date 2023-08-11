@@ -29,7 +29,7 @@ const baseProcedure = protectedProcedure.input(
 
     if (!ctx.session.user.admin && ctx.session.user.institution?.id !== institution.id) {
       throw new TRPCError({
-        code: 'UNAUTHORIZED',
+        code: 'FORBIDDEN',
         message: 'User is not in institution',
       })
     }
@@ -176,7 +176,7 @@ export const institutionInviteRouter = router({
 
       if (invite.institutionId !== input.institutionId) {
         throw new TRPCError({
-          code: 'UNAUTHORIZED',
+          code: 'FORBIDDEN',
         })
       }
 

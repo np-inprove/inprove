@@ -95,7 +95,7 @@ export const groupRouter = router({
 
       if (groupUser === null) {
         throw new TRPCError({
-          code: 'UNAUTHORIZED',
+          code: 'FORBIDDEN',
           message: 'User does not have sufficient permissions.',
         })
       }
@@ -149,7 +149,7 @@ export const groupRouter = router({
 
       if (groupUser === null) {
         throw new TRPCError({
-          code: 'UNAUTHORIZED',
+          code: 'FORBIDDEN',
           message: 'User does not have sufficient permissions.',
         })
       }
