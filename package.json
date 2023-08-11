@@ -54,6 +54,7 @@
     "lint-staged": "^13.2.3",
     "nodemailer": "^6.9.4",
     "nuxt": "^3.6.5",
+    "nuxt-security": "^0.14.4",
     "pinia": "^2.1.6",
     "pino": "^8.15.0",
     "pino-http": "^8.4.0",
