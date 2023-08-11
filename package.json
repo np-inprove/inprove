@@ -41,7 +41,7 @@
     "@trpc/client": "^10.37.1",
     "@trpc/server": "^10.37.1",
     "@types/node": "^20.4.8",
-    "@unocss/eslint-config": "^0.54.1",
+    "@unocss/eslint-config": "^0.55.0",
     "@unocss/nuxt": "^0.55.0",
     "@vueuse/core": "^10.3.0",
     "@vueuse/integrations": "^10.3.0",
