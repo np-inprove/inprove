@@ -55,8 +55,8 @@ export default defineNuxtConfig({
       crossOriginEmbedderPolicy: process.env.NODE_ENV === 'development' ? 'unsafe-none' : 'require-corp',
     },
     rateLimiter: {
-      tokensPerInterval: 10000,
-      interval: 'hour',
+      tokensPerInterval: 10,
+      interval: 'minute',
     },
   },
 
