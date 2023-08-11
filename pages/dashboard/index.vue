@@ -1,4 +1,6 @@
 <script setup lang="ts">
+// TODO this page occasionally causes hydration mismatch, probably cuz of my whacky greeting implementation thing
+
 import ScrollPanel from 'primevue/scrollpanel'
 import endOfToday from 'date-fns/endOfToday/index'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow/index'
