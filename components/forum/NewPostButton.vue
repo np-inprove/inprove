@@ -11,19 +11,29 @@ const toast = useToast()
 
 const Dialog = defineAsyncComponent(() => import('primevue/dialog'))
 const InputText = defineAsyncComponent(() => import('primevue/inputtext'))
-const Textarea = defineAsyncComponent(() => import('primevue/textarea'))
+const FileUpload = defineAsyncComponent(() => import('primevue/fileupload'))
 
 const { mutate: createMutate } = useCreateForumPostMutation(props.forumId)
+const { mutate: createPresignedMutate } = useUploadAttachment(props.forumId)
 
-const formData = reactive({
+const formData = reactive<{
+  visible: boolean
+  title: string
+  richContent: string
+  files: { id: string; name: string }[]
+}>({
   visible: false,
   title: '',
   richContent: '',
+  files: [],
 })
 
 function createPost() {
   formData.visible = false
-  createMutate(formData, {
+  createMutate({
+    ...formData,
+    attachments: formData.files.map(({ id }) => id),
+  }, {
     onError(err) {
       toast.add({
         severity: 'error',
@@ -34,6 +44,19 @@ function createPost() {
     onSettled() {
       formData.title = ''
       formData.richContent = ''
+    },
+  })
+}
+
+function uploader({ files }: { files: File | File[] }) {
+  createPresignedMutate(Array.isArray(files) ? files : [files], {
+    onSuccess(data, files) {
+      data.forEach((file, idx) => {
+        formData.files.push({
+          id: file.id,
+          name: files[idx].name,
+        })
+      })
     },
   })
 }
@@ -65,16 +88,10 @@ function createPost() {
       </div>
 
       <div class="flex flex-col gap-2">
-        <!-- <Textarea
-          id="content" v-model="formData.richContent" :rows="5" :pt="{
-            root: {
-              class: 'bg-transparent border-none! outline-none! shadow-none! border-none! p0! py-0.75rem',
-            },
-          }" :required="true" placeholder="Add some content..." aria-describedby="content-help"
-        /> -->
-        <!-- <small id="content-help" class="sr-only">Enter the content for the post</small> -->
+        <ForumTiptapEditor v-model="formData.richContent" placeholder="Some content here!" />
+        <FileUpload mode="basic" name="files[]" accept="image/*" :max-file-size="1000000" choose-label="Add attachment" auto custom-upload multiple @uploader="uploader" />
 
-        <ForumTiptapEditor />
+        <Button v-for="file in formData.files" :key="file.id" size="small" :label="file.name" class="mt-2" />
       </div>
 
       <div mt6>

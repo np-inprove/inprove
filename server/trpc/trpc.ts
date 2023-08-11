@@ -35,7 +35,7 @@ const authMiddleware = t.middleware(async ({ next, ctx, meta }) => {
     throw new TRPCError({ code: 'UNAUTHORIZED' })
 
   if (meta?.admin && !user.admin)
-    throw new TRPCError({ code: 'UNAUTHORIZED' })
+    throw new TRPCError({ code: 'FORBIDDEN' })
 
   // If user is logged in, replace original session data with user session.
   // Modifying session data is usually not done.

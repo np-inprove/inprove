@@ -21,3 +21,12 @@ export function useCreateQuizMutation(groupId: string) {
     },
   })
 }
+
+export function useQuestions(groupId: string, quizId: string) {
+  const { $client } = useNuxtApp()
+
+  return useQuery({
+    queryKey: ['question', 'list', groupId, quizId],
+    queryFn: () => $client.quiz.listQuestions.query({ groupId, quizId }),
+  })
+}

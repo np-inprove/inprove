@@ -30,3 +30,15 @@ export function useCreateGroupMutation() {
     },
   })
 }
+
+export function useDeleteGroupMutation(groupId: string) {
+  const { $client } = useNuxtApp()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: () => $client.group.delete.mutate({ groupId }),
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ['group', 'list'] })
+    },
+  })
+}

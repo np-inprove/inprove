@@ -25,12 +25,16 @@ const { data, isLoading, error } = useQuizzes(props.groupId)
             <CardDescription>{{ quiz.description }}</CardDescription>
           </div>
           <div className="flex items-center space-x-1 rounded-md">
-            <Button outlined size="small">
-              Edit
-            </Button>
-            <Button size="small">
-              Attempt
-            </Button>
+            <NuxtLink prefetch :to="`/dashboard/${props.groupId}/quizzes/${quiz.id}/edit`">
+              <Button outlined size="small">
+                Edit
+              </Button>
+            </NuxtLink>
+            <NuxtLink prefetch :to="`/dashboard/${props.groupId}/quizzes/${quiz.id}/attempt`">
+              <Button size="small">
+                Attempt
+              </Button>
+            </NuxtLink>
           </div>
         </CardHeader>
       </Card>

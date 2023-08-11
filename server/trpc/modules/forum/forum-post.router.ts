@@ -1,11 +1,14 @@
 import { TRPCError } from '@trpc/server'
 import isBefore from 'date-fns/isBefore/index.js'
 import endOfYesterday from 'date-fns/endOfYesterday/index.js'
+import { PutObjectCommand } from '@aws-sdk/client-s3'
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
+import { createId } from '@paralleldrive/cuid2'
 import { defaultUserSelect } from '../user/user.select'
 import { defaultForumPostSelect } from './forum-post.select'
 import { defaultForumPostReactionSelect } from './forum-post-reaction.select'
 import { protectedProcedure, router } from '~/server/trpc/trpc'
-import { baseForumPostInput, createForumPostInput, getForumPostInput, listForumPostInput, reactForumPostInput } from '~/shared/forum-post'
+import { baseForumPostInput, createAttachmentPresignedUrlInput, createForumPostInput, getForumPostInput, listForumPostInput, reactForumPostInput } from '~/shared/forum-post'
 
 const userIsInGroup = protectedProcedure
   .input(baseForumPostInput)
@@ -27,7 +30,7 @@ const userIsInGroup = protectedProcedure
       // TODO caught locally
       if (group === null) {
         throw new TRPCError({
-          code: 'UNAUTHORIZED',
+          code: 'FORBIDDEN',
         })
       }
 
@@ -141,6 +144,11 @@ export const forumPostRouter = router({
 
             title: input.title,
             richContent: input.richContent,
+            attachments: {
+              connect: input.attachments?.map(id => ({
+                id,
+              })),
+            },
           },
           select: defaultForumPostSelect,
         })
@@ -241,4 +249,39 @@ export const forumPostRouter = router({
       }
     }),
 
+  createAttachmentPresignedUrl: userIsInGroup
+    .input(createAttachmentPresignedUrlInput)
+    .mutation(async ({ ctx, input }) => {
+      try {
+        return await ctx.prisma.$transaction(async (prisma) => {
+          return await Promise.all(input.files.map(async (file) => {
+            const id = createId()
+            const key = `${useRuntimeConfig().r2.folderNames.forum}/${id}-${file.name}`
+            const url = `https://${useRuntimeConfig().r2.accountId}.r2.cloudflarestorage.com/${useRuntimeConfig().r2.bucketName}/${key}`
+            await prisma.forumPostAttachment.create({
+              data: { id: key, url },
+            })
+
+            return {
+              id,
+              presignedUrl: await getSignedUrl(ctx.storage, new PutObjectCommand({
+                Bucket: useRuntimeConfig().r2.bucketName,
+                Key: key,
+                ACL: 'public-read',
+                ContentType: file.contentType,
+              }), {
+                expiresIn: 60 * 5, // 5 minutes
+              }),
+            }
+          }))
+        })
+      }
+      catch (err) {
+        ctx.logger.error({ msg: 'failed to create attachment presigned url', err })
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to create attachment presigned url',
+        })
+      }
+    }),
 })

@@ -1,9 +1,10 @@
 import { TRPCError } from '@trpc/server'
 import { GroupRole, InstitutionRole } from '@prisma/client'
-import { assertInstitutionRole } from '../rbac'
+import { assertGroupRole, assertInstitutionRole } from '../rbac'
 import { defaultGroupSelect } from './group.select'
 import { defaultGroupUsersSelect } from './group-users.select'
 import { groupUsersRouter } from './group-users.router'
+import { groupInviteRouter } from './group-invite.router'
 import { protectedProcedure, router } from '~/server/trpc/trpc'
 import { createGroupInput, getGroupInput } from '~/shared/group'
 
@@ -94,7 +95,7 @@ export const groupRouter = router({
 
       if (groupUser === null) {
         throw new TRPCError({
-          code: 'UNAUTHORIZED',
+          code: 'FORBIDDEN',
           message: 'User does not have sufficient permissions.',
         })
       }
@@ -132,5 +133,54 @@ export const groupRouter = router({
       }
     }),
 
+  delete: protectedProcedure
+    .input(getGroupInput)
+    // Check whether user is in group
+    .use(async ({ next, ctx, input }) => {
+      const groupUser = await ctx.prisma.groupUsers.findUnique({
+        where: {
+          groupId_userId: {
+            userId: ctx.session.user.id,
+            groupId: input.groupId,
+          },
+        },
+        select: defaultGroupUsersSelect,
+      })
+
+      if (groupUser === null) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'User does not have sufficient permissions.',
+        })
+      }
+
+      assertGroupRole(groupUser, GroupRole.Owner, GroupRole.Educator)
+
+      return next({
+        ctx: {
+          groupUser,
+        },
+      })
+    })
+    .mutation(async ({ ctx, input }) => {
+      try {
+        await ctx.prisma.group.delete({
+          where: {
+            id: input.groupId,
+          },
+        })
+      }
+      catch (err) {
+        ctx.logger.error({ msg: 'failed to delete group', err })
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to delete group',
+        })
+      }
+    }),
+
+  // TODO should rename to singular fof consistency
   users: groupUsersRouter,
+  // TODO should rename to singular for consistency
+  invites: groupInviteRouter,
 })

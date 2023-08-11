@@ -9,6 +9,7 @@ const props = withDefaults(defineProps<{
 
 const emit = defineEmits([
   'logout',
+  'settings',
 ])
 
 const Menu = defineAsyncComponent(() => import('primevue/menu'))
@@ -18,13 +19,21 @@ const menu = ref()
 
 const menuItems = [
   {
+    label: 'Settings',
+    command: settings,
+  },
+  {
     label: 'Logout',
     command: logout,
   },
 ]
 
-async function logout() {
+function logout() {
   emit('logout')
+}
+
+function settings() {
+  emit('settings')
 }
 
 function toggle(event: any) {
