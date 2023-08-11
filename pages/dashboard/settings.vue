@@ -4,6 +4,7 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import { formatRelative } from 'date-fns'
 
+// TODO yes, proper loading, etc.
 const { data: redeemed, isLoading: redeemedIsLoading } = useRedeemedVouchers()
 
 const relativeRedeemed = computed(() => {

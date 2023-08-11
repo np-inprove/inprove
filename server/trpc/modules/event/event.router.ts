@@ -29,7 +29,7 @@ const userIsInGroup = protectedProcedure
       // TODO caught locally
       if (group === null) {
         throw new TRPCError({
-          code: 'UNAUTHORIZED',
+          code: 'FORBIDDEN',
         })
       }
 
@@ -226,7 +226,7 @@ export const eventRouter = router({
 
   //     if (deadline.authorId !== ctx.session.user.id) {
   //       throw new TRPCError({
-  //         code: 'UNAUTHORIZED',
+  //         code: 'FORBIDDEN',
   //       })
   //     }
 
@@ -270,7 +270,7 @@ export const eventRouter = router({
 
   //     if (deadline.authorId !== ctx.session.user.id) {
   //       throw new TRPCError({
-  //         code: 'UNAUTHORIZED',
+  //         code: 'FORBIDDEN',
   //       })
   //     }
 

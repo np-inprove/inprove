@@ -13,21 +13,21 @@ import type { DefaultGroupUsers } from './group/group-users.select'
 export function assertInstitutionRole(user: DefaultUser, ...roles: InstitutionRole[]): void {
   if (!user.institution?.id) {
     throw new TRPCError({
-      code: 'UNAUTHORIZED',
+      code: 'FORBIDDEN',
       message: 'User does not have sufficient permissions.',
     })
   }
 
   if (!user.institutionRole) {
     throw new TRPCError({
-      code: 'UNAUTHORIZED',
+      code: 'FORBIDDEN',
       message: 'User does not have sufficient permissions.',
     })
   }
 
   if (!roles.includes(user.institutionRole)) {
     throw new TRPCError({
-      code: 'UNAUTHORIZED',
+      code: 'FORBIDDEN',
       message: 'User does not have sufficient permissions.',
     })
   }
@@ -36,7 +36,7 @@ export function assertInstitutionRole(user: DefaultUser, ...roles: InstitutionRo
 export function assertGroupRole(groupUser: DefaultGroupUsers, ...roles: GroupRole[]) {
   if (!roles.includes(groupUser.role)) {
     throw new TRPCError({
-      code: 'UNAUTHORIZED',
+      code: 'FORBIDDEN',
       message: 'User does not have sufficient permissions.',
     })
   }
