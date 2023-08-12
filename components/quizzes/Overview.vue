@@ -7,11 +7,7 @@ const props = defineProps<{
   groupId: string
 }>()
 
-const { $client } = useNuxtApp()
-
-const { data, isLoading, error } = useQuery(group.details(props.groupId)._ctx.quizzes)
-
-// const { data, isLoading, error } = useQuizzes(props.groupId)
+const { data, isLoading, error } = useQuery(queries.quizzes.list(props.groupId))
 </script>
 
 <template>

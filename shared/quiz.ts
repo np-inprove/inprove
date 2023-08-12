@@ -7,7 +7,7 @@ export const baseQuizInput = z.object({
 
 export const listQuizzesInput = baseQuizInput.extend({})
 
-export const getQuizInput = baseQuizInput.extend({
+export const getQuizInput = z.object({
   quizId: z.string().cuid(),
 })
 
@@ -30,6 +30,7 @@ export type ListQuestionsInput = z.infer<typeof listQuestionsInput>
 
 // Add question
 export const baseAddQuestionInput = baseQuestionInput.extend({
+  id: z.string().cuid().optional(),
   content: z.string().min(1),
   description: z.string(),
   points: z.number().min(1),

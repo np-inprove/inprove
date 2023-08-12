@@ -2,7 +2,7 @@
 import Divider from 'primevue/divider'
 
 const route = useRoute()
-const { data: group } = useGroup(route.params.groupId as string)
+const { data: group } = useQuery(queries.groups.details(route.params.groupId as string))
 
 const items = computed(() => [
   {

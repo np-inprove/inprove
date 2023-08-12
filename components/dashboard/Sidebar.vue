@@ -25,7 +25,7 @@ const config = useRuntimeConfig()
 const { $client } = useNuxtApp()
 
 const { data: me, isLoading: meIsLoading } = useQuery(queries.me.info)
-const { data: groups, isLoading: groupsIsLoading } = useGroups()
+const { data: groups, isLoading: groupsIsLoading } = useQuery(queries.groups.list)
 
 const sidebarItems = computed(() => {
   const base = [

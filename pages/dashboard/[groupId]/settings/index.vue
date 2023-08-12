@@ -12,8 +12,8 @@ import { useToast } from 'primevue/usetoast'
 const route = useRoute()
 const toast = useToast()
 
-const { mutate: createMutate } = useCreateGroupInviteMutation(route.params.groupId as string)
-const { mutate: deleteMutate } = useDeleteGroupInviteMutation(route.params.groupId as string)
+const { mutate: createMutate } = useCreateGroupInviteMutation()
+const { mutate: deleteMutate } = useDeleteGroupInviteMutation()
 
 const menu = ref()
 const menuItems = [
@@ -22,6 +22,7 @@ const menuItems = [
     command: () => {
       createMutate({
         role: 'Owner',
+        groupId: route.params.groupId as string,
       })
     },
   },
@@ -30,6 +31,7 @@ const menuItems = [
     command: () => {
       createMutate({
         role: 'Educator',
+        groupId: route.params.groupId as string,
       })
     },
   },
@@ -38,16 +40,18 @@ const menuItems = [
     command: () => {
       createMutate({
         role: 'Member',
+        groupId: route.params.groupId as string,
       })
     },
   },
 ]
 
-const { data: invites, isLoading: invitesIsLoading, error: invitesError } = useGroupInvites(route.params.groupId as string)
+const { data: invites, isLoading: invitesIsLoading, error: invitesError } = useQuery(queries.groupInvites.list(route.params.groupId as string))
 
 function deleteInvite(id: string) {
   deleteMutate({
     inviteId: id,
+    groupId: route.params.groupId as string,
   })
 }
 

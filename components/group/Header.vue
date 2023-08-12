@@ -11,7 +11,7 @@ const Menu = defineAsyncComponent(() => import('primevue/menu'))
 const { visible } = useSidebar()
 
 const menu = ref()
-const { data: group, isLoading: groupIsLoading } = useGroup(props.groupId)
+const { data: group, isLoading: groupIsLoading } = useQuery(queries.groups.details(props.groupId))
 
 function openMenu(event: any) {
   menu.value?.toggle(event)

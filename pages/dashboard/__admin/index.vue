@@ -15,7 +15,7 @@ const Dialog = defineAsyncComponent(() => import('primevue/dialog'))
 const toast = useToast()
 const router = useRouter()
 
-const { data: institutions, isLoading: institutionsIsLoading, error: institutionsError } = useInstitutions()
+const { data: institutions, isLoading: institutionsIsLoading, error: institutionsError } = useQuery(queries.institutions.list)
 
 const { mutate: createMutate } = useCreateInstitutionMutation()
 const { mutate: deleteMutate } = useDeleteInstitutionMutation()
