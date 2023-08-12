@@ -1,20 +1,27 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
+import { createQueryKeys } from '@lukemorales/query-key-factory'
 import type { CreateQuizInput } from 'shared/quiz'
 
-const queryKeys = {
-  all: ['quizzes'] as const,
-}
+export const group = createQueryKeys('group', {
+  details: (groupId: string) => ({
+    queryKey: [groupId],
+    queryFn: () => {
+      const { $client } = useNuxtApp()
+      return $client.group.get.query({ groupId })
+    },
+    contextQueries: {
+      quizzes: {
+        queryKey: null,
+        queryFn: () => {
+          const { $client } = useNuxtApp()
+          return $client.quiz.list.query({ groupId })
+        },
+      },
+    },
+  }),
+})
 
 export function useQuizzes(groupId: string) {
-  const { $client } = useNuxtApp()
-
-  return useQuery({
-    queryKey: ['quiz', 'list'],
-    queryFn: () => $client.quiz.list.query({ groupId }),
-  })
-}
-
-export function useQuiz(groupId: string, quizId: string) {
   const { $client } = useNuxtApp()
 
   return useQuery({

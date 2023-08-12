@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useQuery } from '@tanstack/vue-query'
 import Button from 'primevue/button'
 import Skeleton from 'primevue/skeleton'
 
@@ -6,7 +7,11 @@ const props = defineProps<{
   groupId: string
 }>()
 
-const { data, isLoading, error } = useQuizzes(props.groupId)
+const { $client } = useNuxtApp()
+
+const { data, isLoading, error } = useQuery(group.details(props.groupId)._ctx.quizzes)
+
+// const { data, isLoading, error } = useQuizzes(props.groupId)
 </script>
 
 <template>

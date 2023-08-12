@@ -7,6 +7,10 @@ export const baseQuizInput = z.object({
 
 export const listQuizzesInput = baseQuizInput.extend({})
 
+export const getQuizInput = baseQuizInput.extend({
+  quizId: z.string().cuid(),
+})
+
 export type ListQuizInput = z.infer<typeof listQuizzesInput>
 
 export const createQuizInput = baseQuizInput.extend({

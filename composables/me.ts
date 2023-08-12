@@ -1,10 +1,15 @@
-import { useQuery } from '@tanstack/vue-query'
+import { createQueryKeys } from '@lukemorales/query-key-factory'
+
+export const meQueries = createQueryKeys('me', {
+  info: {
+    queryKey: null,
+    queryFn: () => {
+      const { $client } = useNuxtApp()
+      return $client.me.get.query()
+    },
+  },
+})
 
 export function useMe() {
-  const { $client } = useNuxtApp()
-
-  return useQuery({
-    queryKey: ['me'],
-    queryFn: () => $client.me.get.query(),
-  })
+  return useQuery(meQueries.info)
 }
