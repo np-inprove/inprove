@@ -3,7 +3,7 @@ import Button from 'primevue/button'
 import Skeleton from 'primevue/skeleton'
 
 const { data: vouchers, isLoading: vouchersIsloading, error: vouchersError } = useVouchers()
-const { data: me } = useMe()
+const { data: me } = useQuery(queries.me.info)
 
 const { mutate: redeemMutate } = useRedeemVoucher()
 

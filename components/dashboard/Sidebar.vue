@@ -24,7 +24,7 @@ const menu = ref()
 const config = useRuntimeConfig()
 const { $client } = useNuxtApp()
 
-const { data: me, isLoading: meIsLoading } = useMe()
+const { data: me, isLoading: meIsLoading } = useQuery(queries.me.info)
 const { data: groups, isLoading: groupsIsLoading } = useGroups()
 
 const sidebarItems = computed(() => {

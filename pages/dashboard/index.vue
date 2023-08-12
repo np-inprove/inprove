@@ -5,7 +5,7 @@ import ScrollPanel from 'primevue/scrollpanel'
 import endOfToday from 'date-fns/endOfToday/index'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow/index'
 
-const { data: me, error: meError } = useMe()
+const { data: me, error: meError } = useQuery(queries.me.info)
 
 const greeting = computed(() => {
   const hour = new Date().getHours()

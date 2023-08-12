@@ -28,6 +28,15 @@ export default defineNuxtConfig({
     strict: true,
   },
 
+  imports: {
+    presets: [
+      {
+        from: '@tanstack/vue-query',
+        imports: ['useQuery', 'useMutation'],
+      },
+    ],
+  },
+
   build: {
     transpile: [
       'primevue',

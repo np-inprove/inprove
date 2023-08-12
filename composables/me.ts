@@ -1,5 +1,4 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
-import { useQuery } from '@tanstack/vue-query'
 
 export const meQueries = createQueryKeys('me', {
   info: {
@@ -10,7 +9,3 @@ export const meQueries = createQueryKeys('me', {
     },
   },
 })
-
-export function useMe() {
-  return useQuery(meQueries.info)
-}

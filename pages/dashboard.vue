@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const Sidebar = defineAsyncComponent(() => import('primevue/sidebar'))
 
-const { data: me, status: meStatus, refetch } = useMe()
+const { data: me, status: meStatus, refetch } = useQuery(queries.me.info)
 const { error: groupsError } = useGroups()
 
 const { visible } = useSidebar()
