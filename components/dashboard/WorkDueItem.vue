@@ -13,7 +13,7 @@ const props = defineProps<{
   }[]
 }>()
 
-const { data: me } = useMe()
+const { data: me } = useQuery(queries.me.info)
 const { mutate: toggleVoteMutate } = useToggleVoteDeadlineMutation(props.groupId)
 
 const upvotedByUser = computed(() => {

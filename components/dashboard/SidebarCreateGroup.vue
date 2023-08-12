@@ -6,7 +6,7 @@ const Textarea = defineAsyncComponent(() => import('primevue/textarea'))
 const InputText = defineAsyncComponent(() => import('primevue/inputtext'))
 
 const { mutate, isLoading } = useCreateGroupMutation()
-const { data: me } = useMe()
+const { data: me } = useQuery(queries.me.info)
 
 const formData = reactive({
   visible: false,
