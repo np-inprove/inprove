@@ -1,53 +1,45 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
+import { createQueryKeys } from '@lukemorales/query-key-factory'
+import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import type { CreateGroupInviteInput, DeleteGroupInviteInput } from '~/shared/group-invite'
 
-export function useGroupInvites(groupId?: string) {
-  const { $client } = useNuxtApp()
+export const groupInviteQueries = createQueryKeys('groupInvites', {
+  list: (groupId: string) => ({
+    queryKey: [groupId],
+    queryFn: () => {
+      const { $client } = useNuxtApp()
+      return $client.group.invites.list.query({ groupId })
+    },
+  }),
 
-  return useQuery({
-    queryKey: ['group', 'invites', 'list', { groupId }],
-    queryFn: () => $client.group.invites.list.query({ groupId: groupId! }),
-    enabled: !!groupId,
-  })
-}
+  details: (inviteId: string) => ({
+    queryKey: [inviteId],
+    queryFn: () => {
+      const { $client } = useNuxtApp()
+      return $client.group.invites.get.query({ inviteId })
+    },
+  }),
+})
 
-export function useGroupInvite(inviteId?: string) {
-  const { $client } = useNuxtApp()
-
-  return useQuery({
-    queryKey: ['group', 'invites', 'get', { inviteId }],
-    queryFn: () => $client.group.invites.get.query({ inviteId: inviteId! }),
-    enabled: !!inviteId,
-  })
-}
-
-export function useCreateGroupInviteMutation(groupId: string) {
+export function useCreateGroupInviteMutation() {
   const { $client } = useNuxtApp()
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (invite: Omit<CreateGroupInviteInput, 'groupId'>) =>
-      $client.group.invites.create.mutate({
-        ...invite,
-        groupId,
-      }),
-    onSuccess() {
-      queryClient.invalidateQueries({ queryKey: ['group', 'invites', 'list', { groupId }] })
+    mutationFn: (invite: CreateGroupInviteInput) => $client.group.invites.create.mutate(invite),
+    onSuccess(_, vars) {
+      queryClient.invalidateQueries({ queryKey: groupInviteQueries.list(vars.groupId).queryKey })
     },
   })
 }
 
-export function useDeleteGroupInviteMutation(groupId: string) {
+export function useDeleteGroupInviteMutation() {
   const { $client } = useNuxtApp()
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (invite: Omit<DeleteGroupInviteInput, 'groupId'>) => $client.group.invites.delete.mutate({
-      ...invite,
-      groupId,
-    }),
-    onSuccess() {
-      queryClient.invalidateQueries({ queryKey: ['group', 'invites', 'list', { groupId }] })
+    mutationFn: (invite: DeleteGroupInviteInput) => $client.group.invites.delete.mutate(invite),
+    onSuccess(_, vars) {
+      queryClient.invalidateQueries({ queryKey: groupInviteQueries.list(vars.groupId).queryKey })
     },
   })
 }

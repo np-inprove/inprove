@@ -12,8 +12,8 @@ import { useToast } from 'primevue/usetoast'
 const route = useRoute()
 const toast = useToast()
 
-const { mutate: createMutate } = useCreateInstitutionInviteMutation(route.query.institutionId as string)
-const { mutate: deleteMutate } = useDeleteInstitutionInviteMutation(route.query.institutionId as string)
+const { mutate: createMutate } = useCreateInstitutionInviteMutation()
+const { mutate: deleteMutate } = useDeleteInstitutionInviteMutation()
 
 const menu = ref()
 const menuItems = [
@@ -22,6 +22,7 @@ const menuItems = [
     command: () => {
       createMutate({
         role: 'Admin',
+        institutionId: route.query.institutionId as string,
       })
     },
   },
@@ -30,6 +31,7 @@ const menuItems = [
     command: () => {
       createMutate({
         role: 'Educator',
+        institutionId: route.query.institutionId as string,
       })
     },
   },
@@ -38,16 +40,18 @@ const menuItems = [
     command: () => {
       createMutate({
         role: 'Member',
+        institutionId: route.query.institutionId as string,
       })
     },
   },
 ]
 
-const { data: invites, isLoading: invitesIsLoading, error: invitesError } = useInstitutionInvites(route.query.institutionId as string)
+const { data: invites, isLoading: invitesIsLoading, error: invitesError } = useQuery(queries.institutionInvites.list(route.query.institutionId as string))
 
 function deleteInvite(id: string) {
   deleteMutate({
     inviteId: id,
+    institutionId: route.query.institutionId as string,
   })
 }
 

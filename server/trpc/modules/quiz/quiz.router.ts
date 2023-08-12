@@ -63,8 +63,31 @@ export const quizRouter = router({
       }
     }),
 
-  get: userIsInGroup
+  get: protectedProcedure
     .input(getQuizInput)
+    .use(async ({ next, ctx, input }) => {
+      const quiz = await ctx.prisma.quiz.findUnique({
+        where: {
+          id: input.quizId,
+          group: {
+            users: {
+              some: {
+                userId: ctx.session.user.id,
+              },
+            },
+          },
+        },
+      })
+
+      if (quiz === null)
+        throw new TRPCError({ code: 'NOT_FOUND' })
+
+      return next({
+        ctx: {
+          quiz,
+        },
+      })
+    })
     .query(async ({ ctx, input }) => {
       try {
         return await ctx.prisma.quiz.findUnique({
@@ -160,8 +183,19 @@ export const quizRouter = router({
     .mutation(async ({ ctx, input }) => {
       try {
         return await ctx.prisma.$transaction(async (prisma) => {
-          const qn = await prisma.question.create({
-            data: {
+          // TODO bulk upsert qns create / update if does not exist so client can have keep state and send one shot
+          const qn = await prisma.question.upsert({
+            where: {
+              id: input.id,
+            },
+            update: {
+              content: input.content,
+              description: input.description,
+              points: input.points,
+              type: input.type,
+              quizId: input.quizId,
+            },
+            create: {
               content: input.content,
               description: input.description,
               points: input.points,

@@ -3,7 +3,7 @@ import ScrollPanel from 'primevue/scrollpanel'
 
 const route = useRoute()
 
-const { error: groupError } = useGroup(route.params.groupId as string)
+const { error: groupError } = useQuery(queries.groups.details(route.params.groupId as string))
 const { error: forumsError } = useForums(route.params.groupId as string)
 </script>
 
