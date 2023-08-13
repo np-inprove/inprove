@@ -4,7 +4,6 @@ import Button from 'primevue/button'
 import { TRPCClientError } from '@trpc/client'
 
 const route = useRoute()
-const config = useRuntimeConfig()
 const { $client } = useNuxtApp()
 
 useSeoMeta({
