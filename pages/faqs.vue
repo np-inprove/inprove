@@ -1,12 +1,6 @@
 <script setup lang="ts">
-import Button from 'primevue/button'
 import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
-
-const { $client } = useNuxtApp()
-const config = useRuntimeConfig()
-
-const { data: me } = await $client.me.get.useQuery(undefined, { lazy: true })
 
 interface Faq {
   title: string
@@ -42,25 +36,8 @@ const faqs = [
 </script>
 
 <template>
-  <div w-full items-center>
-    <header
-      class="h-24 flex items-center justify-between bg-$surface-section"
-    >
-      <NuxtLink to="/">
-        <span class="font-semibold">{{ config.public.appName }}</span>
-      </NuxtLink>
-
-      <NuxtLink to="/about-us">
-        About Us
-      </NuxtLink>
-
-      <NuxtLink to="/faqs">
-        FAQs
-      </NuxtLink>
-
-      <Button v-if="me" label="Dashboard" @click="$router.push('dashboard')" />
-      <Button v-else label="Login" @click="$router.push('login')" />
-    </header>
+  <div class="mx-auto px-6 container">
+    <NavBar />
     <main>
       <h1 p-5 text-center text-3xl>
         Frequently Asked Questions
