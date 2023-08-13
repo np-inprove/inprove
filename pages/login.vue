@@ -72,21 +72,8 @@ async function verifyOtp() {
 </script>
 
 <template>
-  <div>
-    <header class="h-24 flex items-center justify-between p-6 lg:px-30">
-      <NuxtLink to="/">
-        <span class="font-semibold">{{ config.public.appName }}</span>
-      </NuxtLink>
-
-      <NuxtLink to="/about-us">
-        About Us
-      </NuxtLink>
-
-      <NuxtLink to="/faqs">
-        FAQs
-      </NuxtLink>
-    </header>
-
+  <div class="mx-auto px-6 container">
+    <NavBar />
     <main>
       <div grid grid-cols-1 md:grid-cols-2 lg:py-20>
         <div mx-auto max-w-lg w-full p-10>
