@@ -59,7 +59,16 @@ const sidebarItems = computed(() => {
 
 const groupContextMenu = computed(() => {
   return [
-    { label: 'Settings' },
+    {
+      label: 'Quizzes',
+      icon: 'i-tabler-bulb-filled',
+      to: `/dashboard/${selectedGroupId.value}/quizzes`,
+    },
+    {
+      label: 'Settings',
+      icon: 'i-tabler-settings',
+      to: `/dashboard/${selectedGroupId.value}/settings`,
+    },
   ]
 })
 
@@ -73,7 +82,8 @@ async function settings() {
   await navigateTo('/dashboard/settings')
 }
 
-function openContextMenu(event: any) {
+function openContextMenu(groupId: string, event: any) {
+  selectedGroupId.value = groupId
   menu.value.show(event)
 }
 </script>
@@ -114,14 +124,14 @@ function openContextMenu(event: any) {
       <ContextMenu ref="menu" :model="groupContextMenu" />
 
       <Skeleton v-if="groupsIsLoading" height="100%" width="100%" />
-      <ScrollPanel v-else style="height: 100%; padding-right: 16px;">
+      <ScrollPanel v-else style="height: 100%;">
         <TransitionGroup appear>
           <NuxtLink
             v-for="group in groups"
             :key="group.id" prefetch :to="`/dashboard/${group.id}`"
             :class="{ 'bg-$highlight-bg text-$highlight-text-color hover:no-underline': $route.params.groupId === group.id }"
             class="mt2 w-full inline-flex cursor-pointer items-center justify-start gap2 rounded-md px-4 py-2 font-normal transition-colors disabled:pointer-events-none hover:bg-$highlight-bg font-medium! hover:text-$highlight-text-color hover:underline disabled:opacity-50 focus-visible:outline-none focus-visible:ring-1"
-            @contextmenu="openContextMenu"
+            @contextmenu="(event) => openContextMenu(group.id, event)"
           >
             {{ group.name }}
           </NuxtLink>
