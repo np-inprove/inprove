@@ -1,53 +1,78 @@
 <script setup lang="ts">
 import { EditorContent, useEditor } from '@tiptap/vue-3'
+
 import StarterKit from '@tiptap/starter-kit'
 import Image from '@tiptap/extension-image'
+import Link from '@tiptap/extension-link'
+import Placeholder from '@tiptap/extension-placeholder'
+import FloatingMenu from '@tiptap/extension-floating-menu'
+
+interface Props {
+  editable?: boolean
+  placeholder?: string
+  class?: string
+  disableProse?: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  editable: true,
+})
+
+const { $cn } = useNuxtApp()
+
+const model = defineModel<string>({ required: false })
 
 const editor = useEditor({
-  content: '<p>Some content here!</p>',
   extensions: [
     StarterKit,
     Image,
+    Link,
+    FloatingMenu,
+    Placeholder.configure({
+      placeholder: props.placeholder,
+    }),
   ],
+  editable: props.editable,
+  content: model.value,
+  onUpdate() {
+    model.value = editor.value?.getHTML()
+  },
   editorProps: {
     attributes: {
-      class: 'prose text-base mx-auto focus:outline-none',
-    },
-    async handleDrop(view, event, slice, moved) {
-      if (!moved && event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0]) { // if dropping external files
-        const file = event.dataTransfer.files[0] // the dropped file
-        const filesize = ((file.size / 1024) / 1024).toFixed(4) // get the filesize in MB
-        if ((file.type === 'image/jpeg' || file.type === 'image/png') && filesize < 10) { // check valid image type under 10MB
-          const _URL = window.URL || window.webkitURL
-          const img = new Image()
-          img.src = _URL.createObjectURL(file)
-          img.onload = function () {
-            if (this.width > 5000 || this.height > 5000) {
-              window.alert('Your images need to be less than 5000 pixels in height and width.') // display alert
-            }
-            else {
-              try {
-                // uploadImage(file)
-                alert('Not implemented :()')
-              }
-              catch (err) {
-                if (err)
-                  window.alert('There was a problem uploading your image, please try again.')
-              }
-            }
-          }
-        }
-        else {
-          window.alert('Images need to be in jpg or png format and less than 10mb in size.')
-        }
-        return true // handled
-      }
-      return false // not handled use default behaviour
+      class: $cn(
+        {
+          'prose text-base': !props.disableProse,
+        },
+        'focus:outline-none',
+        props.class,
+      ),
     },
   },
+})
+
+watch(model, (value) => {
+  const isSame = editor.value?.getHTML() === value
+
+  if (isSame)
+    return
+
+  // TODO value may be null but is never null
+  editor.value?.commands.setContent(value!, false)
 })
 </script>
 
 <template>
-  <EditorContent :editor="editor" />
+  <div>
+    <EditorContent :editor="editor" />
+  </div>
 </template>
+
+<style scoped>
+:deep(.ProseMirror p.is-editor-empty:first-child::before) {
+  color: #adb5bd;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+</style>

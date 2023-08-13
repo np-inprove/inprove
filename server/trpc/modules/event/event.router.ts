@@ -29,7 +29,7 @@ const userIsInGroup = protectedProcedure
       // TODO caught locally
       if (group === null) {
         throw new TRPCError({
-          code: 'UNAUTHORIZED',
+          code: 'FORBIDDEN',
         })
       }
 
@@ -74,19 +74,13 @@ export const eventRouter = router({
         const events = await ctx.prisma.event.findMany({
           where: {
             groupId: input.groupId,
-            OR: [
-              {
-                startTime: {
-                  gt: today,
-                  lt: addDays(input.date ?? today, 3),
-                },
-              },
-              {
-                endTime: {
-                  lt: addDays(input.date ?? today, 3),
-                },
-              },
-            ],
+            startTime: {
+              gt: today,
+              lt: addDays(input.date ?? today, 3),
+            },
+            endTime: {
+              gt: input.date ?? today,
+            },
             rrule: null,
           },
           select: defaultEventSelect,
@@ -232,7 +226,7 @@ export const eventRouter = router({
 
   //     if (deadline.authorId !== ctx.session.user.id) {
   //       throw new TRPCError({
-  //         code: 'UNAUTHORIZED',
+  //         code: 'FORBIDDEN',
   //       })
   //     }
 
@@ -276,7 +270,7 @@ export const eventRouter = router({
 
   //     if (deadline.authorId !== ctx.session.user.id) {
   //       throw new TRPCError({
-  //         code: 'UNAUTHORIZED',
+  //         code: 'FORBIDDEN',
   //       })
   //     }
 

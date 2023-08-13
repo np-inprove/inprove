@@ -1,24 +1,16 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
-import type { AcceptInstitutionInviteInput, CreateInstitutionInput, CreateInstitutionInviteInput, DeleteInstitutionInput, DeleteInstitutionInviteInput, UpdateInstitutionInput } from '~/shared/institution'
-import type { DefaultUser, TRPCClientError } from '~/shared/types'
+import { createQueryKeys } from '@lukemorales/query-key-factory'
+import { useMutation, useQueryClient } from '@tanstack/vue-query'
+import type { AcceptInstitutionInviteInput, CreateInstitutionInput, DeleteInstitutionInput, UpdateInstitutionInput } from '~/shared/institution'
 
-export function useInstitutions() {
-  const { $client } = useNuxtApp()
-
-  return useQuery({
-    queryKey: ['institution', 'list'],
-    queryFn: () => $client.institution.list.query(),
-  })
-}
-
-export function useInstitutionInvites(institutionId: string) {
-  const { $client } = useNuxtApp()
-
-  return useQuery({
-    queryKey: ['institutionInvite', institutionId],
-    queryFn: () => $client.institutionInvite.list.query({ institutionId }),
-  })
-}
+export const institutionQueries = createQueryKeys('institutions', {
+  list: {
+    queryKey: null,
+    queryFn: () => {
+      const { $client } = useNuxtApp()
+      return $client.institution.list.query()
+    },
+  },
+})
 
 export function useCreateInstitutionMutation() {
   const { $client } = useNuxtApp()
@@ -27,7 +19,7 @@ export function useCreateInstitutionMutation() {
   return useMutation({
     mutationFn: (institution: CreateInstitutionInput) => $client.institution.create.mutate(institution),
     onSuccess() {
-      queryClient.invalidateQueries({ queryKey: ['institution', 'list'] })
+      queryClient.invalidateQueries({ queryKey: institutionQueries.list.queryKey })
     },
   })
 }
@@ -39,7 +31,7 @@ export function useUpdateInstitutionMutation() {
   return useMutation({
     mutationFn: (institution: UpdateInstitutionInput) => $client.institution.update.mutate(institution),
     onSuccess() {
-      queryClient.invalidateQueries({ queryKey: ['institution', 'list'] })
+      queryClient.invalidateQueries({ queryKey: institutionQueries.list.queryKey })
     },
   })
 }
@@ -51,7 +43,7 @@ export function useDeleteInstitutionMutation() {
   return useMutation({
     mutationFn: (institution: DeleteInstitutionInput) => $client.institution.delete.mutate(institution),
     onSuccess() {
-      queryClient.invalidateQueries({ queryKey: ['institution', 'list'] })
+      queryClient.invalidateQueries({ queryKey: institutionQueries.list.queryKey })
     },
   })
 }
@@ -61,45 +53,10 @@ export function useAcceptInstitutionInviteMutation() {
   const { $client } = useNuxtApp()
   const queryClient = useQueryClient()
 
-  return useMutation<
-    DefaultUser,
-    TRPCClientError,
-    AcceptInstitutionInviteInput
-  >({
-    mutationFn: invite => $client.institutionInvite.accept.mutate(invite),
-    onSuccess() {
-      queryClient.invalidateQueries({ queryKey: ['me'] })
-    },
-  })
-}
-
-export function useCreateInstitutionInviteMutation(institutionId: string) {
-  const { $client } = useNuxtApp()
-  const queryClient = useQueryClient()
-
   return useMutation({
-    mutationFn: (invite: Omit<CreateInstitutionInviteInput, 'institutionId'>) =>
-      $client.institutionInvite.create.mutate({
-        ...invite,
-        institutionId,
-      }),
+    mutationFn: (invite: AcceptInstitutionInviteInput) => $client.institutionInvite.accept.mutate(invite),
     onSuccess() {
-      queryClient.invalidateQueries({ queryKey: ['institutionInvite', institutionId] })
-    },
-  })
-}
-
-export function useDeleteInstitutionInviteMutation(institutionId: string) {
-  const { $client } = useNuxtApp()
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: (invite: Omit<DeleteInstitutionInviteInput, 'institutionId'>) => $client.institutionInvite.delete.mutate({
-      ...invite,
-      institutionId,
-    }),
-    onSuccess() {
-      queryClient.invalidateQueries({ queryKey: ['institutionInvite', institutionId] })
+      queryClient.invalidateQueries({ queryKey: meQueries.info.queryKey })
     },
   })
 }

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useQuery } from '@tanstack/vue-query'
 import Button from 'primevue/button'
 import Skeleton from 'primevue/skeleton'
 
@@ -6,7 +7,7 @@ const props = defineProps<{
   groupId: string
 }>()
 
-const { data, isLoading, error } = useQuizzes(props.groupId)
+const { data, isLoading, error } = useQuery(queries.quizzes.list(props.groupId))
 </script>
 
 <template>
@@ -25,12 +26,16 @@ const { data, isLoading, error } = useQuizzes(props.groupId)
             <CardDescription>{{ quiz.description }}</CardDescription>
           </div>
           <div className="flex items-center space-x-1 rounded-md">
-            <Button outlined size="small">
-              Edit
-            </Button>
-            <Button size="small">
-              Attempt
-            </Button>
+            <NuxtLink prefetch :to="`/dashboard/${props.groupId}/quizzes/${quiz.id}/edit`">
+              <Button outlined size="small">
+                Edit
+              </Button>
+            </NuxtLink>
+            <NuxtLink prefetch :to="`/dashboard/${props.groupId}/quizzes/${quiz.id}/attempt`">
+              <Button size="small">
+                Attempt
+              </Button>
+            </NuxtLink>
           </div>
         </CardHeader>
       </Card>

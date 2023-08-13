@@ -32,7 +32,7 @@ export const createEventInput = baseEventInput.extend({
   startTime: z.date(),
   endTime: z.date(),
   location: z.string(),
-  rrule: z.string(),
+  rrule: z.string().optional(),
 })
 
 export const deleteEventInput = baseEventInput.extend({

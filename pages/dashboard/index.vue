@@ -1,9 +1,11 @@
 <script setup lang="ts">
+// TODO this page occasionally causes hydration mismatch, probably cuz of my whacky greeting implementation thing
+
 import ScrollPanel from 'primevue/scrollpanel'
 import endOfToday from 'date-fns/endOfToday/index'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow/index'
 
-const { data: me, error: meError } = useMe()
+const { data: me, error: meError } = useQuery(queries.me.info)
 
 const greeting = computed(() => {
   const hour = new Date().getHours()
@@ -47,6 +49,10 @@ onUnmounted(() => {
               Good {{ greeting }}, {{ me?.name }}
             </h3>
 
+            <!-- TODO move to own component -->
+            <h4 class="scroll-m-20 text-xl font-semibold tracking-tight">
+              Points
+            </h4>
             <div grid="~ cols-1 md:cols-2 lg:cols-3 gap-4">
               <Card>
                 <CardHeader class="flex flex-row items-center justify-between pb-2 space-y-0">
@@ -84,7 +90,10 @@ onUnmounted(() => {
                   </div>
                 </CardContent>
               </Card>
+            <!-- ENDTODO move to own component -->
             </div>
+
+            <DashboardVouchersOverview />
           </div>
         </ScrollPanel>
       </div>

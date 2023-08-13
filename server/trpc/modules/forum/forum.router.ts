@@ -25,7 +25,7 @@ export const forumRouter = router({
 
       if (groupUser === null) {
         throw new TRPCError({
-          code: 'UNAUTHORIZED',
+          code: 'FORBIDDEN',
           message: 'User does not have sufficient permissions.',
         })
       }
@@ -75,7 +75,7 @@ export const forumRouter = router({
 
       if (groupUser === null) {
         throw new TRPCError({
-          code: 'UNAUTHORIZED',
+          code: 'FORBIDDEN',
           message: 'User does not have sufficient permissions.',
         })
       }

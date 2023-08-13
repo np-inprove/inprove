@@ -6,7 +6,7 @@ const Textarea = defineAsyncComponent(() => import('primevue/textarea'))
 const InputText = defineAsyncComponent(() => import('primevue/inputtext'))
 
 const { mutate, isLoading } = useCreateGroupMutation()
-const { data: me } = useMe()
+const { data: me } = useQuery(queries.me.info)
 
 const formData = reactive({
   visible: false,
@@ -25,6 +25,11 @@ function create() {
   }, {
     onSettled(data) {
       navigateTo(`/dashboard/${data?.id}`)
+
+      // Reset form data
+      formData.name = ''
+      formData.description = ''
+      formData.visible = false
     },
   })
 }

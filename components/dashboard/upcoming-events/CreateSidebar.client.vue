@@ -47,7 +47,7 @@ const visible = defineModel<boolean>('visible', { required: true })
 const { mutate: createEventMutate } = useCreateEventMutation(props.groupId)
 
 function createEvent() {
-  let rrule = ''
+  let rrule: string | undefined
   if (formData.recurrence.enabled) {
     const t = new RRule({
       freq: formData.recurrence.freq,
@@ -64,6 +64,10 @@ function createEvent() {
     endTime: formData.range.end,
     location: formData.location,
     rrule,
+  }, {
+    onSuccess() {
+      visible.value = false
+    },
   })
 }
 

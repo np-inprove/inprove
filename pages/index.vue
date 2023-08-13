@@ -1,4 +1,6 @@
 <script setup lang="ts">
+// TODO we need a better landing page
+
 import Card from 'primevue/card'
 import Button from 'primevue/button'
 

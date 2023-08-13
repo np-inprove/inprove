@@ -3,7 +3,7 @@ import { QuestionType } from '@prisma/client'
 import { defaultQuizSelect } from './quiz.select'
 import { defaultQuestionSelect } from './question.select'
 import { protectedProcedure, router } from '~/server/trpc/trpc'
-import { addQuestionInput, baseQuizInput, createQuizInput, listQuestionsInput, listQuizzesInput } from '~/shared/quiz'
+import { addQuestionInput, baseQuizInput, createQuizInput, getQuizInput, listQuestionsInput, listQuizzesInput } from '~/shared/quiz'
 
 const userIsInGroup = protectedProcedure
   .input(baseQuizInput)
@@ -23,7 +23,7 @@ const userIsInGroup = protectedProcedure
       // TODO caught locally
       if (group === null) {
         throw new TRPCError({
-          code: 'UNAUTHORIZED',
+          code: 'FORBIDDEN',
         })
       }
 
@@ -59,6 +59,49 @@ export const quizRouter = router({
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to list quizzes',
+        })
+      }
+    }),
+
+  get: protectedProcedure
+    .input(getQuizInput)
+    .use(async ({ next, ctx, input }) => {
+      const quiz = await ctx.prisma.quiz.findUnique({
+        where: {
+          id: input.quizId,
+          group: {
+            users: {
+              some: {
+                userId: ctx.session.user.id,
+              },
+            },
+          },
+        },
+      })
+
+      if (quiz === null)
+        throw new TRPCError({ code: 'NOT_FOUND' })
+
+      return next({
+        ctx: {
+          quiz,
+        },
+      })
+    })
+    .query(async ({ ctx, input }) => {
+      try {
+        return await ctx.prisma.quiz.findUnique({
+          where: {
+            id: input.quizId,
+          },
+          select: defaultQuizSelect,
+        })
+      }
+      catch (err) {
+        ctx.logger.error({ msg: 'failed to get quiz', err })
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to get quiz',
         })
       }
     }),
@@ -140,8 +183,19 @@ export const quizRouter = router({
     .mutation(async ({ ctx, input }) => {
       try {
         return await ctx.prisma.$transaction(async (prisma) => {
-          const qn = await prisma.question.create({
-            data: {
+          // TODO bulk upsert qns create / update if does not exist so client can have keep state and send one shot
+          const qn = await prisma.question.upsert({
+            where: {
+              id: input.id,
+            },
+            update: {
+              content: input.content,
+              description: input.description,
+              points: input.points,
+              type: input.type,
+              quizId: input.quizId,
+            },
+            create: {
               content: input.content,
               description: input.description,
               points: input.points,

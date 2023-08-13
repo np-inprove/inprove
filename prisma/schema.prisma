@@ -34,15 +34,17 @@ model User {
   institutionId String?
   institution   Institution? @relation(fields: [institutionId], references: [id])
 
-  groups            GroupUsers[]
-  posts             ForumPost[]
-  reactions         ForumPostReaction[]
-  deadlinesAuthored Deadline[]          @relation("DeadlinesAuthored")
-  deadlinesUpvoted  Deadline[]          @relation("DeadlinesUpvoted")
-  quizzes           Quiz[]
-  quizAttempts      Attempt[]
-  quizAnswers       Answer[]
-  redemptions       Redemption[]
+  groups             GroupUsers[]
+  posts              ForumPost[]
+  reactions          ForumPostReaction[]
+  deadlinesAuthored  Deadline[]               @relation("DeadlinesAuthored")
+  deadlinesUpvoted   Deadline[]               @relation("DeadlinesUpvoted")
+  deadlinesCompleted UserCompletedDeadlines[]
+  quizzes            Quiz[]
+  quizAttempts       Attempt[]
+  quizAnswers        Answer[]
+  redemptions        Redemption[]
+  forumPostReports   ForumPostReport[]
 }
 
 // ===========
@@ -85,7 +87,8 @@ model Voucher {
 }
 
 model Redemption {
-  id String @id @default(cuid())
+  id        String   @id @default(cuid())
+  timestamp DateTime @default(now())
 
   voucherId String
   voucher   Voucher @relation(fields: [voucherId], references: [id], onDelete: Cascade)
@@ -179,6 +182,20 @@ model ForumPost {
 
   reactions   ForumPostReaction[]
   attachments ForumPostAttachment[]
+  reports     ForumPostReport[]
+}
+
+model ForumPostReport {
+  id String @id @default(cuid())
+
+  reason    String
+  timestamp DateTime @default(now())
+
+  postId String
+  post   ForumPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  reporterId String
+  reporter   User   @relation(fields: [reporterId], references: [id], onDelete: Cascade)
 }
 
 model ForumPostAttachment {
@@ -221,7 +238,21 @@ model Deadline {
   groupId  String
   group    Group   @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
-  upvotes User[] @relation("DeadlinesUpvoted")
+  upvotes        User[]                   @relation("DeadlinesUpvoted")
+  completedUsers UserCompletedDeadlines[]
+}
+
+model UserCompletedDeadlines {
+  id        String   @id @default(cuid())
+  timestamp DateTime @default(now())
+
+  deadlineId String
+  deadline   Deadline @relation(fields: [deadlineId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([deadlineId, userId])
 }
 
 // ======

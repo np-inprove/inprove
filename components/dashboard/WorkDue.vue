@@ -15,7 +15,7 @@ const ScrollPanel = defineAsyncComponent(() => import('primevue/scrollpanel'))
 const Calendar = defineAsyncComponent(() => import('primevue/calendar'))
 
 const { data: deadlines, isLoading: deadlinesIsLoading, error: deadlinesError } = useDeadlines(props.groupId)
-const { data: group } = useGroup(props.groupId)
+const { data: group } = useQuery(queries.groups.details(props.groupId))
 const { mutate: createMutate } = useCreateDeadlineMutation(props.groupId)
 
 const formData = reactive<{

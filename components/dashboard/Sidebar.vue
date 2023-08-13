@@ -24,8 +24,8 @@ const menu = ref()
 const config = useRuntimeConfig()
 const { $client } = useNuxtApp()
 
-const { data: me, isLoading: meIsLoading } = useMe()
-const { data: groups, isLoading: groupsIsLoading } = useGroups()
+const { data: me, isLoading: meIsLoading } = useQuery(queries.me.info)
+const { data: groups, isLoading: groupsIsLoading } = useQuery(queries.groups.list)
 
 const sidebarItems = computed(() => {
   const base = [
@@ -67,7 +67,11 @@ const groupContextMenu = computed(() => {
 async function logout() {
   // TODO clear query cache
   await $client.auth.email.logout.mutate()
-  navigateTo('/login')
+  await navigateTo('/login')
+}
+
+async function settings() {
+  await navigateTo('/dashboard/settings')
 }
 
 function openContextMenu(event: any) {
@@ -83,7 +87,7 @@ function openContextMenu(event: any) {
       </NuxtLink>
 
       <Skeleton v-if="meIsLoading" width="29px" height="29px" shape="circle" />
-      <LazyDashboardSidebarUserProfile v-else :name="me?.name" @logout="logout" />
+      <LazyDashboardSidebarUserProfile v-else :name="me?.name" @logout="logout" @settings="settings" />
     </div>
 
     <Skeleton v-if="meIsLoading" height="100px" />

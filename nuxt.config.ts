@@ -21,10 +21,20 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@nuxtjs/html-validator',
     '@nuxt/image',
+    'nuxt-security',
   ],
 
   typescript: {
     strict: true,
+  },
+
+  imports: {
+    presets: [
+      {
+        from: '@tanstack/vue-query',
+        imports: ['useQuery', 'useMutation'],
+      },
+    ],
   },
 
   build: {
@@ -42,11 +52,20 @@ export default defineNuxtConfig({
   ],
 
   app: {
-    pageTransition: { name: 'page', mode: 'out-in' },
     head: {
       charset: 'utf-8',
       viewport: 'width=device-width,height=device-height,initial-scale=1,maximum-scale=1,user-scalable=no,shrink-to-fit=no,viewport-fit=cover',
       htmlAttrs: { lang: 'en' },
+    },
+  },
+
+  security: {
+    headers: {
+      crossOriginEmbedderPolicy: process.env.NODE_ENV === 'development' ? 'unsafe-none' : 'require-corp',
+    },
+    rateLimiter: {
+      tokensPerInterval: 10,
+      interval: 'minute',
     },
   },
 
@@ -88,7 +107,8 @@ export default defineNuxtConfig({
       accountId: '',
       secretAccessKey: '',
       accessKeyId: '',
-      buckets: {
+      bucketName: 'inprove',
+      folderNames: {
         forum: 'forum',
       },
     },

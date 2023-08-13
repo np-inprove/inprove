@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Divider from 'primevue/divider'
 
-const { data: me } = useMe()
+const { data: me } = useQuery(queries.me.info)
 
 const items = computed(() => [
   {

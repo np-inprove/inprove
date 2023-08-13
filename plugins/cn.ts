@@ -1,14 +1,19 @@
-import { type ClassValue, clsx } from 'clsx'
-import { twMerge } from 'tailwind-merge'
+import { type ClassValue } from 'clsx'
 
-function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
-}
+export default defineNuxtPlugin({
+  parallel: true,
+  async setup() {
+    const { twMerge } = await import('tailwind-merge')
+    const { clsx } = await import('clsx')
 
-export default defineNuxtPlugin(() => {
-  return {
-    provide: {
-      cn,
-    },
-  }
+    function cn(...inputs: ClassValue[]) {
+      return twMerge(clsx(inputs))
+    }
+
+    return {
+      provide: {
+        cn,
+      },
+    }
+  },
 })
