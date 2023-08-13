@@ -2,11 +2,6 @@
 import Card from 'primevue/card'
 import Button from 'primevue/button'
 
-const { $client } = useNuxtApp()
-const config = useRuntimeConfig()
-
-const { data: me } = await $client.me.get.useQuery(undefined, { lazy: true })
-
 interface CardContent {
   icon: string
   title: string
@@ -48,28 +43,11 @@ const cards = [
 </script>
 
 <template>
-  <div class="p-6 lg:px-30">
-    <header
-      class="h-24 flex items-center justify-between bg-$surface-section"
-    >
-      <NuxtLink to="/">
-        <span class="font-semibold">{{ config.public.appName }}</span>
-      </NuxtLink>
-
-      <NuxtLink to="/about-us">
-        About Us
-      </NuxtLink>
-
-      <NuxtLink to="/faqs">
-        FAQs
-      </NuxtLink>
-
-      <Button v-if="me" label="Dashboard" @click="$router.push('dashboard')" />
-      <Button v-else label="Login" @click="$router.push('login')" />
-    </header>
+  <div class="mx-auto px-6 container">
+    <NavBar />
     <main>
       <div flex flex-col gap-10 pb-30>
-        <div grid="~ cols-1 md:cols-2 gap-6 md:gap-10" class="min-h-[500px]">
+        <div grid="~ cols-1 md:cols-2 gap-6 md:gap-10" class="my-10 lg:my-40 md:my-15">
           <div flex flex-1 flex-col justify-center md:flex-grow-2>
             <span class="leading-[4]">
               <h1 text-4xl font-black lg:text-5xl>
@@ -85,18 +63,14 @@ const cards = [
           </div>
 
           <div flex items-center justify-center>
-            <CommonAppLogo class="w-3/4" />
+            <CommonAppLogo class="w-0 md:w-3/4" />
           </div>
         </div>
 
         <section flex flex-col items-center>
-          <h2 text-3xl font-bold lg:text-3xl>
+          <h2 mb-5 text-3xl font-bold lg:text-3xl>
             Features of iNProve
           </h2>
-
-          <br>
-          <br>
-
           <div grid="~ gap-6 cols-1 md:cols-2" justify-center>
             <div v-for="card in cards" :key="card.title">
               <Card rounded-xl>
