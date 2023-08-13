@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import Button from 'primevue/button'
 
-const { $client } = useNuxtApp()
-const { data: me } = await $client.me.get.useQuery(undefined, { lazy: true })
+const { data: me } = useQuery(queries.me.info)
 </script>
 
 <template>
