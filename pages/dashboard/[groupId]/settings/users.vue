@@ -44,7 +44,7 @@ function removeGroupUser(userId: string) {
         <Column header="Actions">
           <template #body="bodySlot">
             <Button icon="" text severity="danger" @click="removeGroupUser(bodySlot.data.userId)">
-              <div i-tabler-trash />
+              <div i-tabler-x />
             </Button>
           </template>
         </Column>
