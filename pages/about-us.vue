@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import Button from 'primevue/button'
-
 interface Author {
   name: string
   title: string
@@ -9,11 +7,6 @@ interface Author {
 
 const { cookieRaw } = useTheme()
 const isDark = computed(() => cookieRaw.value?.includes('dark') ?? true)
-
-const { $client } = useNuxtApp()
-const config = useRuntimeConfig()
-
-const { data: me } = await $client.me.get.useQuery(undefined, { lazy: true })
 
 const textColor = computed(() => {
   if (isDark.value)
@@ -51,31 +44,14 @@ const authors = [
 </script>
 
 <template>
-  <div>
-    <header
-      class="h-24 flex items-center justify-between bg-$surface-section"
-    >
-      <NuxtLink to="/">
-        <span class="font-semibold">{{ config.public.appName }}</span>
-      </NuxtLink>
-
-      <NuxtLink to="/about-us">
-        About Us
-      </NuxtLink>
-
-      <NuxtLink to="/faqs">
-        FAQs
-      </NuxtLink>
-
-      <Button v-if="me" label="Dashboard" @click="$router.push('dashboard')" />
-      <Button v-else label="Login" @click="$router.push('login')" />
-    </header>
+  <div class="mx-auto px-6 container">
+    <NavBar />
     <main>
       <div pb-5 md:pb-10>
-        <h2 p-5 text-center text-3xl font-bold>
+        <h2 py-5 text-center text-3xl font-bold>
           Purpose of iNProve
         </h2>
-        <div p-5 text-justify>
+        <div text-justify>
           <p>
             iNProve is a platform build by students for students. The aims of the platform is to make classes more engaging
             and effective for students. While students are rewarded with incentives, lecturers are able to better gauge the
@@ -108,7 +84,7 @@ const authors = [
             all.
           </p>
         </div>
-        <h2 p-5 text-center text-3xl font-bold>
+        <h2 py-5 text-center text-3xl font-bold>
           Design Rationale
         </h2>
         <div grid="~ cols-1 md:cols-2" p-5>
@@ -133,7 +109,7 @@ const authors = [
             </p>
           </div>
         </div>
-        <h2 p-5 text-center text-3xl font-bold>
+        <h2 py-5 text-center text-3xl font-bold>
           Developers of iNProve
         </h2>
         <div grid="~ cols-1 md:cols-3 gap-5">

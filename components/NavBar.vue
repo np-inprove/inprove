@@ -1,0 +1,26 @@
+<script setup lang="ts">
+import Button from 'primevue/button'
+
+const { $client } = useNuxtApp()
+const { data: me } = await $client.me.get.useQuery(undefined, { lazy: true })
+</script>
+
+<template>
+  <header
+    class="h-24 flex items-center justify-between bg-$surface-section"
+  >
+    <NuxtLink to="/">
+      <span class="font-semibold">
+        <CommonAppLogo class="h-6" />
+      </span>
+    </NuxtLink>
+
+    <div flex grid="gap-2 md:gap-10">
+      <Button link label="FAQs" @click="$router.push('/faqs')" />
+      <Button link label="About Us" @click="$router.push('/about-us')" />
+
+      <Button v-if="me" label="Dashboard" @click="$router.push('dashboard')" />
+      <Button v-else label="Login" @click="$router.push('login')" />
+    </div>
+  </header>
+</template>
