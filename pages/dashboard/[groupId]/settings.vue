@@ -11,6 +11,11 @@ const items = computed(() => [
     name: 'Invites',
   },
   {
+    to: `/dashboard/${route.params.groupId}/settings/users`,
+    match: [`/dashboard/${route.params.groupId}/settings/users`],
+    name: 'Users',
+  },
+  {
     to: `/dashboard/${route.params.groupId}/settings/advanced`,
     match: [`/dashboard/${route.params.groupId}/settings/advanced`],
     name: 'Advanced',
