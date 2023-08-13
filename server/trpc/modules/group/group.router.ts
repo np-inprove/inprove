@@ -179,7 +179,7 @@ export const groupRouter = router({
       }
     }),
 
-  // TODO should rename to singular fof consistency
+  // TODO should rename to singular for consistency
   users: groupUsersRouter,
   // TODO should rename to singular for consistency
   invites: groupInviteRouter,

@@ -4,6 +4,7 @@ export const queries = mergeQueryKeys(
   meQueries,
   groupQueries,
   groupInviteQueries,
+  groupUsersQueries,
 
   institutionQueries,
   institutionInviteQueries,
