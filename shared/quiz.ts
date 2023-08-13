@@ -20,7 +20,7 @@ export const createQuizInput = baseQuizInput.extend({
 
 export type CreateQuizInput = z.infer<typeof createQuizInput>
 
-export const baseQuestionInput = baseQuizInput.extend({
+export const baseQuestionInput = z.object({
   quizId: z.string().cuid(),
 })
 
@@ -29,7 +29,7 @@ export const listQuestionsInput = baseQuestionInput.extend({})
 export type ListQuestionsInput = z.infer<typeof listQuestionsInput>
 
 // Add question
-export const baseAddQuestionInput = baseQuestionInput.extend({
+export const baseAddQuestionInput = z.object({
   id: z.string().cuid().optional(),
   content: z.string().min(1),
   description: z.string(),
@@ -48,7 +48,7 @@ export const addOptionsQuestionInput = baseAddQuestionInput.extend({
   correctOptions: z.array(z.number().int().min(0)),
 })
 
-export const addQuestionInput = z.discriminatedUnion('type', [
+export const addAnyQuestionInput = z.discriminatedUnion('type', [
   addFileQuestionInput,
   addTextQuestionInput,
   addOptionsQuestionInput,
@@ -58,4 +58,10 @@ export const addQuestionInput = z.discriminatedUnion('type', [
   return value.correctOptions.every(i => i < value.options.length)
 })
 
-export type AddQuestionInput = z.infer<typeof addQuestionInput>
+export const bulkUpsertQuestionInput = baseQuestionInput.extend({
+  questions: z.array(addAnyQuestionInput),
+})
+
+export type BulkUpsertQuestionInput = z.infer<typeof bulkUpsertQuestionInput>
+// TODO move to proper place, not necessarily used only in input
+export type AnyQuestion = z.infer<typeof addAnyQuestionInput>

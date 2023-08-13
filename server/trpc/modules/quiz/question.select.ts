@@ -31,12 +31,12 @@ export const defaultFileQuestionSelect = Prisma.validator<Prisma.FileQuestionSel
 
 export type DefaultFileQuestion = Prisma.FileQuestionGetPayload<{ select: typeof defaultFileQuestionSelect }>
 
-export const defaultOptionsQuestion = Prisma.validator<Prisma.OptionsQuestionSelect>()({
+export const defaultOptionsQuestionSelect = Prisma.validator<Prisma.OptionsQuestionSelect>()({
   id: true,
   options: true,
   correctOptions: true,
 })
 
-export type DefaultOptionsQuestion = Prisma.OptionsQuestionGetPayload<{ select: typeof defaultQuestionSelect }>
+export type DefaultOptionsQuestion = Prisma.OptionsQuestionGetPayload<{ select: typeof defaultOptionsQuestionSelect }>
 
-export type DefaultCompletedQuestion = DefaultQuestion & (DefaultTextQuestion | DefaultFileQuestion | DefaultOptionsQuestion)
+export type DefaultCompleteQuestion = DefaultQuestion & (DefaultTextQuestion | DefaultFileQuestion | DefaultOptionsQuestion)

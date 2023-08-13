@@ -3,7 +3,7 @@ import { QuestionType } from '@prisma/client'
 import { defaultQuizSelect } from './quiz.select'
 import { defaultQuestionSelect } from './question.select'
 import { protectedProcedure, router } from '~/server/trpc/trpc'
-import { addQuestionInput, baseQuizInput, createQuizInput, getQuizInput, listQuestionsInput, listQuizzesInput } from '~/shared/quiz'
+import { baseQuizInput, bulkUpsertQuestionInput, createQuizInput, getQuizInput, listQuestionsInput, listQuizzesInput } from '~/shared/quiz'
 
 const userIsInGroup = protectedProcedure
   .input(baseQuizInput)
@@ -129,8 +129,32 @@ export const quizRouter = router({
       }
     }),
 
-  listQuestions: userIsInGroup
+  listQuestions: protectedProcedure
     .input(listQuestionsInput)
+    // TODO should generalize this as well as input
+    .use(async ({ next, ctx, input }) => {
+      const quiz = await ctx.prisma.quiz.findUnique({
+        where: {
+          id: input.quizId,
+          group: {
+            users: {
+              some: {
+                userId: ctx.session.user.id,
+              },
+            },
+          },
+        },
+      })
+
+      if (quiz === null)
+        throw new TRPCError({ code: 'NOT_FOUND' })
+
+      return next({
+        ctx: {
+          quiz,
+        },
+      })
+    })
     .query(async ({ ctx, input }) => {
       try {
         return await ctx.prisma.$transaction(async (prisma) => {
@@ -178,65 +202,74 @@ export const quizRouter = router({
       }
     }),
 
-  addQuestion: userIsInGroup
-    .input(addQuestionInput)
+  bulkUpsertQuestions: protectedProcedure
+    .input(bulkUpsertQuestionInput)
     .mutation(async ({ ctx, input }) => {
       try {
-        return await ctx.prisma.$transaction(async (prisma) => {
-          // TODO bulk upsert qns create / update if does not exist so client can have keep state and send one shot
-          const qn = await prisma.question.upsert({
+        const stmts = []
+
+        for (const qn of input.questions) {
+          stmts.push(ctx.prisma.question.upsert({
             where: {
-              id: input.id,
+              id: qn.id,
             },
             update: {
-              content: input.content,
-              description: input.description,
-              points: input.points,
-              type: input.type,
+              content: qn.content,
+              description: qn.description,
+              points: qn.points,
+              type: qn.type,
               quizId: input.quizId,
             },
             create: {
-              content: input.content,
-              description: input.description,
-              points: input.points,
-              type: input.type,
+              content: qn.content,
+              description: qn.description,
+              points: qn.points,
+              type: qn.type,
               quizId: input.quizId,
             },
             select: defaultQuestionSelect,
-          })
+          }))
 
-          switch (input.type) {
-            case QuestionType.File:
-              return await prisma.fileQuestion.create({
+          switch (qn.type) {
+            case QuestionType.File: {
+              stmts.push(ctx.prisma.fileQuestion.create({
                 data: {
                   id: qn.id,
                 },
-              })
+              }))
+              break
+            }
 
-            case QuestionType.Options:
-              return await prisma.optionsQuestion.create({
+            case QuestionType.Options: {
+              stmts.push(ctx.prisma.optionsQuestion.create({
                 data: {
                   id: qn.id,
-                  options: input.options,
-                  correctOptions: input.correctOptions,
+                  options: qn.options,
+                  correctOptions: qn.correctOptions,
                 },
-              })
+              }))
+              break
+            }
 
-            case QuestionType.Text:
-              return await prisma.textQuestion.create({
+            case QuestionType.Text: {
+              stmts.push(ctx.prisma.textQuestion.create({
                 data: {
                   id: qn.id,
-                  answer: input.answer,
+                  answer: qn.answer,
                 },
-              })
+              }))
+              break
+            }
           }
-        })
+        }
+
+        return await ctx.prisma.$transaction(stmts)
       }
       catch (err) {
-        ctx.logger.error({ msg: 'failed to create quiz', err })
+        ctx.logger.error({ msg: 'failed to bulk upsert questions', err })
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to create quiz',
+          message: 'Failed to bulk upsert questions',
         })
       }
     }),

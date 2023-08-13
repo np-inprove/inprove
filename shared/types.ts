@@ -10,5 +10,6 @@ export type { DefaultGroupUsers } from '~/server/trpc/modules/group/group-users.
 export type { DefaultForum } from '~/server/trpc/modules/forum/forum.select'
 export type { DefaultForumPost } from '~/server/trpc/modules/forum/forum-post.select'
 export type { DefaultForumPostReaction } from '~/server/trpc/modules/forum/forum-post-reaction.select'
+export type { DefaultCompleteQuestion } from '~/server/trpc/modules/quiz/question.select'
 
 export type TRPCClientError = __TRPCClientError<AppRouter>
