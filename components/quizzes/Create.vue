@@ -16,12 +16,13 @@ const formData = reactive({
   description: '',
 })
 
-const { mutate: createQuizMutate } = useCreateQuizMutation(props.groupId)
+const { mutate: createQuizMutate } = useCreateQuizMutation()
 
 function createQuiz() {
   createQuizMutate({
     name: formData.name,
     description: formData.description,
+    groupId: props.groupId,
   }, {
     onSuccess() {
       formData.visible = false
