@@ -1,125 +1,141 @@
 <script setup lang="ts">
-import Menu from 'primevue/menu'
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
-import Skeleton from 'primevue/skeleton'
-import Toast from 'primevue/toast'
 import Button from 'primevue/button'
 import Divider from 'primevue/divider'
+import InputText from 'primevue/inputtext'
+import Textarea from 'primevue/textarea'
 import Card from 'primevue/card'
+import ConfirmDialog from 'primevue/confirmdialog'
+import { useConfirm } from 'primevue/useconfirm'
+import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
 
 const route = useRoute()
+const router = useRouter()
+const confirm = useConfirm()
 const toast = useToast()
 
-const { mutate: createMutate } = useCreateGroupInviteMutation()
-const { mutate: deleteMutate } = useDeleteGroupInviteMutation()
+const { data: group, isLoading: isGroupLoading } = useQuery(queries.groups.details(route.params.groupId as string))
+const { mutate: updateMutate, isLoading: isUpdateLoading } = useUpdateGroupMutation(route.params.groupId as string)
+const { mutate: deleteMutate, isLoading: isDeleteLoading } = useDeleteGroupMutation(route.params.groupId as string)
 
-const menu = ref()
-const menuItems = [
-  {
-    label: 'Owner',
-    command: () => {
-      createMutate({
-        role: 'Owner',
-        groupId: route.params.groupId as string,
-      })
-    },
+const formData = reactive({
+  name: group.value?.name ?? '',
+  description: group.value?.description ?? '',
+})
+
+watch(
+  () => isGroupLoading.value,
+  (isGroupLoading) => {
+    if (!isGroupLoading) {
+      formData.name = group.value?.name ?? ''
+      formData.description = group.value?.description ?? ''
+    }
+    else {
+      formData.name = ''
+      formData.description = ''
+    }
+  },
+)
+
+function updateGroup() {
+  updateMutate({
+    name: formData.name,
+    description: formData.description,
   },
   {
-    label: 'Educator',
-    command: () => {
-      createMutate({
-        role: 'Educator',
-        groupId: route.params.groupId as string,
+    onSuccess() {
+      router.replace(`/dashboard/${route.params.groupId}/settings`)
+      toast.add({
+        summary: 'Group details updated!',
+        severity: 'success',
+        life: 3000,
       })
     },
-  },
-  {
-    label: 'Member',
-    command: () => {
-      createMutate({
-        role: 'Member',
-        groupId: route.params.groupId as string,
-      })
-    },
-  },
-]
-
-const { data: invites, isLoading: invitesIsLoading, error: invitesError } = useQuery(queries.groupInvites.list(route.params.groupId as string))
-
-function deleteInvite(id: string) {
-  deleteMutate({
-    inviteId: id,
-    groupId: route.params.groupId as string,
   })
 }
 
-async function copyInvite(id: string) {
-  await window.navigator.clipboard.writeText(`${window.location.origin}/g/${id}`)
-  toast.add({
-    summary: 'Copied to clipboard',
-    detail: 'Share the link with someone!',
-    life: 3000,
+function confirmDeleteGroup() {
+  confirm.require({
+    message: 'Are you sure you want to proceed?',
+    header: 'Delete Confirmation',
+    icon: 'i-tabler-alert-circle',
+    acceptClass: 'p-button-danger',
+    accept: () => {
+      deleteGroup()
+    },
+  })
+}
+
+function deleteGroup() {
+  deleteMutate(undefined, {
+    onSuccess() {
+      router.replace('/dashboard')
+    },
   })
 }
 </script>
 
 <template>
   <div>
+    <ConfirmDialog />
     <Toast />
 
     <div flex justify-between>
       <div>
         <h2 text-lg font-medium>
-          Invite links
+          General
         </h2>
         <p text-sm opacity-80>
-          List of institution invite links on iNProve
+          Configure various group properties
         </p>
       </div>
-
-      <template v-if="invites">
-        <div>
-          <Button
-            type="button" label="New" size="small" aria-haspopup="true" aria-controls="overlay_menu"
-            @click="menu.toggle($event)"
-          />
-        </div>
-        <Menu id="overlay_menu" ref="menu" :model="menuItems" :popup="true" />
-      </template>
     </div>
 
     <!-- For some reason, the divider does not appear -->
     <Divider :pt="{ root: { class: 'before:border-solid!' } }" />
 
-    <Skeleton v-if="invitesIsLoading" height="300px" />
-    <LazyErrorCard v-else-if="invitesError" v-bind="invitesError" />
+    <form flex flex-col space-y-6 @submit.prevent="updateGroup">
+      <div class="flex flex-col gap-2">
+        <label for="name">Group name</label>
+        <InputText id="name" v-model="formData.name" :disabled="isGroupLoading" autofocus required />
+      </div>
 
-    <template v-else>
-      <Card v-if="invites?.length === 0">
-        <template #title>
-          No invites available
-        </template>
-        <template #subtitle>
-          No invites have been created yet, make one now!
-        </template>
-      </Card>
+      <div class="flex flex-col gap-2">
+        <label for="description">Group description</label>
+        <Textarea id="description" v-model="formData.description" :disabled="isGroupLoading" />
+      </div>
 
-      <DataTable v-else :value="invites">
-        <Column field="id" header="ID" />
-        <Column field="role" header="Role" sortable style="width: 50%" />
-        <Column header="Actions">
-          <template #body="bodySlot">
-            <Button icon="" text @click="copyInvite(bodySlot.data.id)">
-              <div i-tabler-copy />
-            </Button>
-            <Button icon="" text severity="danger" @click="deleteInvite(bodySlot.data.id)">
-              <div i-tabler-trash />
-            </Button>
+      <div>
+        <Button :disabled="isGroupLoading" :loading="isUpdateLoading" type="submit" label="Update" />
+      </div>
+    </form>
+
+    <!-- For some reason, the divider does not appear -->
+    <Divider :pt="{ root: { class: 'before:border-solid!' } }" />
+
+    <div class="mt-5">
+      <h2 mb-3 text-lg font-medium>
+        Danger Zone
+      </h2>
+      <div>
+        <Card px-3>
+          <template #content>
+            <div class="flex justify-between">
+              <div>
+                <h3 class="text-lg font-medium">
+                  Delete group
+                </h3>
+                <p class="text-md opacity-80">
+                  Deleting a group is irreversible. All data associated with the group will be deleted.
+                </p>
+              </div>
+              <div class="flex items-center">
+                <Button severity="danger" label="Delete Group" :disabled="isDeleteLoading" @click="confirmDeleteGroup" />
+              </div>
+            </div>
           </template>
-        </Column>
-      </DataTable>
-    </template>
+        </Card>
+      </div>
+    </div>
   </div>
 </template>

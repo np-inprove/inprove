@@ -11,4 +11,16 @@ export const defaultGroupUsersSelect = Prisma.validator<Prisma.GroupUsersSelect>
   userId: true,
 })
 
+export const detailedGroupUsersSelect = Prisma.validator<Prisma.GroupUsersSelect>()({
+  role: true,
+  groupId: true,
+  userId: true,
+  user: {
+    select: {
+      name: true,
+    },
+  },
+})
+
 export type DefaultGroupUsers = Prisma.GroupUsersGetPayload<{ select: typeof defaultGroupUsersSelect }>
+export type DetailedGroupUsers = Prisma.GroupUsersGetPayload<{ select: typeof detailedGroupUsersSelect }>
