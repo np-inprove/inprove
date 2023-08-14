@@ -35,12 +35,12 @@ export function useCreateGroupMutation() {
   })
 }
 
-export function useUpdateGroupMutation(groupId: string) {
+export function useUpdateGroupMutation() {
   const { $client } = useNuxtApp()
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: () => (group: UpdateGroupInput) => $client.group.update.mutate(group),
+    mutationFn: (group: UpdateGroupInput) => $client.group.update.mutate(group),
     onSuccess(_, vars) {
       queryClient.invalidateQueries({
         queryKey: groupQueries.details(vars.groupId).queryKey,
@@ -69,7 +69,7 @@ export function useDeleteGroupMutation(groupId: string) {
   })
 }
 
-export function useAcceptGroupInviteMutation() {
+export function useAcceptGroupInviteLinkMutation() {
   const { $client } = useNuxtApp()
   const queryClient = useQueryClient()
 
