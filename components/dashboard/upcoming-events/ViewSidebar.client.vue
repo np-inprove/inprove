@@ -9,9 +9,11 @@ import Dropdown from 'primevue/dropdown'
 import InputNumber from 'primevue/inputnumber'
 import type { DefaultEvent } from '~/shared/types'
 
+const props = defineProps<{
+  event: DefaultEvent
+}>()
 const route = useRoute()
 const editMode = ref(false)
-const event = defineModel<DefaultEvent | null>('event', { required: true })
 const visible = defineModel<boolean>('visible', { required: true })
 
 const { mutate: updateEventMutate } = useUpdateEventMutation(route.params.groupId as string)
@@ -56,14 +58,14 @@ const formData = reactive<{
 
 watch(editMode, (e) => {
   if (e) {
-    formData.name = event.value?.name ?? ''
-    formData.location = event.value?.location ?? ''
-    formData.range.start = event.value?.startTime ?? today
-    formData.range.end = event.value?.endTime ?? today
-    formData.allDay = event.value?.allDay ?? true
-    formData.recurrence.enabled = event.value?.rrule !== null
-    if (event.value?.rrule) {
-      const rrule = RRule.fromString(event.value.rrule)
+    formData.name = props.event.name ?? ''
+    formData.location = props.event.location ?? ''
+    formData.range.start = props.event.startTime ?? today
+    formData.range.end = props.event.endTime ?? today
+    formData.allDay = props.event.allDay ?? true
+    formData.recurrence.enabled = props.event.rrule !== null
+    if (props.event.rrule) {
+      const rrule = RRule.fromString(props.event.rrule)
       formData.recurrence.freq = rrule.options.freq ?? RRule.DAILY
       formData.recurrence.interval = rrule.options.interval ?? 1
       formData.recurrence.count = rrule.options.count ?? undefined
@@ -90,7 +92,7 @@ function updateEvent() {
     rrule = t.toString()
   }
   updateEventMutate({
-    eventId: event.value?.id ?? '',
+    eventId: props.event.id ?? '',
     name: formData.name,
     startTime: formData.range.start,
     endTime: formData.range.end,
@@ -109,11 +111,11 @@ function onEditClick() {
 }
 
 function onDeleteClick() {
-  if (event.value?.id === undefined)
+  if (props.event.id === undefined)
     return
 
   deleteMutate({
-    eventId: event.value.id,
+    eventId: props.event.id,
   },
   {
     onSuccess() {
@@ -204,16 +206,16 @@ function onDeleteClick() {
       <div py2 space-y-2>
         <DashboardUpcomingEventsEventPropCard
           icon-class="i-tabler-map-pin"
-          :label="event?.location ?? '-'"
+          :label="event.location?.length === 0 ? 'No location' : event.location"
         />
         <div flex space-x-2>
           <DashboardUpcomingEventsEventPropCard
             icon-class="i-tabler-clock-play"
-            :label="(event?.allDay ? event?.startTime.toDateString() : event?.startTime.toLocaleString()) ?? '-'"
+            :label="event?.allDay ? event?.startTime.toDateString() : event?.startTime.toLocaleString()"
           />
           <DashboardUpcomingEventsEventPropCard
             icon-class="i-tabler-clock-stop"
-            :label="(event?.allDay ? event?.endTime.toDateString() : event?.endTime.toLocaleString()) ?? '-'"
+            :label="event?.allDay ? event?.endTime.toDateString() : event?.endTime.toLocaleString()"
           />
         </div>
       </div>

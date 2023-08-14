@@ -1,17 +1,18 @@
 <script setup lang="ts">
-const { iconClass, label } = defineProps<{
-  iconClass: string
-  label: string
-}>()
+const { iconClass, label } = withDefaults(
+  defineProps<{
+    iconClass: string
+    label?: string | null
+  }>(), {
+    label: '-',
+  })
 </script>
 
 <template>
   <div class="w-full flex items-center justify-between rounded-md bg-$surface-card px4 py3">
     <div flex items-center text-lg>
       <span class="mr-4" :class="iconClass" />
-      <slot>
-        {{ label }}
-      </slot>
+      {{ label }}
     </div>
   </div>
 </template>

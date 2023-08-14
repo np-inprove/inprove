@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Checkbox from 'primevue/checkbox'
+import type { OptionsQn } from '~/shared/quiz'
 
 const props = defineProps<{
   question: OptionsQn
