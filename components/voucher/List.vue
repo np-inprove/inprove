@@ -124,8 +124,8 @@ function deleteVoucher(voucherId: string) {
       <DataTable v-else :value="vouchers">
         <Column field="id" header="ID" />
         <Column field="name" header="Name" sortable />
-        <Column field="description" header="Description" style="50%" />
-        <Column field="pointsRequired" header="Points" sortable style="20%" />
+        <Column field="description" header="Description" style="width: 50%" />
+        <Column field="pointsRequired" header="Points" sortable style="width: 20%" />
         <Column header="Actions">
           <template #body="slotProps">
             <div>
