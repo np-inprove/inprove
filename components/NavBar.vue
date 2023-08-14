@@ -5,14 +5,14 @@ const { data: me } = useQuery(queries.me.info)
 </script>
 
 <template>
-  <header
-    class="h-24 flex items-center justify-between bg-$surface-section"
-  >
-    <NuxtLink to="/">
-      <span class="font-semibold">
-        <CommonAppLogo class="h-6" />
-      </span>
-    </NuxtLink>
+  <header class="h-18 bg-$surface-section">
+    <div class="mx-auto h-full flex items-center justify-between px-6 container">
+      <NuxtLink to="/">
+        <span class="font-semibold">
+          <CommonAppLogo class="h-6" />
+        </span>
+      </NuxtLink>
+    </div>
 
     <div flex grid="gap-2 md:gap-10">
       <Button link label="FAQs" @click="$router.push('/faqs')" />

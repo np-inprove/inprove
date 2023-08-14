@@ -36,19 +36,17 @@ const faqs = [
 </script>
 
 <template>
-  <div class="mx-auto px-6 container">
-    <NavBar />
-    <main>
-      <h1 p-5 text-center text-3xl>
-        Frequently Asked Questions
-      </h1>
-      <Accordion :active-index="0">
-        <AccordionTab v-for="faq in faqs" :key="faq.title" :header="faq.title">
-          <p>
-            {{ faq.content }}
-          </p>
-        </AccordionTab>
-      </Accordion>
-    </main>
-  </div>
+  <NavBar />
+  <main class="mx-auto px-6 container">
+    <h1 p-5 text-center text-3xl>
+      Frequently Asked Questions
+    </h1>
+    <Accordion :active-index="0">
+      <AccordionTab v-for="faq in faqs" :key="faq.title" :header="faq.title">
+        <p>
+          {{ faq.content }}
+        </p>
+      </AccordionTab>
+    </Accordion>
+  </main>
 </template>

@@ -14,9 +14,7 @@ const Calendar = defineAsyncComponent(() => import('v-calendar').then(m => m.Cal
 
 interface Props extends /* @vue-ignore */ Partial<CalendarProps> {}
 
-// TODO hacky
-const { cookieRaw } = useTheme()
-const isDark = computed(() => cookieRaw.value?.includes('dark') ?? true)
+const { isDark } = useTheme()
 </script>
 
 <template>
