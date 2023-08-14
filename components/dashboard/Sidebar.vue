@@ -57,6 +57,8 @@ const sidebarItems = computed(() => {
   return base
 })
 
+const selectedGroupId = ref<string>('')
+
 const groupContextMenu = computed(() => {
   return [
     {
