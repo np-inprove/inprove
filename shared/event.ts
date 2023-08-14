@@ -31,6 +31,7 @@ export const createEventInput = baseEventInput.extend({
   name: z.string().min(1),
   startTime: z.date(),
   endTime: z.date(),
+  allDay: z.boolean(),
   location: z.string(),
   rrule: z.string().optional(),
 })
@@ -44,8 +45,9 @@ export const updateEventInput = baseEventInput.extend({
   name: z.string().min(1),
   startTime: z.date(),
   endTime: z.date(),
+  allDay: z.boolean(),
   location: z.string(),
-  rrule: z.string(),
+  rrule: z.string().optional(),
 })
 
 export const upcomingEventsInput = baseEventInput.extend({

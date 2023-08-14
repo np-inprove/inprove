@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Button from 'primevue/button'
 import type { CalendarDay } from 'v-calendar/dist/types/src/utils/page'
+import type { DefaultEvent } from '~/shared/types'
 
 const props = defineProps<{
   groupId: string
@@ -8,6 +9,11 @@ const props = defineProps<{
 
 const today = new Date()
 const selectedDate = ref<Date>(today)
+const createVisible = ref(false)
+const viewVisible = ref(false)
+const selectedEvent = ref<DefaultEvent | null>(null)
+
+const { data: events, error: eventsError } = useUpcomingEvents(props.groupId, selectedDate)
 
 const attributes = computed(() => {
   const a: object[] = [
@@ -33,27 +39,33 @@ const attributes = computed(() => {
   return a
 })
 
-const { data: events, error: eventsError } = useUpcomingEvents(props.groupId, selectedDate)
-
 function handleDayclick(day: CalendarDay, event: MouseEvent) {
   selectedDate.value = day.date
 }
 
-const visible = ref(false)
+function handleEventClick(event: DefaultEvent) {
+  selectedEvent.value = event
+  viewVisible.value = true
+}
 </script>
 
 <template>
   <section max-w-sm w-sm space-y-4>
     <!-- TODO combine this with add event button -->
     <LazyDashboardUpcomingEventsCreateSidebar
-      v-model:visible="visible"
+      v-model:visible="createVisible"
       :date="selectedDate"
       :group-id="props.groupId"
     />
 
+    <LazyDashboardUpcomingEventsViewSidebar
+      v-model:visible="viewVisible"
+      v-model:event="selectedEvent"
+    />
+
     <div flex items-center justify-between>
       <h3 font-semibold>
-        Upcoming events
+        Upcoming Events / Deadlines
       </h3>
     </div>
 
@@ -65,7 +77,7 @@ const visible = ref(false)
       @dayclick="handleDayclick"
     />
 
-    <div v-if="events" space-y-1>
+    <div v-if="events" space-y-2>
       <DashboardUpcomingEventsEventCard
         v-for="deadline in events.deadlines" :key="deadline.id"
         :name="deadline.name"
@@ -73,13 +85,14 @@ const visible = ref(false)
         :end-date="deadline.dueDate"
       />
       <DashboardUpcomingEventsEventCard
-        v-for="deadline in events.events" :key="deadline.id"
-        :name="deadline.name"
-        :deadline="true"
-        :end-date="deadline.endTime"
+        v-for="event in events.events" :key="event.id"
+        :name="event.name"
+        :deadline="false"
+        :end-date="event.endTime"
+        @click="handleEventClick(event)"
       />
     </div>
 
-    <Button label="Add event" outlined size="small" @click="visible = true" />
+    <Button label="Add event" outlined size="small" @click="createVisible = true" />
   </section>
 </template>
