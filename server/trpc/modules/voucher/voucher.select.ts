@@ -12,4 +12,4 @@ export const defaultVoucherSelect = Prisma.validator<Prisma.VoucherSelect>()({
   pointsRequired: true,
 })
 
-type DefaultVoucher = Prisma.VoucherGetPayload<{ select: typeof defaultVoucherSelect }>
+export type DefaultVoucher = Prisma.VoucherGetPayload<{ select: typeof defaultVoucherSelect }>
