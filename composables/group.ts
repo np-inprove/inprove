@@ -1,7 +1,7 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import type { AcceptGroupInviteInput } from '~/shared/group-invite'
-import type { CreateGroupInput, RemoveGroupUserInput, UpdateGroupInput } from '~/shared/group'
+import type { CreateGroupInput, RemoveGroupUserInput, UpdateGroupInput, UpdateGroupUserInput } from '~/shared/group'
 
 export const groupQueries = createQueryKeys('groups', {
   list: {
@@ -35,15 +35,18 @@ export function useCreateGroupMutation() {
   })
 }
 
-export function useUpdateGroupMutation() {
+export function useUpdateGroupMutation(groupId: string) {
   const { $client } = useNuxtApp()
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (group: UpdateGroupInput) => $client.group.update.mutate(group),
-    onSuccess(_, vars) {
+    mutationFn: (group: Omit<UpdateGroupInput, 'groupId'>) => $client.group.update.mutate({
+      groupId,
+      ...group,
+    }),
+    onSuccess() {
       queryClient.invalidateQueries({
-        queryKey: groupQueries.details(vars.groupId).queryKey,
+        queryKey: groupQueries.details(groupId).queryKey,
       })
       queryClient.invalidateQueries({
         queryKey: groupQueries.list.queryKey,
@@ -89,7 +92,26 @@ export const groupUsersQueries = createQueryKeys('groupUsers', {
       return $client.group.users.list.query({ groupId })
     },
   }),
+  me: (groupId: string) => ({
+    queryKey: [groupId],
+    queryFn: () => {
+      const { $client } = useNuxtApp()
+      return $client.group.users.me.query({ groupId })
+    },
+  }),
 })
+
+export function useUpdateGroupUserMutation() {
+  const { $client } = useNuxtApp()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (user: UpdateGroupUserInput) => $client.group.users.update.mutate(user),
+    onSuccess(_, vars) {
+      queryClient.invalidateQueries({ queryKey: groupUsersQueries.list(vars.groupId).queryKey })
+    },
+  })
+}
 
 export function useRemoveGroupUserMutation() {
   const { $client } = useNuxtApp()
