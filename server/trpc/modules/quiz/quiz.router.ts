@@ -1,13 +1,25 @@
 import { TRPCError } from '@trpc/server'
-import { QuestionType } from '@prisma/client'
 import { defaultQuizSelect } from './quiz.select'
 import { defaultQuestionSelect } from './question.select'
+import { QuestionType } from '~/shared/enums'
 import { protectedProcedure, router } from '~/server/trpc/trpc'
-import { baseQuizInput, bulkUpsertQuestionInput, createQuizInput, getQuizInput, listQuestionsInput, listQuizzesInput } from '~/shared/quiz'
+import type { CombinedQuestion } from '~/shared/quiz'
+import {
+  baseQuizInput,
+  bulkUpsertQuestionInput,
+  createQuizInput,
+  getQuizInput,
+  listQuestionsInput,
+  listQuizzesInput,
+} from '~/shared/quiz'
 
 const userIsInGroup = protectedProcedure
   .input(baseQuizInput)
-  .use(async ({ next, ctx, input }) => {
+  .use(async ({
+    next,
+    ctx,
+    input,
+  }) => {
     try {
       const group = await ctx.prisma.group.findUnique({
         where: {
@@ -34,7 +46,10 @@ const userIsInGroup = protectedProcedure
       })
     }
     catch (err) {
-      ctx.logger.error({ msg: 'failed to verify user in group', err })
+      ctx.logger.error({
+        msg: 'failed to verify user in group',
+        err,
+      })
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
         message: 'Failed to verify user in group',
@@ -45,7 +60,10 @@ const userIsInGroup = protectedProcedure
 export const quizRouter = router({
   list: userIsInGroup
     .input(listQuizzesInput)
-    .query(async ({ ctx, input }) => {
+    .query(async ({
+      ctx,
+      input,
+    }) => {
       try {
         return await ctx.prisma.quiz.findMany({
           where: {
@@ -55,7 +73,10 @@ export const quizRouter = router({
         })
       }
       catch (err) {
-        ctx.logger.error({ msg: 'failed to list quizzes', err })
+        ctx.logger.error({
+          msg: 'failed to list quizzes',
+          err,
+        })
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to list quizzes',
@@ -65,7 +86,11 @@ export const quizRouter = router({
 
   get: protectedProcedure
     .input(getQuizInput)
-    .use(async ({ next, ctx, input }) => {
+    .use(async ({
+      next,
+      ctx,
+      input,
+    }) => {
       const quiz = await ctx.prisma.quiz.findUnique({
         where: {
           id: input.quizId,
@@ -88,7 +113,10 @@ export const quizRouter = router({
         },
       })
     })
-    .query(async ({ ctx, input }) => {
+    .query(async ({
+      ctx,
+      input,
+    }) => {
       try {
         return await ctx.prisma.quiz.findUnique({
           where: {
@@ -98,7 +126,10 @@ export const quizRouter = router({
         })
       }
       catch (err) {
-        ctx.logger.error({ msg: 'failed to get quiz', err })
+        ctx.logger.error({
+          msg: 'failed to get quiz',
+          err,
+        })
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get quiz',
@@ -108,7 +139,10 @@ export const quizRouter = router({
 
   create: userIsInGroup
     .input(createQuizInput)
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({
+      ctx,
+      input,
+    }) => {
       try {
         return await ctx.prisma.quiz.create({
           data: {
@@ -121,7 +155,10 @@ export const quizRouter = router({
         })
       }
       catch (err) {
-        ctx.logger.error({ msg: 'failed to create quiz', err })
+        ctx.logger.error({
+          msg: 'failed to create quiz',
+          err,
+        })
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to create quiz',
@@ -131,8 +168,12 @@ export const quizRouter = router({
 
   listQuestions: protectedProcedure
     .input(listQuestionsInput)
-    // TODO should generalize this as well as input
-    .use(async ({ next, ctx, input }) => {
+  // TODO should generalize this as well as input
+    .use(async ({
+      next,
+      ctx,
+      input,
+    }) => {
       const quiz = await ctx.prisma.quiz.findUnique({
         where: {
           id: input.quizId,
@@ -155,46 +196,54 @@ export const quizRouter = router({
         },
       })
     })
-    .query(async ({ ctx, input }) => {
+    .query(async ({
+      ctx,
+      input,
+    }) => {
       try {
-        return await ctx.prisma.$transaction(async (prisma) => {
-          const qns = await prisma.question.findMany({
-            where: {
-              quizId: input.quizId,
-            },
-            select: defaultQuestionSelect,
-          })
-
-          const queryList = qns.map(async (qn) => {
-            switch (qn.type) {
-              case QuestionType.File: {
-                const d = await prisma.fileQuestion.findUnique({
-                  where: { id: qn.id },
-                })
-                return { ...qn, ...d }
-              }
-              case QuestionType.Text: {
-                const d = await prisma.textQuestion.findUnique({
-                  where: { id: qn.id },
-                })
-                return { ...qn, ...d }
-              }
-              case QuestionType.Options: {
-                const d = await prisma.optionsQuestion.findUnique({
-                  where: { id: qn.id },
-                })
-                return { ...qn, ...d }
-              }
-              default:
-                throw new Error('Invariant')
-            }
-          })
-
-          return await Promise.all(queryList)
+        const qns = await ctx.prisma.question.findMany({
+          where: {
+            quizId: input.quizId,
+          },
+          select: defaultQuestionSelect,
         })
+
+        const merged: CombinedQuestion[] = []
+
+        for (const qn of qns) {
+          if (qn.type === QuestionType.File) {
+            const d = await ctx.prisma.fileQuestion.findUnique({
+              where: { id: qn.id },
+            })
+            merged.push(
+              { ...qn, ...d },
+            )
+          }
+          else if (qn.type === QuestionType.Text) {
+            const d = await ctx.prisma.textQuestion.findUnique({
+              where: { id: qn.id },
+            })
+            merged.push(
+              { ...qn, ...d },
+            )
+          }
+          else {
+            const d = await ctx.prisma.optionsQuestion.findUnique({
+              where: { id: qn.id },
+            })
+            merged.push(
+              { ...qn, ...d },
+            )
+          }
+        }
+
+        return merged
       }
       catch (err) {
-        ctx.logger.error({ msg: 'failed to list questions', err })
+        ctx.logger.error({
+          msg: 'failed to list questions',
+          err,
+        })
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to list questions',
@@ -204,7 +253,10 @@ export const quizRouter = router({
 
   bulkUpsertQuestions: protectedProcedure
     .input(bulkUpsertQuestionInput)
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({
+      ctx,
+      input,
+    }) => {
       try {
         const stmts = []
 
@@ -266,7 +318,10 @@ export const quizRouter = router({
         return await ctx.prisma.$transaction(stmts)
       }
       catch (err) {
-        ctx.logger.error({ msg: 'failed to bulk upsert questions', err })
+        ctx.logger.error({
+          msg: 'failed to bulk upsert questions',
+          err,
+        })
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to bulk upsert questions',

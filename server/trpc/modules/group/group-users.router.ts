@@ -1,8 +1,8 @@
 import { TRPCError } from '@trpc/server'
-import { GroupRole } from '@prisma/client'
 import { defaultUserSelect } from '../user/user.select'
 import { assertGroupRole } from '../rbac'
 import { defaultGroupUsersSelect } from './group-users.select'
+import { GroupRole } from '~/shared/enums'
 import { protectedProcedure, router } from '~/server/trpc/trpc'
 import { listGroupUsersInput, removeGroupUserInput } from '~/shared/group'
 

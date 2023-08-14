@@ -1,6 +1,12 @@
+<script setup>
+const { $cn } = useNuxtApp()
+</script>
+
 <template>
   <div
-    class="border border-$surface-border rounded-xl bg-$surface-card shadow"
+    :class="
+      $cn('border border-$surface-border rounded-xl bg-$surface-card shadow', $attrs.class)
+    "
     v-bind="$attrs"
   >
     <slot />
