@@ -51,14 +51,14 @@ const cards = [
       <div flex flex-col gap-10 pb-30>
         <div grid="~ cols-1 md:cols-2 gap-6 md:gap-10" class="my-10 lg:my-40 md:my-15">
           <div flex flex-1 flex-col justify-center md:flex-grow-2>
-            <span class="leading-[4]">
+            <div class="leading-[4]">
               <h1 text-4xl font-black lg:text-5xl>
                 A gamified learning platform
               </h1>
-              <span text-xl font-semibold lg:text-3xl>
+              <h2 mt-5 text-xl font-semibold lg:text-3xl>
                 for students, by students
-              </span>
-            </span>
+              </h2>
+            </div>
             <div flex="~ gap-2" mt6>
               <Button rounded label="Get started" @click="$router.push('/login')" />
             </div>
