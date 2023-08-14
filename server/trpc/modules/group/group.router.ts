@@ -6,7 +6,7 @@ import { defaultGroupUsersSelect } from './group-users.select'
 import { groupUsersRouter } from './group-users.router'
 import { groupInviteRouter } from './group-invite.router'
 import { protectedProcedure, router } from '~/server/trpc/trpc'
-import { createGroupInput, getGroupInput } from '~/shared/group'
+import { createGroupInput, getGroupInput, updateGroupInput } from '~/shared/group'
 
 export const groupRouter = router({
   list: protectedProcedure
@@ -76,6 +76,57 @@ export const groupRouter = router({
           })
         }
         throw err
+      }
+    }),
+
+  update: protectedProcedure
+    .input(updateGroupInput)
+    // Check whether user is in group
+    .use(async ({ next, ctx, input }) => {
+      const groupUser = await ctx.prisma.groupUsers.findUnique({
+        where: {
+          groupId_userId: {
+            userId: ctx.session.user.id,
+            groupId: input.groupId,
+          },
+        },
+        select: defaultGroupUsersSelect,
+      })
+
+      if (groupUser === null) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'User does not have sufficient permissions.',
+        })
+      }
+
+      assertGroupRole(groupUser, GroupRole.Owner, GroupRole.Educator)
+
+      return next({
+        ctx: {
+          groupUser,
+        },
+      })
+    })
+    .mutation(async ({ ctx, input }) => {
+      try {
+        return await ctx.prisma.group.update({
+          where: {
+            id: input.groupId,
+          },
+          data: {
+            name: input.name,
+            description: input.description,
+          },
+          select: defaultGroupSelect,
+        })
+      }
+      catch (err) {
+        ctx.logger.error({ msg: 'failed to update group', err })
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to update group',
+        })
       }
     }),
 

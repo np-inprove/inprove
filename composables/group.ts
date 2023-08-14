@@ -1,7 +1,7 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import type { AcceptGroupInviteInput } from '~/shared/group-invite'
-import type { CreateGroupInput, RemoveGroupUserInput } from '~/shared/group'
+import type { CreateGroupInput, RemoveGroupUserInput, UpdateGroupInput } from '~/shared/group'
 
 export const groupQueries = createQueryKeys('groups', {
   list: {
@@ -28,6 +28,23 @@ export function useCreateGroupMutation() {
   return useMutation({
     mutationFn: (group: CreateGroupInput) => $client.group.create.mutate(group),
     onSuccess() {
+      queryClient.invalidateQueries({
+        queryKey: groupQueries.list.queryKey,
+      })
+    },
+  })
+}
+
+export function useUpdateGroupMutation(groupId: string) {
+  const { $client } = useNuxtApp()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: () => (group: UpdateGroupInput) => $client.group.update.mutate(group),
+    onSuccess(_, vars) {
+      queryClient.invalidateQueries({
+        queryKey: groupQueries.details(vars.groupId).queryKey,
+      })
       queryClient.invalidateQueries({
         queryKey: groupQueries.list.queryKey,
       })
