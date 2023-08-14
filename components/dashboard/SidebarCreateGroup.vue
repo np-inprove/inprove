@@ -36,17 +36,13 @@ function create() {
 </script>
 
 <template>
-  <Button
-    size="small"
-    :pt="{ root: { style: 'padding: 0 !important' } }" text
-    @click="formData.visible = true"
-  >
-    <div i-tabler-plus />
+  <Button size="small" text @click="formData.visible = true">
+    <template #icon>
+      <div i-tabler-plus />
+    </template>
   </Button>
 
-  <Dialog
-    v-model:visible="formData.visible" modal header="New group" style="min-width: 300px;"
-  >
+  <Dialog v-model:visible="formData.visible" modal header="New group" style="min-width: 300px;">
     <form flex flex-col space-y-6 @submit.prevent="create">
       <div class="flex flex-col gap-2">
         <label for="name">Group name</label>

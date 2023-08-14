@@ -38,5 +38,3 @@ export const defaultOptionsQuestionSelect = Prisma.validator<Prisma.OptionsQuest
 })
 
 export type DefaultOptionsQuestion = Prisma.OptionsQuestionGetPayload<{ select: typeof defaultOptionsQuestionSelect }>
-
-export type DefaultCompleteQuestion = DefaultQuestion & (DefaultTextQuestion | DefaultFileQuestion | DefaultOptionsQuestion)

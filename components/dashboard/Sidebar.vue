@@ -6,15 +6,14 @@
 
 import ScrollPanel from 'primevue/scrollpanel'
 import Skeleton from 'primevue/skeleton'
-import type { InstitutionRole } from '~/shared/institution'
-import { institutionRole } from '~/shared/institution'
+import { InstitutionRole } from '~/shared/enums'
 
 const props = withDefaults(defineProps<{
   createGroupAllowedRoles?: InstitutionRole[]
 }>(), {
   createGroupAllowedRoles: () => [
-    institutionRole.Admin,
-    institutionRole.Educator,
+    InstitutionRole.Admin,
+    InstitutionRole.Educator,
   ],
 })
 
@@ -46,7 +45,7 @@ const sidebarItems = computed(() => {
     })
   }
 
-  if (me?.value?.institutionRole === institutionRole.Admin) {
+  if (me?.value?.institutionRole === InstitutionRole.Admin) {
     base.push({
       title: 'Institution settings',
       icon: 'i-tabler-building',

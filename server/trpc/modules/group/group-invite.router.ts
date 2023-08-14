@@ -1,9 +1,10 @@
 import { TRPCError } from '@trpc/server'
-import { GroupRole, Prisma } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 import { assertGroupRole } from '../rbac'
 import { defaultGroupUsersSelect } from './group-users.select'
 import { defaultGroupInviteSelect } from './group-invite.select'
 import { defaultGroupSelect } from './group.select'
+import { GroupRole } from '~/shared/enums'
 import { protectedProcedure, publicProcedure, router } from '~/server/trpc/trpc'
 import { acceptGroupInviteInput, createGroupInviteInput, deleteGroupInviteInput, getGroupInviteInput, groupInviteInputBase } from '~/shared/group-invite'
 
