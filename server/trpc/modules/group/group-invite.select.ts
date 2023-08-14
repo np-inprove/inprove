@@ -15,4 +15,4 @@ export const defaultGroupInviteSelect = Prisma.validator<Prisma.GroupInviteSelec
   role: true,
 })
 
-type DefaultGroup = Prisma.GroupInviteGetPayload<{ select: typeof defaultGroupSelect }>
+export type DefaultGroupInvite = Prisma.GroupInviteGetPayload<{ select: typeof defaultGroupInviteSelect }>
