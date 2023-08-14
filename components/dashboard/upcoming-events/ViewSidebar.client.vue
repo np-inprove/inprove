@@ -1,17 +1,29 @@
 <script setup lang="ts">
 import { RRule } from 'rrule'
+import Sidebar from 'primevue/sidebar'
+import Divider from 'primevue/divider'
 import Button from 'primevue/button'
 import Checkbox from 'primevue/checkbox'
-import Sidebar from 'primevue/sidebar'
 import InputText from 'primevue/inputtext'
 import Dropdown from 'primevue/dropdown'
 import InputNumber from 'primevue/inputnumber'
+import type { DefaultEvent } from '~/shared/types'
 
-const props = defineProps<{
-  date: Date
-  groupId: string
-}>()
+const route = useRoute()
+const editMode = ref(false)
+const event = defineModel<DefaultEvent | null>('event', { required: true })
+const visible = defineModel<boolean>('visible', { required: true })
 
+const { mutate: updateEventMutate } = useUpdateEventMutation(route.params.groupId as string)
+const { mutate: deleteMutate } = useDeleteEventMutation(route.params.groupId as string)
+
+const today = new Date()
+const freq = [
+  { label: 'Day', value: RRule.DAILY },
+  { label: 'Week', value: RRule.WEEKLY },
+  { label: 'Month', value: RRule.MONTHLY },
+  { label: 'Year', value: RRule.YEARLY },
+]
 const formData = reactive<{
   name: string
   range: {
@@ -30,8 +42,8 @@ const formData = reactive<{
 }>({
   name: '',
   range: {
-    start: props.date,
-    end: props.date,
+    start: today,
+    end: today,
   },
   recurrence: {
     enabled: false,
@@ -42,29 +54,30 @@ const formData = reactive<{
   location: '',
 })
 
-function resetFormData() {
-  formData.name = ''
-  formData.location = ''
-  formData.range.start = props.date
-  formData.range.end = props.date
-  formData.allDay = true
-  formData.recurrence.enabled = false
-  formData.recurrence.freq = RRule.DAILY
-  formData.recurrence.interval = 1
-  formData.recurrence.count = undefined
-  formData.recurrence.until = undefined
-}
-
-const visible = defineModel<boolean>('visible', { required: true })
-
-const { mutate: createEventMutate } = useCreateEventMutation(props.groupId)
-
-watch(visible, (v) => {
-  if (v)
-    resetFormData()
+watch(editMode, (e) => {
+  if (e) {
+    formData.name = event.value?.name ?? ''
+    formData.location = event.value?.location ?? ''
+    formData.range.start = event.value?.startTime ?? today
+    formData.range.end = event.value?.endTime ?? today
+    formData.allDay = event.value?.allDay ?? true
+    formData.recurrence.enabled = event.value?.rrule !== null
+    if (event.value?.rrule) {
+      const rrule = RRule.fromString(event.value.rrule)
+      formData.recurrence.freq = rrule.options.freq ?? RRule.DAILY
+      formData.recurrence.interval = rrule.options.interval ?? 1
+      formData.recurrence.count = rrule.options.count ?? undefined
+      formData.recurrence.until = rrule.options.until ?? undefined
+    }
+  }
 })
 
-function createEvent() {
+watch(visible, (v) => {
+  if (!v)
+    editMode.value = false
+})
+
+function updateEvent() {
   let rrule: string | undefined
   if (formData.recurrence.enabled) {
     const t = new RRule({
@@ -76,7 +89,8 @@ function createEvent() {
     })
     rrule = t.toString()
   }
-  createEventMutate({
+  updateEventMutate({
+    eventId: event.value?.id ?? '',
     name: formData.name,
     startTime: formData.range.start,
     endTime: formData.range.end,
@@ -90,27 +104,38 @@ function createEvent() {
   })
 }
 
-const freq = [
-  { label: 'Day', value: RRule.DAILY },
-  { label: 'Week', value: RRule.WEEKLY },
-  { label: 'Month', value: RRule.MONTHLY },
-  { label: 'Year', value: RRule.YEARLY },
-]
+function onEditClick() {
+  editMode.value = true
+}
+
+function onDeleteClick() {
+  if (event.value?.id === undefined)
+    return
+
+  deleteMutate({
+    eventId: event.value.id,
+  },
+  {
+    onSuccess() {
+      visible.value = false
+    },
+  })
+}
 </script>
 
 <template>
   <Sidebar v-model:visible="visible" position="right" class="min-w-full md:min-w-lg">
-    <div px4 space-y-8>
+    <div v-if="editMode" px4 space-y-8>
       <span>
         <h1 text-2xl font-bold tracking-tight>
-          Create a new event
+          Edit event
         </h1>
         <p>Use events to keep track of important dates, such as exams, in your group.</p>
       </span>
 
       <VDatePicker v-model.range="formData.range" expanded title="left" :mode="formData.allDay ? 'date' : 'dateTime'" />
 
-      <form space-y-8 @submit.prevent="createEvent">
+      <form space-y-8 @submit.prevent="updateEvent">
         <div class="flex flex-col gap-2">
           <label for="name">Name</label>
           <InputText id="name" v-model="formData.name" size="small" aria-describedby="name-help" autofocus />
@@ -165,8 +190,38 @@ const freq = [
           </div>
         </div>
 
-        <Button type="submit" label="Create" class="w-full" />
+        <Button type="submit" label="Update" class="w-full" />
       </form>
+    </div>
+
+    <div v-else px4 space-y-4>
+      <h1 text-2xl font-bold tracking-tight>
+        {{ event?.name }}
+      </h1>
+
+      <Divider :pt="{ root: { class: 'before:border-solid!' } }" />
+
+      <div py2 space-y-2>
+        <DashboardUpcomingEventsEventPropCard
+          icon-class="i-tabler-map-pin"
+          :label="event?.location ?? '-'"
+        />
+        <div flex space-x-2>
+          <DashboardUpcomingEventsEventPropCard
+            icon-class="i-tabler-clock-play"
+            :label="(event?.allDay ? event?.startTime.toDateString() : event?.startTime.toLocaleString()) ?? '-'"
+          />
+          <DashboardUpcomingEventsEventPropCard
+            icon-class="i-tabler-clock-stop"
+            :label="(event?.allDay ? event?.endTime.toDateString() : event?.endTime.toLocaleString()) ?? '-'"
+          />
+        </div>
+      </div>
+
+      <div flex pt2 space-x-2>
+        <Button outlined label="Edit" class="w-full" @click="onEditClick" />
+        <Button severity="danger" label="Delete" class="w-full" @click="onDeleteClick" />
+      </div>
     </div>
   </Sidebar>
 </template>

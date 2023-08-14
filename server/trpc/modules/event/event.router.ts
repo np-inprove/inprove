@@ -3,11 +3,14 @@ import addDays from 'date-fns/addDays/index.js'
 import intervalToDuration from 'date-fns/intervalToDuration/index.js'
 import add from 'date-fns/add/index.js'
 import * as rrule from 'rrule'
+import { GroupRole } from '@prisma/client'
 import { defaultDeadlineSelect } from '../deadline/deadline.select'
+import { defaultGroupUsersSelect } from '../group/group-users.select'
+import { assertGroupRole } from '../rbac'
 import type { DefaultEvent } from './event.select'
 import { defaultEventSelect } from './event.select'
 import { protectedProcedure, router } from '~/server/trpc/trpc'
-import { baseEventInput, createEventInput, upcomingEventsInput } from '~/shared/event'
+import { baseEventInput, createEventInput, deleteEventInput, upcomingEventsInput, updateEventInput } from '~/shared/event'
 
 const { rrulestr } = rrule
 
@@ -51,6 +54,7 @@ const userIsInGroup = protectedProcedure
 export const eventRouter = router({
   // By default, will list events that occur in the next 3 days,
   // unless otherwise specified by input.date
+  // TODO migrate to useInfiniteQuery
   upcoming: userIsInGroup
     .input(upcomingEventsInput)
     .query(async ({ ctx, input }) => {
@@ -133,6 +137,32 @@ export const eventRouter = router({
 
   create: userIsInGroup
     .input(createEventInput)
+    .use(async ({ next, ctx, input }) => {
+      const groupUser = await ctx.prisma.groupUsers.findUnique({
+        where: {
+          groupId_userId: {
+            userId: ctx.session.user.id,
+            groupId: input.groupId,
+          },
+        },
+        select: defaultGroupUsersSelect,
+      })
+
+      if (groupUser === null) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'User does not have sufficient permissions.',
+        })
+      }
+
+      assertGroupRole(groupUser, GroupRole.Owner, GroupRole.Educator)
+
+      return next({
+        ctx: {
+          groupUser,
+        },
+      })
+    })
     .mutation(async ({ ctx, input }) => {
       try {
         return await ctx.prisma.event.create({
@@ -140,6 +170,7 @@ export const eventRouter = router({
             name: input.name,
             startTime: input.startTime,
             endTime: input.endTime,
+            allDay: input.allDay,
             location: input.location,
             groupId: input.groupId,
             rrule: input.rrule,
@@ -152,6 +183,143 @@ export const eventRouter = router({
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to create event',
+        })
+      }
+    }),
+
+  update: userIsInGroup
+    .input(updateEventInput)
+    .use(async ({ next, ctx, input }) => {
+      const event = await ctx.prisma.event.findUnique({
+        where: {
+          id: input.eventId,
+        },
+      })
+
+      if (event === null) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+        })
+      }
+
+      if (event.groupId !== input.groupId) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+        })
+      }
+
+      const groupUser = await ctx.prisma.groupUsers.findUnique({
+        where: {
+          groupId_userId: {
+            userId: ctx.session.user.id,
+            groupId: input.groupId,
+          },
+        },
+        select: defaultGroupUsersSelect,
+      })
+
+      if (groupUser === null) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'User does not have sufficient permissions.',
+        })
+      }
+
+      assertGroupRole(groupUser, GroupRole.Owner, GroupRole.Educator)
+
+      return next({
+        ctx: {
+          event,
+          groupUser,
+        },
+      })
+    })
+    .mutation(async ({ ctx, input }) => {
+      try {
+        return await ctx.prisma.event.update({
+          where: {
+            id: input.eventId,
+          },
+          data: {
+            name: input.name,
+            startTime: input.startTime,
+            endTime: input.endTime,
+            allDay: input.allDay,
+            location: input.location,
+            rrule: input.rrule,
+          },
+          select: defaultEventSelect,
+        })
+      }
+      catch (err) {
+        ctx.logger.error({ msg: 'failed to update event', err })
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to update event',
+        })
+      }
+    }),
+
+  delete: userIsInGroup
+    .input(deleteEventInput)
+    .use(async ({ next, ctx, input }) => {
+      const event = await ctx.prisma.event.findUnique({
+        where: {
+          id: input.eventId,
+        },
+      })
+
+      if (event === null) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+        })
+      }
+
+      if (event.groupId !== input.groupId) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+        })
+      }
+
+      const groupUser = await ctx.prisma.groupUsers.findUnique({
+        where: {
+          groupId_userId: {
+            userId: ctx.session.user.id,
+            groupId: input.groupId,
+          },
+        },
+        select: defaultGroupUsersSelect,
+      })
+
+      if (groupUser === null) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'User does not have sufficient permissions.',
+        })
+      }
+
+      assertGroupRole(groupUser, GroupRole.Owner, GroupRole.Educator)
+
+      return next({
+        ctx: {
+          event,
+          groupUser,
+        },
+      })
+    })
+    .mutation(async ({ ctx, input }) => {
+      try {
+        return await ctx.prisma.event.delete({
+          where: {
+            id: input.eventId,
+          },
+        })
+      }
+      catch (err) {
+        ctx.logger.error({ msg: 'failed to delete event', err })
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to delete event',
         })
       }
     }),
