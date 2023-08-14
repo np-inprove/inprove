@@ -8,17 +8,17 @@ const items = computed(() => [
   {
     to: `/dashboard/${route.params.groupId}/settings`,
     match: [`/dashboard/${route.params.groupId}/settings`],
+    name: 'General',
+  },
+  {
+    to: `/dashboard/${route.params.groupId}/settings/invites`,
+    match: [`/dashboard/${route.params.groupId}/settings/invites`],
     name: 'Invites',
   },
   {
     to: `/dashboard/${route.params.groupId}/settings/users`,
     match: [`/dashboard/${route.params.groupId}/settings/users`],
     name: 'Users',
-  },
-  {
-    to: `/dashboard/${route.params.groupId}/settings/advanced`,
-    match: [`/dashboard/${route.params.groupId}/settings/advanced`],
-    name: 'Advanced',
   },
 ])
 </script>
