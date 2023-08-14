@@ -23,11 +23,11 @@ watch(state, (value) => {
 }, { deep: true })
 
 function addOption() {
-  state.value.options.push('')
+  state.value.options?.push('')
 }
 
 function removeOption(idx: number) {
-  state.value.options.splice(idx, 1)
+  state.value.options?.splice(idx, 1)
 }
 </script>
 
@@ -37,7 +37,7 @@ function removeOption(idx: number) {
       <div v-if="editing" ref="card" flex flex-col gap-2>
         <InputText v-model="state.content" placeholder="Did you have fun today?" />
         <Textarea v-model="state.description" placeholder="Describe your experience" />
-        <ul mt4 space-y-2>
+        <ul v-if="state.options" mt4 space-y-2>
           <li v-for="option, idx in props.modelValue.options" :key="idx" flex items-center gap4>
             <Checkbox disabled />
             <InputText v-model="state.options[idx]" size="small" />
