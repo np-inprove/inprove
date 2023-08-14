@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
-import type { CreateEventInput } from '~/shared/event'
+import type { CreateEventInput, DeleteEventInput, UpdateEventInput } from '~/shared/event'
 
+// TODO migrate to useInfiniteQuery
 export function useUpcomingEvents(groupId: string, date?: Ref<Date | undefined>) {
   const { $client } = useNuxtApp()
 
@@ -20,7 +21,37 @@ export function useCreateEventMutation(groupId: string) {
       ...event,
     }),
     onSuccess() {
-      queryClient.invalidateQueries(['event', 'list', groupId])
+      queryClient.invalidateQueries(['event', 'upcoming'])
+    },
+  })
+}
+
+export function useUpdateEventMutation(groupId: string) {
+  const queryClient = useQueryClient()
+  const { $client } = useNuxtApp()
+
+  return useMutation({
+    mutationFn: (event: Omit<UpdateEventInput, 'groupId'>) => $client.event.update.mutate({
+      groupId,
+      ...event,
+    }),
+    onSuccess() {
+      queryClient.invalidateQueries(['event', 'upcoming'])
+    },
+  })
+}
+
+export function useDeleteEventMutation(groupId: string) {
+  const queryClient = useQueryClient()
+  const { $client } = useNuxtApp()
+
+  return useMutation({
+    mutationFn: (event: Omit<DeleteEventInput, 'groupId'>) => $client.event.delete.mutate({
+      groupId,
+      ...event,
+    }),
+    onSuccess() {
+      queryClient.invalidateQueries(['event', 'upcoming'])
     },
   })
 }
