@@ -60,7 +60,7 @@ function handleEventClick(event: DefaultEvent) {
 
     <LazyDashboardUpcomingEventsViewSidebar
       v-model:visible="viewVisible"
-      v-model:event="selectedEvent"
+      :event="selectedEvent!"
     />
 
     <div flex items-center justify-between>
