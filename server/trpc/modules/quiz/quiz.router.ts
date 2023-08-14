@@ -215,25 +215,22 @@ export const quizRouter = router({
             const d = await ctx.prisma.fileQuestion.findUnique({
               where: { id: qn.id },
             })
-            merged.push(
-              { ...qn, ...d },
-            )
+            const m = { ...qn, ...d, type: QuestionType.File }
+            merged.push(m)
           }
           else if (qn.type === QuestionType.Text) {
             const d = await ctx.prisma.textQuestion.findUnique({
               where: { id: qn.id },
             })
-            merged.push(
-              { ...qn, ...d },
-            )
+            const m = { ...qn, ...d, type: QuestionType.Text }
+            merged.push(m)
           }
           else {
             const d = await ctx.prisma.optionsQuestion.findUnique({
               where: { id: qn.id },
             })
-            merged.push(
-              { ...qn, ...d },
-            )
+            const m = { ...qn, ...d, type: QuestionType.Options }
+            merged.push(m)
           }
         }
 

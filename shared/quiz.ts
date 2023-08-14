@@ -80,8 +80,8 @@ export const optionsQn = z.object({
   type: z.literal(QuestionType.Options),
   id: z.string().cuid().optional(),
   content: z.string(),
-  options: z.array(z.string()),
-  correctOptions: z.array(z.number()),
+  options: z.array(z.string()).optional(),
+  correctOptions: z.array(z.number()).optional(),
   description: z.string(),
   points: z.number(),
 })
@@ -91,7 +91,7 @@ export type OptionsQn = z.infer<typeof optionsQn>
 export const textQn = z.object({
   type: z.literal(QuestionType.Text),
   id: z.string().cuid().optional(),
-  answer: z.string(),
+  answer: z.string().optional(),
   content: z.string(),
   description: z.string(),
   points: z.number(),
