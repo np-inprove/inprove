@@ -22,7 +22,7 @@ const { data: invite, isLoading: inviteIsLoading, error: inviteError } = useQuer
   retry: false,
 })
 
-const { mutate, isLoading } = useAcceptGroupInviteMutation()
+const { mutate, isLoading } = useAcceptGroupInviteLinkMutation()
 
 function joinGroup() {
   mutate(
