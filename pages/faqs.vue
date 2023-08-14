@@ -36,9 +36,9 @@ const faqs = [
 </script>
 
 <template>
-  <div class="mx-auto px-6 container">
+  <div>
     <NavBar />
-    <main>
+    <main class="mx-auto px-6 container">
       <h1 p-5 text-center text-3xl>
         Frequently Asked Questions
       </h1>

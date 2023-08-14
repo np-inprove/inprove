@@ -11,6 +11,9 @@ const resolvedTheme = computed(() => {
   if (cookieRaw.value)
     theme = cookieRaw.value
 
+  else
+    cookieRaw.value = theme
+
   return `/themes/${theme}/theme.css`
 })
 
