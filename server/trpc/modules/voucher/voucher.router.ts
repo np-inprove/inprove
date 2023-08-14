@@ -3,7 +3,7 @@ import { InstitutionRole } from '@prisma/client'
 import { assertInstitutionRole } from '../rbac'
 import { defaultRedemptionSelect } from '../redemption/redemption.select'
 import { protectedProcedure, router } from '~/server/trpc/trpc'
-import { createVoucherInput, redeemVoucherInput } from '~/shared/voucher'
+import { createVoucherInput, redeemVoucherInput, updateVoucherInput } from '~/shared/voucher'
 
 export const voucherRouter = router({
   list: protectedProcedure
@@ -65,6 +65,49 @@ export const voucherRouter = router({
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to create voucher',
+        })
+      }
+    }),
+
+  update: protectedProcedure
+    .input(updateVoucherInput)
+    .mutation(async ({ ctx, input }) => {
+      assertInstitutionRole(ctx.session.user, InstitutionRole.Admin)
+
+      try {
+        return await ctx.prisma.voucher.update({
+          where: { id: input.id },
+          data: {
+            name: input.name,
+            description: input.description,
+            pointsRequired: input.pointsRequired,
+          },
+        })
+      }
+      catch (err) {
+        ctx.logger.error({ msg: 'failed to update voucher', err })
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to update voucher',
+        })
+      }
+    }),
+
+  delete: protectedProcedure
+    .input(redeemVoucherInput)
+    .mutation(async ({ ctx, input }) => {
+      assertInstitutionRole(ctx.session.user, InstitutionRole.Admin)
+
+      try {
+        return await ctx.prisma.voucher.delete({
+          where: { id: input.voucherId },
+        })
+      }
+      catch (err) {
+        ctx.logger.error({ msg: 'failed to delete voucher', err })
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to delete voucher',
         })
       }
     }),
