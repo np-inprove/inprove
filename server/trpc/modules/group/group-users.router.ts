@@ -1,7 +1,6 @@
 import { TRPCError } from '@trpc/server'
-import { defaultUserSelect } from '../user/user.select'
 import { assertGroupRole } from '../rbac'
-import { defaultGroupUsersSelect } from './group-users.select'
+import { defaultGroupUsersSelect, detailedGroupUsersSelect } from './group-users.select'
 import { GroupRole } from '~/shared/enums'
 import { protectedProcedure, router } from '~/server/trpc/trpc'
 import { listGroupUsersInput, removeGroupUserInput } from '~/shared/group'
@@ -36,15 +35,11 @@ export const groupUsersRouter = router({
     })
     .query(async ({ ctx, input }) => {
       try {
-        return await ctx.prisma.user.findMany({
+        return await ctx.prisma.groupUsers.findMany({
           where: {
-            groups: {
-              some: {
-                groupId: input.groupId,
-              },
-            },
+            groupId: input.groupId,
           },
-          select: defaultUserSelect,
+          select: detailedGroupUsersSelect,
         })
       }
       catch (err) {

@@ -1,6 +1,7 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
-import type { CreateGroupInput } from '~/shared/group'
+import type { AcceptGroupInviteInput } from '~/shared/group-invite'
+import type { CreateGroupInput, RemoveGroupUserInput } from '~/shared/group'
 
 export const groupQueries = createQueryKeys('groups', {
   list: {
@@ -47,6 +48,40 @@ export function useDeleteGroupMutation(groupId: string) {
       queryClient.invalidateQueries({
         queryKey: groupQueries.list.queryKey,
       })
+    },
+  })
+}
+
+export function useAcceptGroupInviteMutation() {
+  const { $client } = useNuxtApp()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (invite: AcceptGroupInviteInput) => $client.group.invites.accept.mutate(invite),
+    onSuccess(_, vars) {
+      queryClient.invalidateQueries({ queryKey: groupInviteQueries.list(vars.inviteId).queryKey })
+    },
+  })
+}
+
+export const groupUsersQueries = createQueryKeys('groupUsers', {
+  list: (groupId: string) => ({
+    queryKey: [groupId],
+    queryFn: () => {
+      const { $client } = useNuxtApp()
+      return $client.group.users.list.query({ groupId })
+    },
+  }),
+})
+
+export function useRemoveGroupUserMutation() {
+  const { $client } = useNuxtApp()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (user: RemoveGroupUserInput) => $client.group.users.remove.mutate(user),
+    onSuccess(_, vars) {
+      queryClient.invalidateQueries({ queryKey: groupUsersQueries.list(vars.groupId).queryKey })
     },
   })
 }
