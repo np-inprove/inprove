@@ -15,7 +15,7 @@ const confirm = useConfirm()
 const toast = useToast()
 
 const { data: group, isLoading: isGroupLoading } = useQuery(queries.groups.details(route.params.groupId as string))
-const { mutate: updateMutate, isLoading: isUpdateLoading } = useUpdateGroupMutation()
+const { mutate: updateMutate, isLoading: isUpdateLoading } = useUpdateGroupMutation(route.params.groupId as string)
 const { mutate: deleteMutate, isLoading: isDeleteLoading } = useDeleteGroupMutation(route.params.groupId as string)
 
 const formData = reactive({
@@ -39,7 +39,6 @@ watch(
 
 function updateGroup() {
   updateMutate({
-    groupId: route.params.groupId as string,
     name: formData.name,
     description: formData.description,
   },

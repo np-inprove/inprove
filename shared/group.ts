@@ -1,3 +1,4 @@
+import { GroupRole } from '@prisma/client'
 import { z } from 'zod'
 
 export const createGroupInput = z.object({
@@ -17,10 +18,17 @@ export const getGroupInput = z.object({
 })
 
 export type CreateGroupInput = z.infer<typeof createGroupInput>
+export type UpdateGroupInput = z.infer<typeof updateGroupInput>
 export type GetGroupInput = z.infer<typeof getGroupInput>
 
 export const listGroupUsersInput = z.object({
   groupId: z.string().cuid(),
+})
+
+export const updateGroupUserInput = z.object({
+  groupId: z.string().cuid(),
+  userId: z.string().cuid(),
+  role: z.nativeEnum(GroupRole),
 })
 
 export const removeGroupUserInput = z.object({
@@ -29,5 +37,5 @@ export const removeGroupUserInput = z.object({
 })
 
 export type ListGroupUsersInput = z.infer<typeof listGroupUsersInput>
-export type UpdateGroupInput = z.infer<typeof updateGroupInput>
+export type UpdateGroupUserInput = z.infer<typeof updateGroupUserInput>
 export type RemoveGroupUserInput = z.infer<typeof removeGroupUserInput>
