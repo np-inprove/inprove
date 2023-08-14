@@ -1,10 +1,11 @@
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
-import { InstitutionRole, Prisma } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 import { assertInstitutionRole } from '../rbac'
 import { defaultUserSelect } from '../user/user.select'
 import { defaultInstitutionSelect } from './institution.select'
 import { defaultInstitutionInviteSelect } from './institution-invite.select'
+import { InstitutionRole } from '~/shared/enums'
 import { acceptInstitutionInviteInput, createInstitutionInviteInput, deleteInstitutionInviteInput, getInstitutionInviteInput } from '~/shared/institution'
 import { protectedProcedure, publicProcedure, router } from '~/server/trpc/trpc'
 
