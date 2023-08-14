@@ -12,14 +12,14 @@ const { data: me } = useQuery(queries.me.info)
           <CommonAppLogo class="h-6" />
         </span>
       </NuxtLink>
-    </div>
 
-    <div flex grid="gap-2 md:gap-10">
-      <Button link label="FAQs" @click="$router.push('/faqs')" />
-      <Button link label="About Us" @click="$router.push('/about-us')" />
+      <div flex grid="gap-2 md:gap-10">
+        <Button link label="FAQs" @click="$router.push('/faqs')" />
+        <Button link label="About Us" @click="$router.push('/about-us')" />
 
-      <Button v-if="me" label="Dashboard" @click="$router.push('dashboard')" />
-      <Button v-else label="Login" @click="$router.push('login')" />
+        <Button v-if="me" label="Dashboard" @click="$router.push('dashboard')" />
+        <Button v-else label="Login" @click="$router.push('login')" />
+      </div>
     </div>
   </header>
 </template>
