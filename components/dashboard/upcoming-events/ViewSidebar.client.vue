@@ -7,7 +7,6 @@ import Checkbox from 'primevue/checkbox'
 import InputText from 'primevue/inputtext'
 import Dropdown from 'primevue/dropdown'
 import InputNumber from 'primevue/inputnumber'
-import { GroupRole } from '@prisma/client'
 import type { DefaultEvent } from '~/shared/types'
 
 const route = useRoute()
@@ -17,7 +16,6 @@ const visible = defineModel<boolean>('visible', { required: true })
 
 const { mutate: updateEventMutate } = useUpdateEventMutation(route.params.groupId as string)
 const { mutate: deleteMutate } = useDeleteEventMutation(route.params.groupId as string)
-const { data: me } = useQuery(queries.groupUsers.me(route.params.groupId as string))
 
 const today = new Date()
 const freq = [
@@ -220,7 +218,7 @@ function onDeleteClick() {
         </div>
       </div>
 
-      <div v-if="me?.role === GroupRole.Owner || me?.role === GroupRole.Educator" flex pt2 space-x-2>
+      <div flex pt2 space-x-2>
         <Button outlined label="Edit" class="w-full" @click="onEditClick" />
         <Button severity="danger" label="Delete" class="w-full" @click="onDeleteClick" />
       </div>
