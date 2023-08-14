@@ -6,6 +6,10 @@ generator client {
   previewFeatures = ["fullTextSearch"]
 }
 
+generator enums {
+  provider = "tsx ./prisma/enum-generator"
+}
+
 datasource db {
   provider = "cockroachdb"
   url      = env("NUXT_DATABASE_URL")
@@ -264,6 +268,7 @@ model Event {
   name      String
   startTime DateTime
   endTime   DateTime
+  allDay    Boolean  @default(false) // Ignore time in startTime and endTime if this is true
   location  String?
   rrule     String?
 

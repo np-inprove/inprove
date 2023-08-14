@@ -1,7 +1,7 @@
-import type { GroupRole, InstitutionRole } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import type { DefaultUser } from './user/user.select'
 import type { DefaultGroupUsers } from './group/group-users.select'
+import type { GroupRole, InstitutionRole } from '~/shared/enums'
 
 /**
  * Helper to check institution roles and then throw TRPC errors

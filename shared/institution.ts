@@ -1,13 +1,5 @@
 import { z } from 'zod'
-
-// TODO this is also bad - should find a way to keep this in sync with Prisma schema
-export const institutionRole = {
-  Admin: 'Admin',
-  Educator: 'Educator',
-  Member: 'Member',
-}
-
-export type InstitutionRole = (typeof institutionRole)[keyof typeof institutionRole]
+import { InstitutionRole } from './enums'
 
 export const createInstitutionInput = z.object({
   name: z.string().nonempty(),
@@ -47,7 +39,7 @@ export const getInstitutionInviteInput = z.object({
 export const acceptInstitutionInviteInput = getInstitutionInviteInput
 
 export const createInstitutionInviteInput = institutionInviteInputBase.extend({
-  role: z.nativeEnum(institutionRole),
+  role: z.nativeEnum(InstitutionRole),
 })
 
 export const deleteInstitutionInviteInput = institutionInviteInputBase.extend({
