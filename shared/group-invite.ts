@@ -1,13 +1,5 @@
 import { z } from 'zod'
-
-// TODO this is also bad - should find a way to keep this in sync with Prisma schema
-export const groupRole = {
-  Owner: 'Owner',
-  Educator: 'Educator',
-  Member: 'Member',
-}
-
-export type GroupRole = (typeof groupRole)[keyof typeof groupRole]
+import { GroupRole } from './enums'
 
 export const groupInviteInputBase = z.object({
   groupId: z.string().cuid(),
@@ -20,7 +12,7 @@ export const getGroupInviteInput = z.object({
 export const acceptGroupInviteInput = getGroupInviteInput
 
 export const createGroupInviteInput = groupInviteInputBase.extend({
-  role: z.nativeEnum(groupRole),
+  role: z.nativeEnum(GroupRole),
 })
 
 export const deleteGroupInviteInput = groupInviteInputBase.extend({
