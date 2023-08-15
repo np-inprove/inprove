@@ -6,7 +6,7 @@ export type { DefaultInstitution } from '~/server/trpc/modules/institution/insti
 export type { DefaultInstitutionInvite } from '~/server/trpc/modules/institution/institution-invite.select'
 export type { DefaultUser } from '~/server/trpc/modules/user/user.select'
 export type { DefaultGroup } from '~/server/trpc/modules/group/group.select'
-export type { DefaultGroupUsers } from '~/server/trpc/modules/group/group-users.select'
+export type { DefaultGroupUsers, DetailedGroupUsers } from '~/server/trpc/modules/group/group-users.select'
 export type { DefaultGroupInvite } from '~/server/trpc/modules/group/group-invite.select'
 export type { DefaultEvent } from '~/server/trpc/modules/event/event.select'
 export type { DefaultForum } from '~/server/trpc/modules/forum/forum.select'

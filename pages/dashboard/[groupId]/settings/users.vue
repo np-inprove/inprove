@@ -4,11 +4,14 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Skeleton from 'primevue/skeleton'
 import Button from 'primevue/button'
+import { useConfirm } from 'primevue/useconfirm'
+import ConfirmDialog from 'primevue/confirmdialog'
 import Dropdown from 'primevue/dropdown'
-import type { DefaultGroupUsers } from 'server/trpc/modules/group/group-users.select'
+import type { DefaultGroupUsers, DetailedGroupUsers } from '~/shared/types'
 import { GroupRole } from '~/shared/enums'
 
 const route = useRoute()
+const confirm = useConfirm()
 const groupId = route.params.groupId as string
 const { data: me } = useQuery(queries.groupUsers.me(groupId))
 const { data: groupUsers, isLoading: usersIsLoading, error: usersError } = useQuery(queries.groupUsers.list(groupId))
@@ -55,10 +58,24 @@ function removeGroupUser(userId: string) {
     userId,
   })
 }
+
+function confirmDeleteGroupUser(groupUser: DetailedGroupUsers) {
+  confirm.require({
+    message: `Are you sure you want to remove ${groupUser.user.name}?`,
+    header: 'Removal Confirmation',
+    icon: 'i-tabler-alert-circle',
+    acceptClass: 'p-button-danger',
+    accept: () => {
+      removeGroupUser(groupUser.userId)
+    },
+  })
+}
 </script>
 
 <template>
   <div>
+    <ConfirmDialog />
+    <Toast />
     <div flex justify-between>
       <div>
         <h2 text-lg font-medium>
@@ -96,7 +113,7 @@ function removeGroupUser(userId: string) {
         </Column>
         <Column header="Actions">
           <template #body="bodySlot">
-            <Button icon="" text severity="danger" @click="removeGroupUser(bodySlot.data.userId)">
+            <Button icon="" text severity="danger" @click="confirmDeleteGroupUser(bodySlot.data)">
               <div i-tabler-x />
             </Button>
           </template>
