@@ -155,7 +155,7 @@ export const eventRouter = router({
         })
       }
 
-      assertGroupRole(groupUser, GroupRole.Owner, GroupRole.Educator)
+      assertGroupRole(groupUser, GroupRole.Owner, GroupRole.Educator, GroupRole.Member)
 
       return next({
         ctx: {
