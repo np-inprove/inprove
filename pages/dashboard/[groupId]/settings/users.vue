@@ -5,8 +5,8 @@ import Column from 'primevue/column'
 import Skeleton from 'primevue/skeleton'
 import Button from 'primevue/button'
 import Dropdown from 'primevue/dropdown'
-import { GroupRole } from '@prisma/client'
 import type { DefaultGroupUsers } from 'server/trpc/modules/group/group-users.select'
+import { GroupRole } from '~/shared/enums'
 
 const route = useRoute()
 const groupId = route.params.groupId as string
