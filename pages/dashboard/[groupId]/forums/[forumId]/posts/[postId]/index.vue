@@ -35,9 +35,7 @@ function comment() {
         {{ post.title }}
       </h2>
 
-      <p class="leading-7 [&:not(:first-child)]:mt-3">
-        {{ post.richContent }}
-      </p>
+      <ForumReadonlyTiptapEditor :content="post.richContent" />
 
       <div mt4>
         <ForumPostReactionPanel
