@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import Button from 'primevue/button'
 
-const { data: me } = useQuery(queries.me.info)
+const { $client } = useNuxtApp()
+
+// TODO temporary fix for bad redirect issue
+const { data: me } = $client.me.get.useQuery()
 </script>
 
 <template>
