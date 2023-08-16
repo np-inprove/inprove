@@ -10,10 +10,8 @@ const { data: me } = $client.me.get.useQuery()
 <template>
   <header class="h-18 bg-$surface-section">
     <div class="mx-auto h-full flex items-center justify-between px-6 container">
-      <NuxtLink to="/">
-        <span class="font-semibold">
-          <CommonAppLogo class="h-6" />
-        </span>
+      <NuxtLink to="/" aria-label="Homepage">
+        <CommonAppLogo class="h-6" />
       </NuxtLink>
 
       <div flex grid="gap-2 md:gap-10">

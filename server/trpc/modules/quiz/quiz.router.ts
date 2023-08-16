@@ -255,64 +255,101 @@ export const quizRouter = router({
       input,
     }) => {
       try {
-        const stmts = []
-
-        for (const qn of input.questions) {
-          stmts.push(ctx.prisma.question.upsert({
-            where: {
-              id: qn.id,
-            },
-            update: {
-              content: qn.content,
-              description: qn.description,
-              points: qn.points,
-              type: qn.type,
-              quizId: input.quizId,
-            },
-            create: {
-              content: qn.content,
-              description: qn.description,
-              points: qn.points,
-              type: qn.type,
-              quizId: input.quizId,
-            },
-            select: defaultQuestionSelect,
-          }))
-
-          switch (qn.type) {
-            case QuestionType.File: {
-              stmts.push(ctx.prisma.fileQuestion.create({
+        return await ctx.prisma.$transaction(async (prisma) => {
+          for (const qn of input.questions) {
+            let t
+            if (!qn.id) {
+              t = await prisma.question.create({
                 data: {
+                  content: qn.content,
+                  description: qn.description,
+                  points: qn.points,
+                  type: qn.type,
+                  quizId: input.quizId,
+                },
+                select: defaultQuestionSelect,
+              })
+            }
+            else {
+              t = await ctx.prisma.question.update({
+                where: {
                   id: qn.id,
                 },
-              }))
-              break
+                data: {
+                  content: qn.content,
+                  description: qn.description,
+                  points: qn.points,
+                  type: qn.type,
+                  quizId: input.quizId,
+                },
+                select: defaultQuestionSelect,
+              })
             }
 
-            case QuestionType.Options: {
-              stmts.push(ctx.prisma.optionsQuestion.create({
-                data: {
-                  id: qn.id,
+            switch (qn.type) {
+              case QuestionType.File: {
+                if (!qn.id) {
+                  await prisma.fileQuestion.create({
+                    data: {
+                      id: t.id,
+                    },
+                  })
+                }
+                break
+              }
+
+              case QuestionType.Options: {
+                const data = {
                   options: qn.options,
                   correctOptions: qn.correctOptions,
-                },
-              }))
-              break
-            }
+                }
 
-            case QuestionType.Text: {
-              stmts.push(ctx.prisma.textQuestion.create({
-                data: {
-                  id: qn.id,
+                if (!qn.id) {
+                  await prisma.optionsQuestion.create({
+                    data: {
+                      id: t.id,
+                      ...data,
+                    },
+                  })
+                }
+                else {
+                  await prisma.optionsQuestion.update({
+                    where: {
+                      id: qn.id,
+                    },
+                    data,
+                  })
+                }
+
+                break
+              }
+
+              case QuestionType.Text: {
+                const data = {
                   answer: qn.answer,
-                },
-              }))
-              break
+                }
+
+                if (!qn.id) {
+                  await prisma.textQuestion.create({
+                    data: {
+                      id: t.id,
+                      ...data,
+                    },
+                  })
+                }
+                else {
+                  await prisma.textQuestion.update({
+                    where: {
+                      id: t.id,
+                    },
+                    data,
+                  })
+                }
+                break
+              }
             }
           }
-        }
-
-        return await ctx.prisma.$transaction(stmts)
+        })
       }
       catch (err) {
         ctx.logger.error({

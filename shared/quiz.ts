@@ -58,12 +58,6 @@ export const addAnyQuestionInput = z.discriminatedUnion('type', [
   return value.correctOptions.every(i => i < value.options.length)
 })
 
-export const bulkUpsertQuestionInput = baseQuestionInput.extend({
-  questions: z.array(addAnyQuestionInput),
-})
-
-export type BulkUpsertQuestionInput = z.infer<typeof bulkUpsertQuestionInput>
-
 // TODO move to proper place, not necessarily used only in input. the types for this are all over the place imo.
 // Need to find a time to sit down and probably refactor this.
 export type AnyQuestion = z.infer<typeof addAnyQuestionInput>
@@ -93,7 +87,7 @@ export type OptionsQn = z.infer<typeof optionsQn>
 export const textQn = z.object({
   type: z.literal(QuestionType.Text),
   id: z.string().cuid().optional(),
-  answer: z.string().optional(),
+  answer: z.string().optional().nullable(),
   content: z.string(),
   description: z.string(),
   points: z.number(),
@@ -112,3 +106,9 @@ export const quizState = z.object({
 })
 
 export type QuizState = z.infer<typeof quizState>
+
+export const bulkUpsertQuestionInput = quizState.extend({
+  quizId: z.string().cuid(),
+})
+
+export type BulkUpsertQuestionInput = z.infer<typeof bulkUpsertQuestionInput>

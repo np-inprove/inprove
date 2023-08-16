@@ -12,9 +12,18 @@ const route = useRoute()
 const { data: quiz } = useQuery(queries.quizzes.details(route.params.quizId as string))
 const { data: qns } = useQuery(queries.quizzes.details(route.params.quizId as string)._ctx.questions)
 
+const { mutate } = useBulkUpsertQuestionsMutation()
+
 const qz = ref<QuizState>({
   questions: [],
 })
+
+function createQns() {
+  mutate({
+    quizId: route.params.quizId as string,
+    questions: qz.value.questions,
+  })
+}
 
 const menu = ref()
 
@@ -99,8 +108,20 @@ function bindTextQn(qn: CombinedQuestion) {
         {{ quiz?.name }}
       </h1>
 
-      <Menu id="overlay_menu" ref="menu" :model="addQuestionMenuItems" :popup="true" />
-      <Button type="button" aria-haspopup="true" aria-controls="overlay_menu" label="Add question" size="small" @click="addQuestion" />
+      <div flex gap3>
+        <NuxtLink target="_blank" :to="`/q/${route.params.quizId}`">
+          <Button type="button" label="Preview" size="small" outlined icon-pos="right" icon="">
+            <template #icon>
+              <div i-tabler-external-link />
+            </template>
+          </Button>
+        </NuxtLink>
+
+        <Button type="button" label="Save" size="small" outlined @click="createQns" />
+
+        <Menu id="overlay_menu" ref="menu" :model="addQuestionMenuItems" :popup="true" />
+        <Button type="button" aria-haspopup="true" aria-controls="overlay_menu" label="Add question" size="small" @click="addQuestion" />
+      </div>
     </div>
 
     <div>
