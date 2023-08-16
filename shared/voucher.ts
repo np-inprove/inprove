@@ -17,6 +17,11 @@ export const redeemVoucherInput = z.object({
   voucherId: z.string().cuid(),
 })
 
+export const redeemClaimInput = z.object({
+  redemptionId: z.string().cuid(),
+})
+
 export type CreateVoucherInput = z.infer<typeof createVoucherInput>
 export type UpdateVoucherInput = z.infer<typeof updateVoucherInput>
 export type RedeemVoucherInput = z.infer<typeof redeemVoucherInput>
+export type RedeemClaimInput = z.infer<typeof redeemClaimInput>
