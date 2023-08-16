@@ -9,7 +9,7 @@ const emit = defineEmits(['click'])
 </script>
 
 <template>
-  <Card class="rounded-md hover:bg-$surface-c" @click="emit('click', $event)">
+  <Card class="rounded-md bg-transparent hover:bg-$surface-a" @click="emit('click', $event)">
     <CardHeader>
       <CardTitle>
         {{ props.question.content }}

@@ -1,8 +1,9 @@
 <script setup lang="ts">
 // TODO skeleton and loading state, etc. general cleanup, again.
 
+import Menu from 'primevue/menu'
 import Button from 'primevue/button'
-import Dropdown from 'primevue/dropdown'
+import type { MenuItem } from 'primevue/menuitem'
 import { QuestionType } from '~/shared/enums'
 import { fileQn, optionsQn, textQn } from '~/shared/quiz'
 import type { CombinedQuestion, OptionsQn, QuizState } from '~/shared/quiz'
@@ -14,6 +15,8 @@ const { data: qns } = useQuery(queries.quizzes.details(route.params.quizId as st
 const qz = ref<QuizState>({
   questions: [],
 })
+
+const menu = ref()
 
 watchEffect(() => {
   qz.value.questions = [...(qns.value ?? [])]
@@ -43,12 +46,19 @@ const DEFAULT_QUESTIONS: Record<keyof typeof QuestionType, CombinedQuestion> = {
   },
 }
 
-function addQuestion() {
-  qz.value.questions.push(DEFAULT_QUESTIONS.Text)
+const addQuestionMenuItems: MenuItem[] = Object.keys(DEFAULT_QUESTIONS).map(key => ({
+  label: key,
+  command: () => {
+    qz.value.questions.push(DEFAULT_QUESTIONS[key as keyof typeof QuestionType])
+  },
+}))
+
+function addQuestion(event: any) {
+  menu.value.toggle(event)
 }
 
-function updateQuestionType(idx: number, value: QuestionType) {
-  qz.value.questions[idx] = DEFAULT_QUESTIONS[value]
+function deleteQn(idx: number) {
+  qz.value.questions.splice(idx, 1)
 }
 
 function bindOptionsQn(qn: CombinedQuestion) {
@@ -88,10 +98,12 @@ function bindTextQn(qn: CombinedQuestion) {
       <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">
         {{ quiz?.name }}
       </h1>
-      <Button label="Add question" size="small" @click="addQuestion" />
+
+      <Menu id="overlay_menu" ref="menu" :model="addQuestionMenuItems" :popup="true" />
+      <Button type="button" aria-haspopup="true" aria-controls="overlay_menu" label="Add question" size="small" @click="addQuestion" />
     </div>
 
-    <div divide-y>
+    <div>
       <div v-if="qz.questions.length === 0" mt10>
         <Card>
           <CardHeader class="text-center">
@@ -105,21 +117,9 @@ function bindTextQn(qn: CombinedQuestion) {
         </Card>
       </div>
       <div v-for="(question, idx) in qz.questions" v-else :key="question.id" py4>
-        <LazyQuizzesEditFileQuestion v-if="qz.questions[idx].type === QuestionType.File" v-bind="bindFileQn(qz.questions[idx])" />
-        <LazyQuizzesEditOptionsQuestion v-if="qz.questions[idx].type === QuestionType.Options" v-bind="bindOptionsQn(qz.questions[idx])" />
+        <LazyQuizzesEditFileQuestion v-if="qz.questions[idx].type === QuestionType.File" v-bind="bindFileQn(qz.questions[idx])" @delete="deleteQn(idx)" />
+        <LazyQuizzesEditOptionsQuestion v-if="qz.questions[idx].type === QuestionType.Options" v-bind="bindOptionsQn(qz.questions[idx])" @delete="deleteQn(idx)" />
         <LazyQuizzesEditTextQuestion v-if="qz.questions[idx].type === QuestionType.Text" v-bind="bindTextQn(qz.questions[idx])" />
-
-        <div>
-          <Dropdown
-            :model-value="question.type"
-            size="small"
-            :options="[
-              { label: 'Options', value: 'Options' },
-              { label: 'Text', value: 'Text' },
-              { label: 'File', value: 'File' },
-            ]" option-label="label" option-value="value" class="w-xs" @update:modelValue="updateQuestionType(idx, $event)"
-          />
-        </div>
       </div>
     </div>
   </div>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Divider from 'primevue/divider'
 import Button from 'primevue/button'
 import Textarea from 'primevue/textarea'
 import Checkbox from 'primevue/checkbox'
@@ -8,7 +9,7 @@ import type { OptionsQn } from '~/shared/quiz'
 const props = defineProps<{
   modelValue: OptionsQn
 }>()
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'delete'])
 
 const editing = ref(false)
 const state = ref(props.modelValue)
@@ -50,6 +51,10 @@ function removeOption(idx: number) {
         </ul>
         <div>
           <Button size="small" text label="Add option" @click="addOption" />
+        </div>
+        <Divider :pt="{ root: { class: 'before:border-solid!' } }" />
+        <div ml-auto>
+          <Button size="small" text label="Delete question" severity="danger" @click="emit('delete')" />
         </div>
       </div>
 

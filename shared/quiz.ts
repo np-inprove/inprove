@@ -76,6 +76,8 @@ export const fileQn = z.object({
   points: z.number(),
 })
 
+export type FileQn = z.infer<typeof fileQn>
+
 export const optionsQn = z.object({
   type: z.literal(QuestionType.Options),
   id: z.string().cuid().optional(),
@@ -96,6 +98,8 @@ export const textQn = z.object({
   description: z.string(),
   points: z.number(),
 })
+
+export type TextQn = z.infer<typeof textQn>
 
 export const combinedQuestion = z.discriminatedUnion('type', [
   fileQn, optionsQn, textQn,
