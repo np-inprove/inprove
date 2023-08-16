@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
-import type { CreateVoucherInput, RedeemClaimInput, RedeemVoucherInput, UpdateVoucherInput } from '~/shared/voucher'
+import type { CreateVoucherInput, RedeemAdminClaimInput, RedeemClaimInput, RedeemVoucherInput, UpdateVoucherInput } from '~/shared/voucher'
 
 export function useVouchers() {
   const { $client } = useNuxtApp()
@@ -68,12 +68,34 @@ export function useRedeemVoucher() {
   })
 }
 
+export function useClaimRedeems() {
+  const { $client } = useNuxtApp()
+
+  return useQuery({
+    queryKey: ['vouchersRedeemed'],
+    queryFn: () => $client.redeem.listVoucherRequireRedeem.query(),
+  })
+}
+
 export function useClaimRedeem() {
   const { $client } = useNuxtApp()
   const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: (input: RedeemClaimInput) => $client.redeem.claim.mutate(input),
+    onSuccess() {
+      queryClient.invalidateQueries(['vouchersRedeemed'])
+      queryClient.invalidateQueries(['me'])
+    },
+  })
+}
+
+export function useAdminClaimRedeem() {
+  const { $client } = useNuxtApp()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (input: RedeemAdminClaimInput) => $client.redeem.adminClaim.mutate(input),
     onSuccess() {
       queryClient.invalidateQueries(['vouchersRedeemed'])
       queryClient.invalidateQueries(['me'])

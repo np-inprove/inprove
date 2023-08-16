@@ -10,6 +10,11 @@ const items = computed(() => [
     name: 'Vouchers',
   },
   {
+    to: '/dashboard/institution/settings/redemption',
+    match: ['/dashboard/institution/settings/redemption'],
+    name: 'Vouchers Redemptions',
+  },
+  {
     to: `/dashboard/institution/settings/invites?institutionId=${me?.value?.institution?.id}`,
     match: ['/dashboard/institution/settings/invites'],
     name: 'Invite links',

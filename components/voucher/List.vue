@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import DataTable from 'primevue/datatable'
+import Card from 'primevue/card'
 import Column from 'primevue/column'
+import ConfirmDialog from 'primevue/confirmdialog'
 import Button from 'primevue/button'
 import Skeleton from 'primevue/skeleton'
 import Toast from 'primevue/toast'
@@ -8,6 +10,7 @@ import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
 import Textarea from 'primevue/textarea'
+import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
 import type { DefaultVoucher } from '~/shared/types'
 
@@ -20,7 +23,9 @@ const formData = reactive({
 })
 
 const route = useRoute()
+const router = useRouter()
 const toast = useToast()
+const confirm = useConfirm()
 
 const { data: vouchers, isLoading: vouchersIsLoading, error: vouchersError } = useVouchers()
 const { mutate: updateMutate } = useUpdateVoucher()
@@ -67,10 +72,23 @@ function deleteVoucher(voucherId: string) {
     },
   })
 }
+
+function confirmDeleteVoucher(VoucherData: any) {
+  confirm.require ({
+    message: `Are you sure you want to delete this ${VoucherData.name} voucher?`,
+    header: 'Delete Voucher Confirmation',
+    icon: 'i-tabler-alert-circle',
+    acceptClass: 'p-button-danger',
+    accept: () => {
+      deleteVoucher(VoucherData.id)
+    },
+  })
+}
 </script>
 
 <template>
   <div>
+    <ConfirmDialog />
     <Toast />
 
     <Dialog v-model:visible="formData.visible" modal header="Edit voucher" class="min-w-sm">
@@ -130,7 +148,7 @@ function deleteVoucher(voucherId: string) {
           <template #body="slotProps">
             <div>
               <Button size="small" text label="Edit" @click="onEditVoucher(slotProps.data)" />
-              <Button size="small" text severity="danger" label="Delete" @click="deleteVoucher(slotProps.data.id)" />
+              <Button size="small" text severity="danger" label="Delete" @click="confirmDeleteVoucher(slotProps.data)" />
             </div>
           </template>
         </Column>
