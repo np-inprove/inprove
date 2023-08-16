@@ -67,7 +67,7 @@ function confirmClaimVoucher(redemptionData: any) {
       <DataTable v-else :value="redemptions">
         <Column field="voucher.name" header="Voucher Name" sortable />
         <Column field="user.name" header="User Name" sortable />
-        <Column field="claimed" header="Claimed">
+        <Column field="claimed" header="Unclaimed">
           <template #body="bodySlot">
             <Button
               v-if="bodySlot.data.claimed === false"
