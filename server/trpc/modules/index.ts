@@ -11,6 +11,7 @@ import { deadlineRouter } from './deadline/deadline.router'
 import { eventRouter } from './event/event.router'
 import { quizRouter } from './quiz/quiz.router'
 import { voucherRouter } from './voucher/voucher.router'
+import { redeemRouter } from './redemption/redemption.router'
 
 export const appRouter = router({
   hello: publicProcedure
@@ -42,6 +43,7 @@ export const appRouter = router({
   event: eventRouter,
   quiz: quizRouter,
   voucher: voucherRouter,
+  redeem: redeemRouter,
 })
 
 // export type definition of API
