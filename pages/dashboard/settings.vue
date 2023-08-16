@@ -56,7 +56,7 @@ function confirmClaimVoucher(redemptionData: any) {
   <div w-full flex flex-col>
     <ConfirmDialog />
     <Toast />
-    <CommonHeader title="Voucher Redeemed" />
+    <CommonHeader title="Vouchers Redeemed" />
 
     <div h-full overflow-y-auto>
       <ScrollPanel style="height: 100%">
