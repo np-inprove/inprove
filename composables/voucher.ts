@@ -73,7 +73,7 @@ export function useClaimRedeems() {
 
   return useQuery({
     queryKey: ['vouchersRedeemed'],
-    queryFn: () => $client.redeem.listVoucherRequireRedeem.query(),
+    queryFn: () => $client.redeem.listUnclaimedVouchers.query(),
   })
 }
 

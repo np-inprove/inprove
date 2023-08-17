@@ -24,7 +24,7 @@ export const redeemRouter = router({
       }
     }),
 
-  listVoucherRequireRedeem: protectedProcedure
+  listUnclaimedVouchers: protectedProcedure
     .query(async ({ ctx }) => {
       try {
         return await ctx.prisma.redemption.findMany({
