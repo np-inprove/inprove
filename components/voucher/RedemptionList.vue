@@ -71,7 +71,7 @@ function confirmClaimVoucher(redemptionData: any) {
           <template #body="bodySlot">
             <Button
               v-if="bodySlot.data.claimed === false"
-              label="Claim Now"
+              label="Claim now"
               severity="danger"
               @click="confirmClaimVoucher(bodySlot.data)"
             />
