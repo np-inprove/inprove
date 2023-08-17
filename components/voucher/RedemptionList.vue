@@ -25,7 +25,7 @@ function claimVoucher(redemptionId: any, userId: any) {
   {
     onSuccess() {
       toast.add({
-        summary: 'Voucher Claimed!',
+        summary: 'Voucher claimed!',
         severity: 'success',
         life: 3000,
       })
