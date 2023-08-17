@@ -57,7 +57,7 @@ function confirmClaimVoucher(redemptionData: any) {
     <template v-else>
       <Card v-if="redemptions?.length === 0">
         <template #title>
-          No vouchers for claiming
+          No vouchers available to claim. 
         </template>
         <template #subtitle>
           No vouchers are currently unclaimed. Please check back later.
