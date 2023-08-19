@@ -60,7 +60,7 @@ function confirmClaimVoucher(redemptionData: any) {
           No vouchers available to claim.
         </template>
         <template #subtitle>
-          No vouchers are currently unclaimed. Please redeem a voucher first.
+          No vouchers are currently unclaimed. Please check back later.
         </template>
       </Card>
 
