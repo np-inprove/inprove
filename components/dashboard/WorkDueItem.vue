@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Button from 'primevue/button'
+import InputText from 'primevue/inputtext'
 import formatRelative from 'date-fns/formatRelative/index'
 
 const props = defineProps<{
@@ -15,14 +16,39 @@ const props = defineProps<{
 
 const { data: me } = useQuery(queries.me.info)
 const { mutate: toggleVoteMutate } = useToggleVoteDeadlineMutation(props.groupId)
+const { mutate: updateDeadlineMutate } = useUpdateDeadlineMutation(props.groupId)
 
 const upvotedByUser = computed(() => {
   return props.upvotes.some(upvote => upvote.id === me.value?.id)
 })
 
+const editState = ref({
+  editing: false,
+  name: '',
+})
+
+function toggleEdit() {
+  editState.value = {
+    editing: true,
+    name: props.name,
+  }
+}
+
 function upvote() {
   toggleVoteMutate({
     deadlineId: props.id,
+  })
+}
+
+function edit() {
+  updateDeadlineMutate({
+    deadlineId: props.id,
+    name: editState.value.name,
+    dueDate: props.dueDate,
+  }, {
+    onSuccess() { // TODO need a better way to do this, currently this is a bit slow because of the query revalidation takes a while. This can be eager mutation.
+      editState.value.editing = false
+    },
   })
 }
 </script>
@@ -30,7 +56,10 @@ function upvote() {
 <template>
   <div flex items-center p3 space-x-4 class="border-$surface-border text-sm">
     <div flex flex-1>
-      <span>
+      <form v-if="editState.editing" @submit.prevent="edit">
+        <InputText v-model="editState.name" unstyled :pt="{ root: { class: 'bg-transparent outline-none' } }" />
+      </form>
+      <span v-else @click="toggleEdit">
         {{ props.name }}
       </span>
     </div>
