@@ -20,16 +20,13 @@ export default defineEventHandler(async (event) => {
       })
     }
     else {
+      const { default: axiomPino } = await import('@axiomhq/pino')
+
       const config = useRuntimeConfig()
-      httpLogger = pinoHttp({
-        transport: {
-          target: '@axiomhq/pino',
-          options: {
-            dataset: config.axiom.dataset,
-            token: config.axiom.token,
-          },
-        },
-      })
+      httpLogger = pinoHttp(await axiomPino({
+        dataset: config.axiom.dataset,
+        token: config.axiom.token,
+      }))
     }
   }
 
