@@ -22,6 +22,8 @@ export default defineNuxtConfig({
     '@nuxtjs/html-validator',
     '@nuxt/image',
     'nuxt-security',
+    'nuxt-simple-robots',
+    'nuxt-simple-sitemap',
   ],
 
   typescript: {

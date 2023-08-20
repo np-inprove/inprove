@@ -61,6 +61,8 @@
     "nodemailer": "^6.9.4",
     "nuxt": "^3.6.5",
     "nuxt-security": "^0.14.4",
+    "nuxt-simple-robots": "^3.1.1",
+    "nuxt-simple-sitemap": "^3.1.8",
     "pinia": "^2.1.6",
     "pino": "^8.15.0",
     "pino-http": "^8.4.0",
