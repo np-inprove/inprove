@@ -17,6 +17,9 @@ devDependencies:
   '@aws-sdk/signature-v4-crt':
     specifier: ^3.387.0
     version: 3.387.0
+  '@axiomhq/pino':
+    specifier: ^0.1.3
+    version: 0.1.3
   '@iconify-json/fluent-emoji':
     specifier: ^1.1.14
     version: 1.1.14
@@ -1071,6 +1074,27 @@ packages:
     engines: {node: '>=14.0.0'}
     dependencies:
       tslib: 2.6.1
+    dev: true
+
+  /@axiomhq/js@0.1.3:
+    resolution: {integrity: sha512-2HIHYHBw40V8Qu642aKvP6ZFNoeS0oTtsZNe9Fxv0lQgC2XxR6E9aiPmIuzmJIRKzhFMtyu1MLez15seYzyInw==}
+    engines: {node: '>=16'}
+    dependencies:
+      cross-fetch: 3.1.8
+      fetch-retry: 5.0.6
+      uuid: 8.3.2
+    transitivePeerDependencies:
+      - encoding
+    dev: true
+
+  /@axiomhq/pino@0.1.3:
+    resolution: {integrity: sha512-+27Uv/idAxUkXYcK3fXDUpbPa0PA1tdj477fSYG7kjvNL81nvBIRM/YdNUJKMfI2OsKgyFtWTfUcmOiD72+bIg==}
+    engines: {node: '>=16'}
+    dependencies:
+      '@axiomhq/js': 0.1.3
+      pino-abstract-transport: 1.0.0
+    transitivePeerDependencies:
+      - encoding
     dev: true
 
   /@babel/code-frame@7.22.5:
@@ -5601,6 +5625,14 @@ packages:
     resolution: {integrity: sha512-VQ2MBenTq1fWZUH9DJNGti7kKv6EeAuYr3cLwxUWhIu1baTaXh4Ib5W2CqHVqib4/MqbYGJqiL3Zb8GJZr3l4g==}
     dev: true
 
+  /cross-fetch@3.1.8:
+    resolution: {integrity: sha512-cvA+JwZoU0Xq+h6WkMvAUqPEYy92Obet6UdKLfW60qn99ftItKjB5T+BkyWOFWe2pUyfQ+IJHmpOTznqk1M6Kg==}
+    dependencies:
+      node-fetch: 2.6.12
+    transitivePeerDependencies:
+      - encoding
+    dev: true
+
   /cross-spawn@7.0.3:
     resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==}
     engines: {node: '>= 8'}
@@ -6819,6 +6851,10 @@ packages:
     dependencies:
       node-domexception: 1.0.0
       web-streams-polyfill: 3.2.1
+    dev: true
+
+  /fetch-retry@5.0.6:
+    resolution: {integrity: sha512-3yurQZ2hD9VISAhJJP9bpYFNQrHHBXE2JxxjY5aLEcDi46RmAzJE2OC9FAde0yis5ElW0jTTzs0zfg/Cca4XqQ==}
     dev: true
 
   /file-entry-cache@6.0.1:
