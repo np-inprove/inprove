@@ -20,7 +20,7 @@ export const deleteDeadlineInput = baseDeadlineInput.extend({
 export const updateDeadlineInput = baseDeadlineInput.extend({
   deadlineId: z.string().cuid(),
   name: z.string().min(1),
-  dueDate: z.date().min(new Date()),
+  dueDate: z.date().min(new Date()).nullable(),
 })
 
 export const listDeadlineInput = baseDeadlineInput.extend({})
