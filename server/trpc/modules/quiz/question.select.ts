@@ -20,7 +20,6 @@ export type DefaultQuestion = Prisma.QuestionGetPayload<{ select: typeof default
 
 export const defaultTextQuestionSelect = Prisma.validator<Prisma.TextQuestionSelect>()({
   id: true,
-  answer: true,
 })
 
 export type DefaultTextQuestion = Prisma.TextQuestionGetPayload<{ select: typeof defaultTextQuestionSelect }>

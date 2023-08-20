@@ -28,39 +28,8 @@ export const listQuestionsInput = baseQuestionInput.extend({})
 
 export type ListQuestionsInput = z.infer<typeof listQuestionsInput>
 
-// Add question
-export const baseAddQuestionInput = z.object({
-  id: z.string().cuid().optional(),
-  content: z.string().min(1),
-  description: z.string(),
-  points: z.number().min(1),
-})
-export const addFileQuestionInput = baseAddQuestionInput.extend({
-  type: z.literal(QuestionType.File),
-})
-export const addTextQuestionInput = baseAddQuestionInput.extend({
-  type: z.literal(QuestionType.Text),
-  answer: z.string().min(1),
-})
-export const addOptionsQuestionInput = baseAddQuestionInput.extend({
-  type: z.literal(QuestionType.Options),
-  options: z.array(z.string().min(1)),
-  correctOptions: z.array(z.number().int().min(0)),
-})
-
-export const addAnyQuestionInput = z.discriminatedUnion('type', [
-  addFileQuestionInput,
-  addTextQuestionInput,
-  addOptionsQuestionInput,
-]).refine((value) => {
-  if (value.type !== QuestionType.Options)
-    return true
-  return value.correctOptions.every(i => i < value.options.length)
-})
-
 // TODO move to proper place, not necessarily used only in input. the types for this are all over the place imo.
 // Need to find a time to sit down and probably refactor this.
-export type AnyQuestion = z.infer<typeof addAnyQuestionInput>
 
 export const fileQn = z.object({
   type: z.literal(QuestionType.File),
@@ -112,3 +81,69 @@ export const bulkUpsertQuestionInput = quizState.extend({
 })
 
 export type BulkUpsertQuestionInput = z.infer<typeof bulkUpsertQuestionInput>
+
+// TODO this is for response data
+
+export const fileAnswer = z.object({
+  type: z.literal(QuestionType.File),
+  url: z.string().url(),
+})
+
+// TODO "state" is for the frontend to use in order to render the UI in the respective question components.
+// Different from the filAnswer object which should be used on the server for input validation
+// Need to think of a good name, as usual
+
+// TODO also need to contain the actual question option... oops
+export const fileAnswerState = fileAnswer
+  .extend({
+    content: z.string(),
+    description: z.string(),
+  }).partial({
+    url: true, // TODO temporary for frontend state to not throw errors
+  })
+
+export type FileAnswer = z.infer<typeof fileAnswer>
+export type FileAnswerState = z.infer<typeof fileAnswerState>
+
+export const optionsAnswer = z.object({
+  type: z.literal(QuestionType.Options),
+  options: z.array(z.number()),
+})
+
+export const optionsAnswerState = optionsAnswer
+  .extend({
+    content: z.string(),
+    description: z.string(),
+  }).partial({
+    options: true, // TODO temporary for frontend state to not throw errors
+  })
+
+export type OptionsAnswer = z.infer<typeof optionsAnswer>
+export type OptionsAnswerState = z.infer<typeof optionsAnswerState>
+
+export const textAnswer = z.object({
+  type: z.literal(QuestionType.Text),
+  answer: z.string(),
+})
+
+export const textAnswerState = textAnswer
+  .extend({
+    content: z.string(),
+    description: z.string(),
+  }).partial({
+    answer: true, // TODO temporary for frontend state to not throw errors
+  })
+
+export type TextAnswer = z.infer<typeof textAnswer>
+export type TextAnswerState = z.infer<typeof textAnswerState>
+
+export const combinedAnswer = z.discriminatedUnion('type', [
+  fileAnswer, optionsAnswer, textAnswer,
+])
+
+export const combinedAnswerState = z.discriminatedUnion('type', [
+  fileAnswerState, optionsAnswerState, textAnswerState,
+])
+
+export type CombinedAnswer = z.infer<typeof combinedAnswer>
+export type CombinedAnswerState = z.infer<typeof combinedAnswerState>

@@ -325,7 +325,6 @@ model FileQuestion {
 
 model TextQuestion {
   id     String  @id @default(cuid())
-  answer String?
 }
 
 model OptionsQuestion {
