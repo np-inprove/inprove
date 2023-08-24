@@ -15,7 +15,7 @@
     "docs:preview": "vitepress preview docs"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^0.40.2",
+    "@antfu/eslint-config": "^0.41.0",
     "@aws-sdk/client-s3": "^3.388.0",
     "@aws-sdk/s3-request-presigner": "^3.388.0",
     "@aws-sdk/signature-v4-crt": "^3.387.0",
