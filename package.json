@@ -82,7 +82,7 @@
     "tsx": "^3.12.7",
     "unstorage": "^1.9.0",
     "v-calendar": "^3.0.3",
-    "vitepress": "1.0.0-rc.13",
+    "vitepress": "1.0.0-rc.17",
     "vue": "^3.3.4",
     "vue-tsc": "^1.8.8",
     "zod": "^3.21.4"
