@@ -1,11 +1,20 @@
 <script setup lang="ts">
-import ScrollPanel from 'primevue/scrollpanel'
-import DataTable from 'primevue/datatable'
+import Button from 'primevue/button'
+import Card from 'primevue/card'
 import Column from 'primevue/column'
+import ConfirmDialog from 'primevue/confirmdialog'
+import DataTable from 'primevue/datatable'
+import ScrollPanel from 'primevue/scrollpanel'
+import Toast from 'primevue/toast'
+import { useConfirm } from 'primevue/useconfirm'
+import { useToast } from 'primevue/usetoast'
 import { formatRelative } from 'date-fns'
 
 // TODO yes, proper loading, etc.
+const confirm = useConfirm()
+const toast = useToast()
 const { data: redeemed, isLoading: redeemedIsLoading } = useRedeemedVouchers()
+const { mutate: updateMutate, isLoading: isUpdateLoading } = useClaimRedeem()
 
 const relativeRedeemed = computed(() => {
   const now = new Date()
@@ -14,18 +23,69 @@ const relativeRedeemed = computed(() => {
     timestamp: formatRelative(v.timestamp, now),
   }))
 })
+
+function claimVoucher(redemptionId: any) {
+  updateMutate({
+    redemptionId,
+  },
+  {
+    onSuccess() {
+      toast.add({
+        summary: 'Voucher Claimed!',
+        severity: 'success',
+        life: 3000,
+      })
+    },
+  })
+}
+
+function confirmClaimVoucher(redemptionData: any) {
+  confirm.require({
+    message: 'You should only redeem this voucher at the voucher redemption location.',
+    header: `Are you sure you want to redeem this ${redemptionData.voucher.name} voucher?`,
+    icon: 'i-tabler-alert-circle',
+    acceptClass: 'p-button-danger',
+    accept: () => {
+      claimVoucher(redemptionData.id)
+    },
+  })
+}
 </script>
 
 <template>
   <div w-full flex flex-col>
-    <CommonHeader title="User settings" />
+    <ConfirmDialog />
+    <Toast />
+    <CommonHeader title="Vouchers Redeemed" />
 
     <div h-full overflow-y-auto>
       <ScrollPanel style="height: 100%">
         <div p4>
-          <DataTable :value="relativeRedeemed">
+          <Card v-if="relativeRedeemed?.length === 0">
+            <template #title>
+              No vouchers have been redeemed
+            </template>
+            <template #subtitle>
+              Redeem some vouchers to see them here.
+            </template>
+          </Card>
+          <DataTable v-else :value="relativeRedeemed">
             <Column field="voucher.name" header="Voucher name" />
             <Column field="timestamp" header="Redemption time" />
+            <Column field="claimed" header="Claim Status" sortable>
+              <template #body="bodySlot">
+                <Button
+                  v-if="bodySlot.data.claimed === false"
+                  v-model="bodySlot.data.claimed"
+                  label="Claim Now"
+                  severity="danger"
+                  @click="confirmClaimVoucher(bodySlot.data)"
+                />
+                <div v-else>
+                  Claimed
+                </div>
+              </template>
+            </Column>
           </DataTable>
         </div>
       </ScrollPanel>

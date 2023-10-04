@@ -13,5 +13,6 @@ export type { DefaultForum } from '~/server/trpc/modules/forum/forum.select'
 export type { DefaultForumPost } from '~/server/trpc/modules/forum/forum-post.select'
 export type { DefaultForumPostReaction } from '~/server/trpc/modules/forum/forum-post-reaction.select'
 export type { DefaultVoucher } from '~/server/trpc/modules/voucher/voucher.select'
+export type { DefaultRedemption } from '~/server/trpc/modules/redemption/redemption.select'
 
 export type TRPCClientError = __TRPCClientError<AppRouter>
