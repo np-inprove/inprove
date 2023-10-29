@@ -33,7 +33,7 @@
     "@prisma/client": "^5.1.1",
     "@prisma/generator-helper": "^5.1.1",
     "@qingu/vue-email": "^1.0.23",
-    "@tanstack/vue-query": "^4.32.6",
+    "@tanstack/vue-query": "^5.0.0",
     "@tiptap/extension-floating-menu": "^2.0.4",
     "@tiptap/extension-image": "^2.0.4",
     "@tiptap/extension-link": "^2.0.4",
