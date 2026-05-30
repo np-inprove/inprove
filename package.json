@@ -54,7 +54,7 @@
     "chart.js": "^4.3.3",
     "clsx": "^2.0.0",
     "consola": "^3.2.3",
-    "date-fns": "^2.30.0",
+    "date-fns": "^4.0.0",
     "date-fns-tz": "^2.0.0",
     "eslint": "^8.47.0",
     "lint-staged": "^14.0.0",
