@@ -73,7 +73,7 @@
     "resend": "^1.0.0",
     "rrule": "^2.7.2",
     "sass": "^1.65.1",
-    "sharp": "^0.32.4",
+    "sharp": "^0.35.0",
     "simple-git-hooks": "^2.9.0",
     "std-env": "^3.3.3",
     "superjson": "^1.13.1",
